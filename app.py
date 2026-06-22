@@ -100,7 +100,9 @@ def selected_openai_model() -> str:
         return DEFAULT_OPENAI_MODEL
 
     return model
-    def selected_provider() -> str:
+
+
+def selected_provider() -> str:
     """Return selected AI provider."""
     provider = get_secret_or_env("AI_PROVIDER", "openai").strip().lower()
     if provider in {"openai", "gemini"}:
@@ -366,6 +368,13 @@ def call_gemini_with_retry(prompt: str) -> str:
 
     raise RuntimeError(f"Gemini servisi geçici olarak kullanılamıyor: {last_error}")
 
+
+def call_ai_with_retry(prompt: str) -> str:
+    """Call selected AI provider."""
+    if selected_provider() == "gemini":
+        return call_gemini_with_retry(prompt)
+    return call_openai_with_retry(prompt)
+
 def process_ai_request(request_id: str, payload: dict[str, Any]) -> dict[str, Any]:
     """Process one AI request coming from the Streamlit component iframe."""
     try:
@@ -379,21 +388,21 @@ def process_ai_request(request_id: str, payload: dict[str, Any]) -> dict[str, An
             raise RuntimeError("En az bir çıktı türü seçilmelidir.")
 
         prompt = build_prompt(raw_text, outputs, load_terms_text(), custom_prompt)
-        model_text = call_openai_with_retry(prompt)
+        model_text = call_ai_with_retry(prompt)
 
         return {
             "ok": True,
             "requestId": request_id,
-            "provider": "gemini",
-            "model": selected_openai_model(),
+            "provider": selected_provider(),
+            "model": selected_ai_model(),
             "result": safe_json_parse(model_text),
         }
     except Exception as exc:  # noqa: BLE001
         return {
             "ok": False,
             "requestId": request_id,
-            "provider": "gemini",
-            "model": selected_openai_model(),
+            "provider": selected_provider(),
+            "model": selected_ai_model(),
             "detail": str(exc),
             "result": {},
         }
