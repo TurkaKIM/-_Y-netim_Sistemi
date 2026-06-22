@@ -307,7 +307,7 @@ def process_ai_request(request_id: str, payload: dict[str, Any]) -> dict[str, An
         return {
             "ok": True,
             "requestId": request_id,
-            "provider": "openai",
+            "provider": "gemini",
             "model": selected_openai_model(),
             "result": safe_json_parse(model_text),
         }
@@ -315,7 +315,7 @@ def process_ai_request(request_id: str, payload: dict[str, Any]) -> dict[str, An
         return {
             "ok": False,
             "requestId": request_id,
-            "provider": "openai",
+            "provider": "gemini",
             "model": selected_openai_model(),
             "detail": str(exc),
             "result": {},
