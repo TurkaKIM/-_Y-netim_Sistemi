@@ -69,7 +69,6 @@ footer {
 }
 
 /* iframe çevresindeki boşlukları kaldır */
-[data-testid="stElementContainer"],
 [data-testid="stIFrame"],
 iframe {
     display: block !important;
