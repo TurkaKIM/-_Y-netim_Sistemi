@@ -64,7 +64,8 @@ iframe {
 with open("index.html", "r", encoding="utf-8") as f:
     html_kodu = f.read()
 
-DEFAULT_AI_PROXY_URL = "https://is-takip-uygulamasi-792348862371.europe-west1.run.app/ai-content"
+DEFAULT_AI_PROXY_URL = "https://script.google.com/macros/s/AKfycbxKa4-i3lZDy4tjJ716YrSuJDk6iih6oj8gTnx4resvQkQXbB4hV6_atYeqmPkLxlVopw/exec"
+
 
 def get_secret_or_env(name: str, default: str = "") -> str:
     """Read a value from Streamlit secrets first, then environment variables."""
@@ -77,7 +78,7 @@ def get_secret_or_env(name: str, default: str = "") -> str:
 
 
 def normalize_ai_proxy_url(value: str) -> str:
-    """Return a usable AI endpoint URL for the browser-side app."""
+    """Return the browser-side AI endpoint URL without breaking Apps Script URLs."""
     value = (value or "").strip()
 
     if not value:
@@ -92,18 +93,6 @@ def normalize_ai_proxy_url(value: str) -> str:
         return value
 
     return f"{value}/ai-content"
-
-    if not value:
-        # Streamlit Secrets okunamazsa uzak yayında 127.0.0.1'e düşme.
-        return DEFAULT_AI_PROXY_URL
-
-    value = value.rstrip("/")
-
-    if value.endswith("/ai-content"):
-        return value
-
-    return f"{value}/ai-content"
-
 
 ai_proxy_url = normalize_ai_proxy_url(
     get_secret_or_env("AI_PROXY_URL") or get_secret_or_env("AI_PROXY_BASE_URL")
