@@ -1028,7 +1028,7 @@ if (value.includes("script.google.com/macros/s/")) {
 }
 
 value = value.endsWith("/ai-content") ? value : `${value}/ai-content`;
-
+  
   // GitHub Codespaces / web preview kullanılırken tarayıcıdaki 127.0.0.1 kullanıcının bilgisayarını gösterir.
   // Bu durumda 8501 Streamlit önizleme adresinden 8000 AI proxy önizleme adresini otomatik türet.
   if (aiProxyLooksLocal(value) && !isLocalBrowserHost()) {
@@ -6479,7 +6479,8 @@ saveSocialPosts(Array.isArray(data.socialPosts) ? data.socialPosts : []);
         try {
           const response = await fetch(`${AI_PROXY_BASE_URL}/send-notification-email`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            redirect: "follow",
+headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({ to: user.email, fullName: user.fullName, subject, message })
           });
           const data = await response.json().catch(() => ({}));
