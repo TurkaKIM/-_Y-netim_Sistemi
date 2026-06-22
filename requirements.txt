@@ -1,0 +1,7 @@
+email-validator
+fastapi
+openai
+pypdf
+requests
+streamlit
+uvicorn
