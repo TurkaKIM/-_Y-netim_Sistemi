@@ -176,7 +176,6 @@ def build_prompt(raw_text: str, outputs: list[str], terms_text: str, custom_prom
         "image_prompt": "Kurumsal görsel üretim promptu oluştur",
         "daily_summary": "Günlük iş ve iletişim öncelikleri özeti oluştur",
         "sensitive_check": "Hassas içerik uyarı sistemi kontrolü yap",
-        "chatbot": "Uygulama bağlamına göre kısa danışman cevabı üret",
     }
     selected_outputs = [output_labels.get(x, x) for x in outputs]
 
@@ -202,7 +201,6 @@ Kurumsal dil kuralları:
 - Kurumsal haber metninde ziyaretin/toplantının amacı, teknik bilgi paylaşımı, iş birliği ve kurumsal katkı vurgusu bulunmalı.
 - Sosyal medya metni kısa, etkili, kurumsal ve paylaşılabilir olmalı.
 - Günlük özet üretiliyorsa öncelik, risk ve önerilen aksiyonlara odaklan.
-- Chatbot cevabı üretiliyorsa kısa, uygulanabilir ve bağlama duyarlı cevap ver.
 - Görsel prompt üretiliyorsa TÜRKAK kurumsal kimliği, kırmızı-beyaz tonlar, sade ve resmî görsel dil vurgulansın.
 - Hassas içerik kontrolü isteniyorsa şu başlıkları özellikle denetle: fazla iddialı ifade, resmî dile uygun olmayan ifade, yanlış kurum adı kullanımı, eksik unvan, yanlış tarih, politik açıdan hassas ifade, akreditasyon terminolojisine uygun olmayan kullanım.
 - Platforma özel metinlerde aynı içeriği tekrar etme; LinkedIn, X ve Instagram dilini ayrı ayrı uyarlayıp üret.
@@ -232,7 +230,6 @@ JSON şeması:
   "daily_summary": "Günlük AI özeti burada",
   "sensitive_warnings": ["Uyarı 1", "Uyarı 2"],
   "revised_text": "Varsa düzeltilmiş metin burada",
-  "chatbot": "Chatbot yanıtı burada",
   "term_notes": ["Terim uyarısı 1", "Terim uyarısı 2"]
 }}
 """
@@ -266,7 +263,6 @@ def safe_json_parse(text: str) -> dict[str, Any]:
         "daily_summary": text,
         "sensitive_warnings": [text],
         "revised_text": "",
-        "chatbot": text,
         "term_notes": ["Model yanıtı JSON formatında alınamadı; ham metin gösterildi."],
     }
 
@@ -370,7 +366,6 @@ def demo_response(outputs: list[str], raw_text: str) -> dict[str, Any]:
         "daily_summary": "Demo mod: Bugünün öncelikleri gerçek AI bağlantısı kurulduğunda verilerden özetlenecektir.",
         "sensitive_warnings": ["Demo mod: Hassas içerik kontrolü için gerçek AI sağlayıcısı bağlayın."],
         "revised_text": text,
-        "chatbot": "Demo mod açık. Gerçek cevaplar için AI_PROVIDER=openai veya AI_PROVIDER=gemini olarak ayarlayın.",
         "term_notes": ["Demo mod gerçek terminoloji analizi yapmaz."],
     }
     return result
