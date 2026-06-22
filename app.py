@@ -20,6 +20,7 @@ TERMS_PDF_URL = (
 )
 
 DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
+DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
 
 # Streamlit sayfasını geniş ekran yap
 st.set_page_config(
