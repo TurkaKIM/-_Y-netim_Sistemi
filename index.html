@@ -1021,8 +1021,13 @@ function normalizeAiProxyUrl(value) {
     value = DEFAULT_AI_PROXY_URL;
   }
 
-  value = value.replace(/\/+$/, "");
-  value = value.endsWith("/ai-content") ? value : `${value}/ai-content`;
+value = value.replace(/\/+$/, "");
+
+if (value.includes("script.google.com/macros/s/")) {
+  return value;
+}
+
+value = value.endsWith("/ai-content") ? value : `${value}/ai-content`;
 
   // GitHub Codespaces / web preview kullanılırken tarayıcıdaki 127.0.0.1 kullanıcının bilgisayarını gösterir.
   // Bu durumda 8501 Streamlit önizleme adresinden 8000 AI proxy önizleme adresini otomatik türet.
@@ -3837,16 +3842,17 @@ async function generateContentWithAI() {
 
   try {
     const response = await fetch(AI_PROXY_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        rawText,
-        outputs,
-        provider,
-        promptKey: "contentAssistant",
-        customPrompt: contentOutputPrompt(outputs)
-      })
-    });
+  method: "POST",
+  redirect: "follow",
+  headers: { "Content-Type": "text/plain;charset=utf-8" },
+  body: JSON.stringify({
+    rawText,
+    outputs,
+    provider,
+    promptKey: "contentAssistant",
+    customPrompt: contentOutputPrompt(outputs)
+  })
+});
 
     const data = await response.json();
     if (!response.ok || !data.ok) throw new Error(data.detail || "AI servisi yanıt vermedi.");
@@ -6391,16 +6397,17 @@ saveSocialPosts(Array.isArray(data.socialPosts) ? data.socialPosts : []);
           throw new Error("AI proxy adresi okunamadı. Streamlit Secrets içindeki AI_PROXY_URL değerini veya yerel FastAPI proxy servisinin /ai-content adresini kontrol edin.");
         }
         const response = await fetch(AI_PROXY_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            rawText,
-            outputs,
-            provider: "general",
-            promptKey,
-            customPrompt: promptKey === "contentAssistant" ? contentOutputPrompt(outputs) : getAiPrompt(promptKey)
-          })
-        });
+  method: "POST",
+  redirect: "follow",
+  headers: { "Content-Type": "text/plain;charset=utf-8" },
+  body: JSON.stringify({
+    rawText,
+    outputs,
+    provider: "general",
+    promptKey,
+    customPrompt: promptKey === "contentAssistant" ? contentOutputPrompt(outputs) : getAiPrompt(promptKey)
+  })
+});
         let data = {};
         try { data = await response.json(); } catch { data = {}; }
         if (!response.ok || !data.ok) {
