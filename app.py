@@ -347,3 +347,4 @@ if isinstance(component_value, dict) and component_value.get("type") == "ai_requ
         st.session_state.turkak_last_ai_request_id = request_id
         st.session_state.turkak_ai_response = process_ai_request(request_id, payload)
         st.rerun()
+        
