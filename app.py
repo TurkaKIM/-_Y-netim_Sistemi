@@ -100,6 +100,24 @@ def selected_openai_model() -> str:
         return DEFAULT_OPENAI_MODEL
 
     return model
+    def selected_provider() -> str:
+    """Return selected AI provider."""
+    provider = get_secret_or_env("AI_PROVIDER", "openai").strip().lower()
+    if provider in {"openai", "gemini"}:
+        return provider
+    return "openai"
+
+
+def selected_gemini_model() -> str:
+    """Return Gemini model name."""
+    return get_secret_or_env("GEMINI_MODEL", DEFAULT_GEMINI_MODEL).strip() or DEFAULT_GEMINI_MODEL
+
+
+def selected_ai_model() -> str:
+    """Return selected model according to AI provider."""
+    if selected_provider() == "gemini":
+        return selected_gemini_model()
+    return selected_openai_model()
 
 
 def ai_timeout_seconds() -> float:
@@ -288,7 +306,65 @@ def call_openai_with_retry(prompt: str) -> str:
             break
 
     raise RuntimeError(f"OpenAI servisi geçici olarak kullanılamıyor: {last_error}")
+def call_gemini_with_retry(prompt: str) -> str:
+    """Call Gemini Developer API directly from Streamlit backend."""
+    api_key = get_secret_or_env("GEMINI_API_KEY") or get_secret_or_env("GOOGLE_API_KEY")
+    if not api_key:
+        raise RuntimeError("GEMINI_API_KEY Streamlit Secrets alanında tanımlı değil.")
 
+    model = selected_gemini_model()
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+
+    payload = {
+        "contents": [
+            {
+                "role": "user",
+                "parts": [{"text": prompt}],
+            }
+        ],
+        "generationConfig": {
+            "responseMimeType": "application/json",
+        },
+    }
+
+    last_error: Exception | None = None
+
+    for attempt in range(ai_max_retries() + 1):
+        try:
+            response = requests.post(
+                url,
+                params={"key": api_key},
+                json=payload,
+                timeout=ai_timeout_seconds(),
+            )
+
+            if response.status_code in {408, 429, 500, 502, 503, 504} and attempt < ai_max_retries():
+                last_error = RuntimeError(response.text[:500])
+                time.sleep(min(2**attempt, 4))
+                continue
+
+            if response.status_code in {400, 401, 403}:
+                raise RuntimeError(f"Gemini API anahtarı veya model erişimi hatası: {response.text[:500]}")
+
+            response.raise_for_status()
+
+            data = response.json()
+            candidates = data.get("candidates") or []
+            parts = (((candidates[0] or {}).get("content") or {}).get("parts") or []) if candidates else []
+            text = "".join(part.get("text", "") for part in parts)
+
+            if not text.strip():
+                raise RuntimeError("Gemini boş yanıt döndürdü.")
+
+            return text
+
+        except Exception as exc:
+            last_error = exc
+            if attempt >= ai_max_retries():
+                break
+            time.sleep(min(2**attempt, 4))
+
+    raise RuntimeError(f"Gemini servisi geçici olarak kullanılamıyor: {last_error}")
 
 def process_ai_request(request_id: str, payload: dict[str, Any]) -> dict[str, Any]:
     """Process one AI request coming from the Streamlit component iframe."""
