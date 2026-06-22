@@ -481,4 +481,4 @@ def send_notification_email(req: NotificationEmailRequest):
 @app.get("/health")
 def health():
     return {"ok": True, "provider": selected_provider(), "model": selected_model()}
-    
+
