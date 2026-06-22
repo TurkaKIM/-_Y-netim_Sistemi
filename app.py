@@ -77,8 +77,21 @@ def get_secret_or_env(name: str, default: str = "") -> str:
 
 
 def normalize_ai_proxy_url(value: str) -> str:
-    """Return a usable /ai-content endpoint URL for the browser-side app."""
+    """Return a usable AI endpoint URL for the browser-side app."""
     value = (value or "").strip()
+
+    if not value:
+        return DEFAULT_AI_PROXY_URL
+
+    value = value.rstrip("/")
+
+    if "script.google.com/macros/s/" in value:
+        return value
+
+    if value.endswith("/ai-content"):
+        return value
+
+    return f"{value}/ai-content"
 
     if not value:
         # Streamlit Secrets okunamazsa uzak yayında 127.0.0.1'e düşme.
