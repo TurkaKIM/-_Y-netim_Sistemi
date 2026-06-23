@@ -804,25 +804,26 @@ body.ux-keyboard textarea:focus {
 .timeline-panel {
   overflow-x: auto;
   overflow-y: visible;
-  padding: 34px 24px 40px;
+  padding: 36px 28px 44px;
   border-radius: 26px;
   background:
-    radial-gradient(circle at 10% 12%, rgba(200,16,46,.08), transparent 26%),
-    radial-gradient(circle at 90% 82%, rgba(143,13,33,.06), transparent 28%),
+    radial-gradient(circle at 10% 12%, rgba(200,16,46,.07), transparent 26%),
+    radial-gradient(circle at 90% 82%, rgba(143,13,33,.05), transparent 28%),
     linear-gradient(180deg, #ffffff 0%, #fff8f9 100%);
 }
 .timeline-wrap {
-  --timeline-row-height: 188px;
-  --timeline-line-top: 118px;
-  --timeline-card-gap: 32px;
-  --timeline-line-edge: 112px;
-  --timeline-row-gap: 52px;
-  --timeline-turn-width: 112px;
+  --timeline-row-height: 250px;
+  --timeline-line-top: 176px;
+  --timeline-card-gap: 40px;
+  --timeline-line-edge: 178px;
+  --timeline-row-gap: 32px;
+  --timeline-turn-width: 118px;
+  --timeline-flow-size: 7px;
   position: relative;
   width: 100%;
   min-width: 1320px;
   margin: 4px 0 0;
-  padding: 14px 0 34px;
+  padding: 14px 0 38px;
 }
 .timeline-wrap.is-empty {
   min-width: 0;
@@ -831,10 +832,10 @@ body.ux-keyboard textarea:focus {
 .timeline-row {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(var(--timeline-columns), minmax(158px, 1fr));
+  grid-template-columns: repeat(var(--timeline-columns), minmax(188px, 1fr));
   gap: var(--timeline-card-gap);
   min-height: var(--timeline-row-height);
-  padding: 0 62px;
+  padding: 0 74px;
   align-items: start;
 }
 .timeline-row + .timeline-row {
@@ -847,39 +848,41 @@ body.ux-keyboard textarea:focus {
   left: var(--timeline-line-edge);
   right: var(--timeline-line-edge);
   top: var(--timeline-line-top);
-  height: 8px;
+  height: var(--timeline-flow-size);
   border-radius: 999px;
-  background:
-    linear-gradient(90deg, rgba(200,16,46,.16), rgba(200,16,46,.78), rgba(143,13,33,.78), rgba(200,16,46,.16));
+  background: linear-gradient(90deg, rgba(200,16,46,.16), rgba(200,16,46,.76), rgba(143,13,33,.78), rgba(200,16,46,.16));
   box-shadow:
-    0 8px 18px rgba(200,16,46,.12),
-    inset 0 1px 0 rgba(255,255,255,.66);
+    0 10px 20px rgba(200,16,46,.12),
+    inset 0 1px 0 rgba(255,255,255,.72);
 }
 .timeline-row::after {
   content: "";
   position: absolute;
   z-index: 0;
-  top: calc(var(--timeline-line-top) - 5px);
+  top: var(--timeline-line-top);
   width: var(--timeline-turn-width);
-  height: calc(var(--timeline-row-gap) + 18px);
+  height: calc(var(--timeline-row-height) + var(--timeline-row-gap) + var(--timeline-flow-size));
+  box-sizing: border-box;
   opacity: .78;
   pointer-events: none;
 }
 .timeline-row-ltr:not(:last-child)::after {
-  right: calc(var(--timeline-line-edge) - 4px);
-  border-top: 8px solid rgba(200,16,46,.58);
-  border-right: 8px solid rgba(200,16,46,.58);
-  border-bottom: 8px solid rgba(200,16,46,.58);
-  border-top-right-radius: 90px;
-  border-bottom-right-radius: 90px;
+  right: calc(var(--timeline-line-edge) - var(--timeline-turn-width) + var(--timeline-flow-size));
+  border-top: var(--timeline-flow-size) solid rgba(200,16,46,.64);
+  border-right: var(--timeline-flow-size) solid rgba(200,16,46,.64);
+  border-bottom: var(--timeline-flow-size) solid rgba(200,16,46,.64);
+  border-top-right-radius: 999px;
+  border-bottom-right-radius: 999px;
+  box-shadow: 10px 0 22px rgba(200,16,46,.10);
 }
 .timeline-row-rtl:not(:last-child)::after {
-  left: calc(var(--timeline-line-edge) - 4px);
-  border-top: 8px solid rgba(200,16,46,.58);
-  border-left: 8px solid rgba(200,16,46,.58);
-  border-bottom: 8px solid rgba(200,16,46,.58);
-  border-top-left-radius: 90px;
-  border-bottom-left-radius: 90px;
+  left: calc(var(--timeline-line-edge) - var(--timeline-turn-width) + var(--timeline-flow-size));
+  border-top: var(--timeline-flow-size) solid rgba(200,16,46,.64);
+  border-left: var(--timeline-flow-size) solid rgba(200,16,46,.64);
+  border-bottom: var(--timeline-flow-size) solid rgba(200,16,46,.64);
+  border-top-left-radius: 999px;
+  border-bottom-left-radius: 999px;
+  box-shadow: -10px 0 22px rgba(200,16,46,.10);
 }
 .timeline-row:last-child::after {
   display: none;
@@ -896,8 +899,7 @@ body.ux-keyboard textarea:focus {
   margin: 0;
   border: 1px solid rgba(200,16,46,.13);
   border-radius: 22px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.98) 0%, rgba(255,250,251,.98) 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,.99) 0%, rgba(255,250,251,.99) 100%);
   box-shadow:
     0 20px 34px rgba(31,41,55,.11),
     0 8px 16px rgba(31,41,55,.06),
@@ -918,27 +920,26 @@ body.ux-keyboard textarea:focus {
   content: "";
   position: absolute;
   left: 50%;
-  top: 101px;
+  top: 142px;
   width: 2px;
-  height: 22px;
+  height: 34px;
   transform: translateX(-50%);
   border-radius: 999px;
-  background: rgba(200,16,46,.64);
+  background: rgba(200,16,46,.54);
 }
 .timeline-item::after {
   content: "";
   position: absolute;
   left: 50%;
-  top: 112px;
-  width: 20px;
-  height: 20px;
+  top: 165px;
+  width: 22px;
+  height: 22px;
   transform: translateX(-50%);
   border-radius: 50%;
-  background:
-    radial-gradient(circle at center, #ffffff 0 26%, var(--turkak-red) 27% 58%, #ffffff 59% 100%);
+  background: radial-gradient(circle at center, #ffffff 0 25%, var(--turkak-red) 26% 58%, #ffffff 59% 100%);
   border: 2px solid rgba(200,16,46,.42);
   box-shadow:
-    0 0 0 5px rgba(200,16,46,.10),
+    0 0 0 6px rgba(200,16,46,.09),
     0 10px 18px rgba(200,16,46,.16);
 }
 .timeline-summary {
@@ -946,8 +947,8 @@ body.ux-keyboard textarea:focus {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  min-height: 104px;
-  padding: 16px 16px 18px;
+  min-height: 142px;
+  padding: 17px 17px 20px;
   cursor: pointer;
   list-style: none;
 }
@@ -960,7 +961,7 @@ body.ux-keyboard textarea:focus {
 .timeline-year {
   display: inline-flex;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   border-radius: 999px;
   padding: 6px 12px;
   background: linear-gradient(180deg, #fff7f8, #ffe7ec);
@@ -978,7 +979,7 @@ body.ux-keyboard textarea:focus {
   color: var(--ink);
   font-size: 13.5px;
   font-weight: 900;
-  line-height: 1.36;
+  line-height: 1.38;
   white-space: normal;
   overflow-wrap: anywhere;
   word-break: normal;
@@ -1006,13 +1007,13 @@ body.ux-keyboard textarea:focus {
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  padding: 0 16px;
+  padding: 0 17px;
   transition: max-height .28s ease, opacity .20s ease, padding .20s ease;
 }
 .timeline-item[open] .timeline-desc {
-  max-height: 520px;
+  max-height: 540px;
   opacity: 1;
-  padding: 0 16px 16px;
+  padding: 0 17px 17px;
 }
 .timeline-desc-inner {
   border-top: 1px solid rgba(200,16,46,.12);
@@ -7129,7 +7130,7 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
         state.viewKey = "timeline";
         setTitle("Kurumsal Hafıza Zaman Tüneli", "TÜRKAK iletişim faaliyetlerinin 1999'dan 2026'ya uzanan görünümü");
         const items = getTimelineEvents().sort((a,b)=>Number(a.year)-Number(b.year) || String(a.createdAt).localeCompare(String(b.createdAt)));
-        const rowSize = 7;
+        const rowSize = 5;
         const rows = [];
         for (let i = 0; i < items.length; i += rowSize) {
           rows.push(items.slice(i, i + rowSize));
