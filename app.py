@@ -1,8 +1,10 @@
 import json
 import os
 import re
+import smtplib
 import tempfile
 import time
+from email.message import EmailMessage
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -92,6 +94,29 @@ def get_secret_or_env(name: str, default: str = "") -> str:
         value = st.secrets.get(name, "")
     except Exception:
         value = ""
+
+    return str(value or os.getenv(name, default) or "").strip()
+
+def get_smtp_secret_or_env(name: str, default: str = "") -> str:
+    """Read SMTP settings from [smtp] secrets, top-level secrets, then environment variables."""
+    smtp_key_map = {
+        "SMTP_HOST": "host",
+        "SMTP_PORT": "port",
+        "SMTP_USER": "username",
+        "SMTP_PASSWORD": "password",
+        "SMTP_FROM": "sender",
+        "SMTP_TLS": "use_tls",
+    }
+    value = ""
+    try:
+        smtp_section = st.secrets.get("smtp", {})
+        if smtp_section:
+            value = smtp_section.get(smtp_key_map.get(name, name.lower()), "")
+    except Exception:
+        value = ""
+
+    if not value:
+        value = get_secret_or_env(name, "")
 
     return str(value or os.getenv(name, default) or "").strip()
 
@@ -409,11 +434,61 @@ def process_ai_request(request_id: str, payload: dict[str, Any]) -> dict[str, An
             "result": {},
         }
 
+def process_password_reset_email_request(request_id: str, payload: dict[str, Any]) -> dict[str, Any]:
+    """Send password reset email from the Streamlit backend."""
+    try:
+        to = str(payload.get("to") or "").strip()
+        full_name = str(payload.get("fullName") or "").strip()
+        reset_link = str(payload.get("resetLink") or "").strip()
+
+        if not to or "@" not in to:
+            raise RuntimeError("Geçerli bir e-posta adresi bulunamadı.")
+        if not reset_link:
+            raise RuntimeError("Şifre sıfırlama bağlantısı oluşturulamadı.")
+
+        host = get_smtp_secret_or_env("SMTP_HOST")
+        user = get_smtp_secret_or_env("SMTP_USER")
+        password = get_smtp_secret_or_env("SMTP_PASSWORD")
+        sender = get_smtp_secret_or_env("SMTP_FROM") or user
+        port_value = get_smtp_secret_or_env("SMTP_PORT", "587")
+        use_tls_value = get_smtp_secret_or_env("SMTP_TLS", "true").lower()
+        port = int(port_value or "587")
+        use_tls = use_tls_value not in {"false", "0", "no", "hayır"}
+
+        if not host or not sender:
+            raise RuntimeError("SMTP ayarları tanımlı değil.")
+
+        msg = EmailMessage()
+        msg["Subject"] = "TÜRKAK İş Yönetim Sistemi Şifre Sıfırlama"
+        msg["From"] = sender
+        msg["To"] = to
+        greeting = f"Sayın {full_name}," if full_name else "Merhaba,"
+        msg.set_content(
+            f"{greeting}\n\n"
+            "TÜRKAK İş Yönetim Sistemi için şifre sıfırlama bağlantınız aşağıdadır. "
+            "Bağlantı 30 dakika geçerlidir.\n\n"
+            f"{reset_link}\n\n"
+            "Bu işlemi siz talep etmediyseniz bu e-postayı dikkate almayınız."
+        )
+
+        with smtplib.SMTP(host, port, timeout=20) as smtp:
+            if use_tls:
+                smtp.starttls()
+            if user and password:
+                smtp.login(user, password)
+            smtp.send_message(msg)
+
+        return {"ok": True, "type": "password_reset_email_response", "requestId": request_id}
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "type": "password_reset_email_response", "requestId": request_id, "detail": str(exc)}
+
 
 if "turkak_ai_response" not in st.session_state:
     st.session_state.turkak_ai_response = None
 if "turkak_last_ai_request_id" not in st.session_state:
     st.session_state.turkak_last_ai_request_id = ""
+if "turkak_last_password_reset_email_request_id" not in st.session_state:
+    st.session_state.turkak_last_password_reset_email_request_id = ""
 
 component_dir = Path(__file__).parent.resolve()
 turkak_component = components.declare_component(
@@ -434,4 +509,13 @@ if isinstance(component_value, dict) and component_value.get("type") == "ai_requ
     if request_id and request_id != st.session_state.turkak_last_ai_request_id:
         st.session_state.turkak_last_ai_request_id = request_id
         st.session_state.turkak_ai_response = process_ai_request(request_id, payload)
+        st.rerun()
+
+if isinstance(component_value, dict) and component_value.get("type") == "password_reset_email_request":
+    request_id = str(component_value.get("requestId") or "")
+    payload = component_value.get("payload") or {}
+
+    if request_id and request_id != st.session_state.turkak_last_password_reset_email_request_id:
+        st.session_state.turkak_last_password_reset_email_request_id = request_id
+        st.session_state.turkak_ai_response = process_password_reset_email_request(request_id, payload)
         st.rerun()
