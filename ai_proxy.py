@@ -89,6 +89,20 @@ def load_local_secrets() -> None:
             value = data.get(key)
             if value and not os.getenv(key):
                 os.environ[key] = str(value)
+
+        smtp = data.get("smtp") or {}
+        smtp_map = {
+            "SMTP_HOST": "host",
+            "SMTP_PORT": "port",
+            "SMTP_USER": "username",
+            "SMTP_PASSWORD": "password",
+            "SMTP_FROM": "sender",
+            "SMTP_TLS": "use_tls",
+        }
+        for env_key, smtp_key in smtp_map.items():
+            value = smtp.get(smtp_key)
+            if value not in (None, "") and not os.getenv(env_key):
+                os.environ[env_key] = str(value)
         break
 
 
