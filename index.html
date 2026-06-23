@@ -812,16 +812,16 @@ body.ux-keyboard textarea:focus {
     linear-gradient(180deg, #ffffff 0%, #fff8f9 100%);
 }
 .timeline-wrap {
-  --timeline-row-height: 210px;
-  --timeline-line-top: 146px;
-  --timeline-card-gap: 30px;
-  --timeline-line-edge: 145px;
-  --timeline-row-gap: 28px;
-  --timeline-turn-width: 96px;
+  --timeline-row-height: 300px;
+  --timeline-line-top: 230px;
+  --timeline-card-gap: 40px;
+  --timeline-line-edge: 178px;
+  --timeline-row-gap: 34px;
+  --timeline-turn-width: 118px;
   --timeline-flow-size: 7px;
   position: relative;
   width: 100%;
-  min-width: 1100px;
+  min-width: 1320px;
   margin: 4px 0 0;
   padding: 14px 0 38px;
 }
@@ -832,11 +832,11 @@ body.ux-keyboard textarea:focus {
 .timeline-row {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(var(--timeline-columns), minmax(142px, 170px));
+  grid-template-columns: repeat(var(--timeline-columns), minmax(188px, 1fr));
   justify-content: center;
   gap: var(--timeline-card-gap);
   min-height: var(--timeline-row-height);
-  padding: 0 60px;
+  padding: 0 74px;
   align-items: start;
 }
 .timeline-row + .timeline-row {
@@ -921,7 +921,7 @@ body.ux-keyboard textarea:focus {
   content: "";
   position: absolute;
   left: 50%;
-  top: 112px;
+  top: 190px;
   width: 2px;
   height: 34px;
   transform: translateX(-50%);
@@ -932,7 +932,7 @@ body.ux-keyboard textarea:focus {
   content: "";
   position: absolute;
   left: 50%;
-  top: 135px;
+  top: 219px;
   width: 22px;
   height: 22px;
   transform: translateX(-50%);
@@ -948,8 +948,8 @@ body.ux-keyboard textarea:focus {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  min-height: 112px;
-  padding: 13px 13px 15px;
+  min-height: 190px;
+  padding: 17px 17px 20px;
   cursor: pointer;
   list-style: none;
 }
@@ -1059,7 +1059,7 @@ body.ux-dark .timeline-desc-inner {
     padding: 16px;
   }
   .timeline-wrap {
-    min-width: 1100px;
+    min-width: 1320px;
   }
 }
 .entry-alert-list { display: flex; flex-direction: column; gap: 10px; }
