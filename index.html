@@ -4176,7 +4176,7 @@ showDashboard();
 
   setTitle(
     "Kurumsal İçerik Asistanı",
-    "Admin promptlarına göre çoklu kurumsal içerik çıktısı üretimi"
+    "Stratejik hedefler, güçlü performansla hayat bulur"
   );
 
   $("view").innerHTML = `
@@ -5911,7 +5911,7 @@ function exportAnnualScorecardPdf() {
 
         setTitle(
           "Faaliyet Karnesi",
-          "Kurumsal İletişim Müdürlüğü Anlık Performans Takib"
+          "Kurumsal İletişim Müdürlüğü Anlık Performans Takibi"
         );
 
         const tasks = visibleTasks().filter(task => scorecardTaskYear(task) === selectedYear);
@@ -7049,7 +7049,7 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
 
       function showBrandLibrary() {
         state.viewKey = "brandLibrary";
-        setTitle("Kurumsal Kimlik Kütüphanesi", "TÜRKAK kurumsal kimlik içerikleri");
+        setTitle("Kurumsal Kimlik Kütüphanesi", "TÜRKAK Kurumsal Kimlik İçerikleri");
         const items = getBrandLibrary().filter(item => item.content || item.imageData);
         const list = items.length ? items.map((item, index) => {
           const value = brandLibraryOptionValue(item, index);
@@ -7072,7 +7072,7 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
           `;
         }).join("") : `<p class="muted">Admin tarafından henüz kurumsal kimlik kütüphanesi bilgisi girilmedi.</p>`;
         $("view").innerHTML = `
-          <div class="page-head"><div><h2>Kurumsal Kimlik Kütüphanesi</h2><p>Admin tarafından girilen başlıklar burada görüntülenir.</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
+          <div class="page-head"><div><h2>Kurumsal Kimlik Kütüphanesi</h2><p>Öğrenen organizasyon, Büyüyen Organizasyon</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
           <div class="panel"><div class="summary-list">${list}</div></div>
         `;
       }
@@ -7139,7 +7139,7 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
 
       function showContentIdeas() {
         state.viewKey = "contentIdeas";
-        setTitle("İçerik Fikir Havuzu", "Fikirleri AI ile geliştirip listeye ekleme");
+        setTitle("İçerik Fikir Havuzu", "Fikirlerini geliştirin, listeye ekleyin");
         const items = getContentIdeas().sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
         const rows = items.map(item => `
           <tr onclick="App.openContentIdeaDetail('${js(item.id)}')" style="cursor:pointer">
@@ -7151,7 +7151,7 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
           </tr>
         `).join("");
         $("view").innerHTML = `
-          <div class="page-head"><div><h2>İçerik Fikir Havuzu</h2><p>Başlık ve fikir notunu girin; AI fikri geliştirsin ve listeye eklesin.</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
+          <div class="page-head"><div><h2>İçerik Fikir Havuzu</h2><p>Başlık ve fikir notunu girin; fikrinizi geliştirin ve listeye ekleyin</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
           <form class="panel" onsubmit="App.developAndSaveContentIdea(event)">
             <h3>Yeni Fikir Geliştir</h3>
             <div class="form-grid">
@@ -7239,7 +7239,7 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
               return `<div class="timeline-row ${directionClass}" style="--timeline-columns:${row.length}">${cards}</div>`;
             }).join("")
           : `<p class="muted timeline-empty">Admin tarafından henüz zaman tüneli bilgisi girilmedi.</p>`;
-        $("view").innerHTML = `<div class="page-head"><div><h2>Kurumsal Hafıza Zaman Tüneli</h2><p>Admin tarafından girilen kurumsal hafıza kayıtları burada görüntülenir.</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div><div class="panel timeline-panel" style="margin-top:16px"><div class="timeline-wrap ${items.length ? "" : "is-empty"}">${timelineBody}</div></div>`;
+        $("view").innerHTML = `<div class="page-head"><div><h2>Kurumsal Hafıza Zaman Tüneli</h2><p>Sürekli gelişim, kalıcı başarı sağlar</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div><div class="panel timeline-panel" style="margin-top:16px"><div class="timeline-wrap ${items.length ? "" : "is-empty"}">${timelineBody}</div></div>`;
       }
 
       function timelineAdminHtml() {
@@ -7482,9 +7482,9 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
 
       function showSensitiveChecker() {
         state.viewKey = "sensitiveChecker";
-        setTitle("Hassas İçerik Uyarı Sistemi", "Metinleri kurumsal dil, terminoloji ve hassasiyet açısından kontrol edin");
+        setTitle("Hassas İçerik Uyarı Sistemi", "Bugünün performansı, yarının rekabet avantajıdır");
         $("view").innerHTML = `
-          <div class="page-head"><div><h2>Hassas İçerik Uyarı Sistemi</h2><p>Haber, sosyal medya metni veya herhangi bir içeriği admin promptlarına göre AI ile kontrol edin.</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
+          <div class="page-head"><div><h2>Hassas İçerik Uyarı Sistemi</h2><p>Haber, sosyal medya metni veya herhangi bir içeriği kontrol edin.</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
           <div class="panel">
             <div class="field"><label>Kontrol Edilecek Metin</label><textarea id="sensitiveRawText" style="min-height:260px" placeholder="Haber metni, sosyal medya metni veya kontrol edilecek içeriği yapıştırın."></textarea></div>
             <div class="form-actions btn-row"><button class="btn" type="button" onclick="App.checkSensitiveContent()">İçeriği Kontrol Et</button><button class="btn ghost" type="button" onclick="App.showSensitiveChecker()">Temizle</button></div>
