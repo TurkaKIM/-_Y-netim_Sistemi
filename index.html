@@ -5911,7 +5911,7 @@ function exportAnnualScorecardPdf() {
 
         setTitle(
           "Faaliyet Karnesi",
-          "İş, sosyal medya, toplantı, içerik fikri ve AI destekli üretim performansı"
+          "Kurumsal İletişim Müdürlüğü Anlık Performans Takib"
         );
 
         const tasks = visibleTasks().filter(task => scorecardTaskYear(task) === selectedYear);
@@ -5958,7 +5958,7 @@ function exportAnnualScorecardPdf() {
           <div class="page-head">
             <div>
               <h2>Faaliyet Karnesi</h2>
-              <p>Sayısal faaliyet verileri, içerik üretimi, toplantı/ziyaret, personel ve AI destekli çalışma performansı.</p>
+              <p>Sürdürülebilir başarı, ölçülebilir performansla başlar</p>
             </div>
             <div class="btn-row">
               <select id="scorecardYear" onchange="App.showReports(this.value)">${scorecardYearOptions(selectedYear)}</select>
@@ -5973,7 +5973,7 @@ function exportAnnualScorecardPdf() {
           <div id="annualScorecardPrintArea">
             <div class="scorecard-hero">
               <h2>${selectedYear} Faaliyet Karnesi</h2>
-              <p>Kurumsal İletişim Müdürlüğü faaliyetlerinin bütünleşik performans özeti.</p>
+              <p>Veriyle yönet, sonuçla fark yarat</p>
               <p class="scorecard-print-note">Rapor tarihi: ${new Date().toLocaleDateString("tr-TR")}</p>
             </div>
 
