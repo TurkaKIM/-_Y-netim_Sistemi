@@ -6791,7 +6791,7 @@ saveSocialPosts(Array.isArray(data.socialPosts) ? data.socialPosts : []);
                 <h2 style="font-size:22px">Günün Kurumsal İletişim Asistanı</h2>
                 <p>Bugün neye odaklanmalısınız?</p>
               </div>
-              <button class="btn secondary small" onclick="App.refreshDailyAssistantAI()">AI Özeti Yenile</button>
+              <button class="btn secondary small" onclick="App.refreshDailyAssistantAI()">Günlük Odağı Yenile</button>
             </div>
             <div id="dailyAssistantText" class="mini-item"><div><strong>Günlük Odak</strong><span>${esc(defaultText)}</span></div></div>
           </div>
@@ -6809,7 +6809,7 @@ saveSocialPosts(Array.isArray(data.socialPosts) ? data.socialPosts : []);
         const box = $("dailyAssistantText");
         if (!box) return;
         const ctx = dailyAssistantContext();
-        box.innerHTML = `<div><strong>AI özeti hazırlanıyor...</strong><span>Lütfen bekleyin.</span></div>`;
+        box.innerHTML = `<div><strong>Günlük odağınız hazırlanıyor...</strong><span>Lütfen bekleyin.</span></div>`;
         try {
           const data = await callAI(["daily_summary"], JSON.stringify({ today: today(), context: ctx, user: state.currentUser?.fullName }, null, 2), "dailyAssistant");
           const text = data?.daily_summary || data?.spot_text || "Günlük özet üretilemedi.";
