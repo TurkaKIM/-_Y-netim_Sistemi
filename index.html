@@ -3529,7 +3529,7 @@ function materialDashboardHtml(items = getMaterials()) {
 
 function showMaterialModule() {
   state.viewKey = "materialManagement";
-  setTitle("Malzeme Yönetim Modülü", "Demirbaş, sarf ve geçici kullanım ekipmanlarının merkezi takibi");
+  setTitle("Malzeme Yönetim Modülü", "Özel Kalem Müdürlüğü ve Kurumsal İletişim Müdürlüğü Promosyon Malzeme Takip Merkezi");
 
   const locations = [...new Set(getMaterials().map(item => item.location).filter(Boolean))].sort((a,b) => a.localeCompare(b, "tr"));
 
@@ -3537,7 +3537,7 @@ function showMaterialModule() {
     <div class="page-head">
       <div>
         <h2>Malzeme Yönetim Modülü</h2>
-        <p>Demirbaşlar, sarf malzemeleri ve geçici kullanım ekipmanları için merkezi takip ekranı.</p>
+        <p>Düzenli Stok, Sorunsuz Operasyon... Takip Et, Kontrol Et, Yönet</p>
       </div>
       <div class="btn-row">
         <button class="btn secondary" onclick="App.downloadMaterialExcelTemplate()">Boş Excel Şablonu</button>
