@@ -2876,7 +2876,7 @@ function showMeetingList(type = "all") {
 
   setTitle(
     "Toplantı / Ziyaret Takibi",
-    "Toplantı, ziyaret, heyet kabulü, protokol ve etkinlik kayıtları"
+    "TÜRKAK Toplantı, Ziyaret, Heyet Kabulü, Protokol ve Etkinlik Takip Merkezi"
   );
 
   const items = getMeetings();
@@ -4459,7 +4459,7 @@ function showSocialList(type = "all") {
   state.viewKey = "social";
   state.socialListType = type;
 
-  setTitle("Sosyal Medya Planı", "Aylık sosyal medya, web haber ve slider içerik takibi");
+  setTitle("Sosyal Medya Planı", "TÜRKAK Sosyal medya ve Kurumsal Web Sayfası İçerik Takip Merkezi");
 
   $("view").innerHTML = `
     <div class="page-head">
@@ -4717,7 +4717,7 @@ function exportSocialCsv() {
      function showTaskList(type = "all") {
   state.viewKey = "tasks";
   state.listType = type;
-  setTitle("Genel İş Listesi", "Açık, geciken, tamamlanan ve onay bekleyen işler");
+  setTitle("Genel İş Listesi", "Kurumsal İletişim Müdürlüğü Çalışma Programı Takip Merkezi");
 
   $("view").innerHTML = `
     <div class="page-head">
@@ -5142,14 +5142,14 @@ showDashboard();
 
   setTitle(
     "Kurumsal İçerik Asistanı",
-    "Stratejik hedefler, güçlü performansla hayat bulur"
+    "Sosyal Medya İçeriği, Haber Metni, Basın Notu, Bülten Metni Hazırlama Merkezi"
   );
 
   $("view").innerHTML = `
     <div class="page-head">
       <div>
         <h2>Kurumsal İçerik Asistanı</h2>
-        <p>Ham metinden web haberi, sosyal medya, bülten, İngilizce haber ve basın notu üretin.</p>
+        <p>Stratejik Hedefler, Güçlü Performansla Hayat Bulur</p>
       </div>
       <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
     </div>
@@ -8195,7 +8195,7 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
 
       function showTimeline() {
         state.viewKey = "timeline";
-        setTitle("Kurumsal Hafıza Zaman Tüneli", "TÜRKAK iletişim faaliyetlerinin 1999'dan 2026'ya uzanan görünümü");
+        setTitle("Kurumsal Hafıza Zaman Tüneli", "TÜRKAK'ın 1999'dan 2026'ya Uzanan Başarı Hikayesi");
         const items = getTimelineEvents().sort((a,b)=>Number(a.year)-Number(b.year) || String(a.createdAt).localeCompare(String(b.createdAt)));
         const rowSize = 5;
         const rows = [];
@@ -8452,9 +8452,9 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
 
       function showSensitiveChecker() {
         state.viewKey = "sensitiveChecker";
-        setTitle("Hassas İçerik Uyarı Sistemi", "Bugünün performansı, yarının rekabet avantajıdır");
+        setTitle("Hassas İçerik Uyarı Sistemi", "Haber, sosyal medya metni, Bülten vb. İçerik Kontrol Merkezi");
         $("view").innerHTML = `
-          <div class="page-head"><div><h2>Hassas İçerik Uyarı Sistemi</h2><p>Haber, sosyal medya metni veya herhangi bir içeriği kontrol edin.</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
+          <div class="page-head"><div><h2>Hassas İçerik Uyarı Sistemi</h2><p>Bugünün performansı, yarının rekabet avantajıdır</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
           <div class="panel">
             <div class="field"><label>Kontrol Edilecek Metin</label><textarea id="sensitiveRawText" style="min-height:260px" placeholder="Haber metni, sosyal medya metni veya kontrol edilecek içeriği yapıştırın."></textarea></div>
             <div class="form-actions btn-row"><button class="btn" type="button" onclick="App.checkSensitiveContent()">İçeriği Kontrol Et</button><button class="btn ghost" type="button" onclick="App.showSensitiveChecker()">Temizle</button></div>
