@@ -98,15 +98,17 @@
     .nowrap { white-space: nowrap; }
 
     .login-page {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 28px;
-      background:
-        radial-gradient(circle at 15% 18%, rgba(200,16,46,.13), transparent 28%),
-        radial-gradient(circle at 80% 75%, rgba(200,16,46,.10), transparent 30%),
-        linear-gradient(135deg, #fff, #fff8f9);
-    }
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background:
+    linear-gradient(rgba(255,255,255,.35), rgba(255,255,255,.35)),
+    url("login-bg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
     .login-card {
       width: min(1080px, 96vw);
