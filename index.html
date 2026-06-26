@@ -622,6 +622,7 @@
 .logo-mark {
   position: relative;
   overflow: hidden;
+  perspective: 900px;
   animation: turkakLogoEnter .55s ease-out both, turkakLogoGlow 4.8s ease-in-out infinite;
   transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
   will-change: transform;
@@ -639,7 +640,9 @@
 
 .logo-mark img {
   transform-origin: center;
-  animation: turkakLogoSpin 14s linear infinite;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+  animation: turkakLogoFlip3D 5.8s ease-in-out infinite;
   transition: animation-duration .22s ease, transform .22s ease;
 }
 
@@ -649,26 +652,32 @@
 }
 
 .logo-mark:hover img {
-  animation-duration: 4s;
+  animation-duration: 2.8s;
 }
 
 @keyframes turkakLogoEnter {
   from {
     opacity: 0;
-    transform: scale(.88) rotate(-8deg);
+    transform: scale(.88);
   }
   to {
     opacity: 1;
-    transform: scale(1) rotate(0);
+    transform: scale(1);
   }
 }
 
-@keyframes turkakLogoSpin {
-  from {
-    transform: rotate(0deg);
+@keyframes turkakLogoFlip3D {
+  0% {
+    transform: rotateY(0deg) scale(1);
   }
-  to {
-    transform: rotate(360deg);
+  45% {
+    transform: rotateY(180deg) scale(1.03);
+  }
+  55% {
+    transform: rotateY(180deg) scale(1.03);
+  }
+  100% {
+    transform: rotateY(360deg) scale(1);
   }
 }
 
@@ -7214,9 +7223,9 @@ function exportAnnualScorecardPdf() {
           </div>
 
           <div style="margin-top:14px"><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
-        `;
-      }
-setTimeout(() => {
+         `;
+
+        setTimeout(() => {
           renderAnimatedBarChart("chartTaskCategory", categoryData, "İş Kategori Dağılımı");
           renderAnimatedBarChart("chartSocialStatus", socialStatusData, "Sosyal Medya Yayın Durumları");
           renderAnimatedBarChart("chartMeetingStatus", meetingStatusData, "Toplantı / Ziyaret Durumları");
@@ -7230,7 +7239,8 @@ setTimeout(() => {
           renderAnimatedBarChart("chartPersonWorkload", personRowsToChartObject(personRows), "Personel Bazlı İş Yükü", "Toplam Faaliyet");
         }, 120);
       }
-       function countBy(items, getter) {
+
+      function countBy(items, getter) {
         return items.reduce((acc, item) => {
           const key = getter(item) || "Belirsiz";
           acc[key] = (acc[key] || 0) + 1;
