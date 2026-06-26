@@ -813,6 +813,23 @@
     transition: none !important;
   }
 }
+  /* --- Login ekranı arka plan resmi temiz görünüm düzeltmesi --- */
+
+#loginPage.login-page {
+  background-image: url("login-bg.jpg") !important;
+  background-size: cover !important;
+  background-position: center bottom !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Login resmi üstüne binen eski çizgi/ışık efektlerini kapatır */
+#loginPage.login-page::before,
+#loginPage.login-page::after {
+  content: none !important;
+  display: none !important;
+  animation: none !important;
+  background: none !important;
+}
 @media print {
   .scorecard-hero::after {
     display: none;
@@ -7242,7 +7259,8 @@ function showAnnualScorecard(year = new Date().getFullYear()) {
     <div style="margin-top:14px">
       <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
     </div>
-  ``;
+  `;
+
   setTimeout(animateVisibleScorecardNumbers, 80);
 }
 function exportAnnualScorecardPdf() {
