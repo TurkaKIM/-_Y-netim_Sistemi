@@ -7,6 +7,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://unpkg.com/streamlit-component-lib@1.4.0/dist/index.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
 <script>
 (function () {
   if (window.streamlitComponentLib && window.streamlitComponentLib.Streamlit) return;
@@ -615,7 +617,191 @@
     grid-template-columns: 1fr;
   }
 }
+/* --- TÜRKAK animasyon ekleri: logo, buton/UI, Lottie ve Plotly --- */
 
+.logo-mark {
+  position: relative;
+  overflow: hidden;
+  animation: turkakLogoEnter .55s ease-out both, turkakLogoGlow 4.8s ease-in-out infinite;
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+  will-change: transform;
+}
+
+.logo-mark::after {
+  content: "";
+  position: absolute;
+  inset: -35%;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,.55), transparent 70%);
+  transform: translateX(-120%) rotate(18deg);
+  animation: turkakLogoShine 4.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.logo-mark img {
+  transform-origin: center;
+  animation: turkakLogoSpin 14s linear infinite;
+  transition: animation-duration .22s ease, transform .22s ease;
+}
+
+.logo-mark:hover {
+  transform: translateY(-2px) scale(1.045);
+  box-shadow: 0 16px 30px rgba(200,16,46,.24);
+}
+
+.logo-mark:hover img {
+  animation-duration: 4s;
+}
+
+@keyframes turkakLogoEnter {
+  from {
+    opacity: 0;
+    transform: scale(.88) rotate(-8deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes turkakLogoSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes turkakLogoGlow {
+  0%, 100% {
+    box-shadow: 0 12px 24px rgba(0,0,0,.14);
+  }
+  50% {
+    box-shadow: 0 18px 34px rgba(200,16,46,.26);
+  }
+}
+
+@keyframes turkakLogoShine {
+  0%, 55% {
+    transform: translateX(-120%) rotate(18deg);
+  }
+  75%, 100% {
+    transform: translateX(120%) rotate(18deg);
+  }
+}
+
+.btn,
+.nav button,
+.stat-card,
+.mini-item,
+.content-output-card,
+.social-channel-card,
+.scorecard-kpi,
+.timeline-item {
+  transition: transform .20s ease, box-shadow .20s ease, border-color .20s ease, background .20s ease;
+}
+
+.btn:hover,
+.nav button:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active,
+.nav button:active {
+  transform: translateY(0) scale(.98);
+}
+
+.panel {
+  transition: box-shadow .20s ease, border-color .20s ease;
+}
+
+.panel:hover {
+  border-color: rgba(200,16,46,.22);
+  box-shadow: 0 13px 30px rgba(31,41,55,.10);
+}
+
+.stat-card:hover,
+.mini-item:hover,
+.content-output-card:hover,
+.social-channel-card:hover,
+.scorecard-kpi:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(31,41,55,.11);
+  border-color: rgba(200,16,46,.26);
+}
+
+.field input,
+.field select,
+.field textarea {
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .18s ease;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  transform: translateY(-1px);
+  background: #fffdfd;
+}
+
+.loading-panel {
+  min-height: 230px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.lottie-wrap {
+  width: 150px;
+  height: 150px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 6px;
+}
+
+.lottie-fallback-spinner {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 6px solid rgba(200,16,46,.14);
+  border-top-color: var(--turkak-red);
+  animation: turkakLoadingSpin .85s linear infinite;
+}
+
+@keyframes turkakLoadingSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.plotly-chart {
+  width: 100%;
+  height: 320px;
+  min-height: 300px;
+}
+
+.plotly-empty {
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-mark,
+  .logo-mark::after,
+  .logo-mark img,
+  .btn,
+  .nav button,
+  .stat-card,
+  .mini-item,
+  .content-output-card,
+  .social-channel-card,
+  .scorecard-kpi,
+  .timeline-item,
+  .lottie-fallback-spinner {
+    animation: none !important;
+    transition: none !important;
+  }
+}
 @media print {
   .scorecard-hero::after {
     display: none;
@@ -5264,12 +5450,13 @@ async function generateContentWithAI() {
   if (!outputs.length) return toast("Lütfen en az bir çıktı türü seçin.");
   if (!hasStreamlitAiBridge() && !AI_PROXY_URL) return toast("AI bağlantısı hazır değil. Streamlit Secrets içindeki OPENAI_API_KEY değerini kontrol edin.");
 
-  $("contentAssistantResults").innerHTML = `
-    <div class="panel">
-      <h3>İçerik üretiliyor...</h3>
-      <p class="muted">ChatGPT API, admin promptları ve terimler sözlüğü kullanılarak metin hazırlanıyor.</p>
-    </div>
-  `;
+  $("contentAssistantResults").innerHTML = corporateLoadingHtml(
+  "İçerik üretiliyor...",
+  "ChatGPT API, admin promptları ve terimler sözlüğü kullanılarak metin hazırlanıyor.",
+  "contentAssistantLottie"
+);
+
+mountCorporateLottie("contentAssistantLottie");
 
   try {
     const data = await requestAI({
@@ -6967,25 +7154,42 @@ function exportAnnualScorecardPdf() {
               { label: "Fikir dönüşüm oranı", value: percentText(ideas.length ? acceptedIdeas / ideas.length * 100 : 0), hint: "Tamamlanan fikir / toplam fikir" }
             ])}
 
-            <div class="reports-grid">
-              <div class="panel"><h3>İş Kategori Dağılımı</h3>${barChart(categoryData)}</div>
-              <div class="panel"><h3>Sosyal Medya Yayın Durumları</h3>${barChart(socialStatusData)}</div>
-              <div class="panel"><h3>Toplantı / Ziyaret Durumları</h3>${barChart(meetingStatusData)}</div>
-              <div class="panel"><h3>İçerik Fikir Havuzu Durumları</h3>${barChart(ideaStatusData)}</div>
-            </div>
+<div class="reports-grid">
+  <div class="panel"><h3>İş Kategori Dağılımı</h3>${plotlyChartBox("chartTaskCategory")}</div>
+  <div class="panel"><h3>Sosyal Medya Yayın Durumları</h3>${plotlyChartBox("chartSocialStatus")}</div>
+  <div class="panel"><h3>Toplantı / Ziyaret Durumları</h3>${plotlyChartBox("chartMeetingStatus")}</div>
+  <div class="panel"><h3>İçerik Fikir Havuzu Durumları</h3>${plotlyChartBox("chartIdeaStatus")}</div>
+</div>
 
             <div class="reports-grid" style="margin-top:16px">
-              <div class="panel"><h3>Sosyal Medya İçerik Sayıları - Ay Bazlı</h3>${dateRowsTable(socialMonthRows, "İçerik Sayısı")}</div>
-              <div class="panel"><h3>Sosyal Medya İçerik Sayıları - Hafta Bazlı</h3>${dateRowsTable(socialWeekRows, "İçerik Sayısı")}</div>
-              <div class="panel"><h3>Toplantı / Ziyaret Sayıları - Ay Bazlı</h3>${dateRowsTable(meetingMonthRows, "Kayıt Sayısı")}</div>
-              <div class="panel"><h3>Toplantı / Ziyaret Sayıları - Hafta Bazlı</h3>${dateRowsTable(meetingWeekRows, "Kayıt Sayısı")}</div>
-            </div>
+  <div class="panel">
+    <h3>Sosyal Medya İçerik Sayıları - Ay Bazlı</h3>
+    ${plotlyChartBox("chartSocialMonth")}
+    ${dateRowsTable(socialMonthRows, "İçerik Sayısı")}
+  </div>
+  <div class="panel">
+    <h3>Sosyal Medya İçerik Sayıları - Hafta Bazlı</h3>
+    ${plotlyChartBox("chartSocialWeek")}
+    ${dateRowsTable(socialWeekRows, "İçerik Sayısı")}
+  </div>
+  <div class="panel">
+    <h3>Toplantı / Ziyaret Sayıları - Ay Bazlı</h3>
+    ${plotlyChartBox("chartMeetingMonth")}
+    ${dateRowsTable(meetingMonthRows, "Kayıt Sayısı")}
+  </div>
+  <div class="panel">
+    <h3>Toplantı / Ziyaret Sayıları - Hafta Bazlı</h3>
+    ${plotlyChartBox("chartMeetingWeek")}
+    ${dateRowsTable(meetingWeekRows, "Kayıt Sayısı")}
+  </div>
+</div>
 
             <div class="panel" style="margin-top:16px">
-              <h3>Personel Bazlı Faaliyet ve Performans Analizi</h3>
-              <p class="muted">İş yükü, tamamlanan/açık/geciken işler, sosyal medya, toplantı/ziyaret, fikir ve içerik asistanı kullanımı birlikte gösterilir.</p>
-              ${activityPersonTable(personRows)}
-            </div>
+  <h3>Personel Bazlı Faaliyet ve Performans Analizi</h3>
+  <p class="muted">İş yükü, tamamlanan/açık/geciken işler, sosyal medya, toplantı/ziyaret, fikir ve içerik asistanı kullanımı birlikte gösterilir.</p>
+  ${plotlyChartBox("chartPersonWorkload")}
+  ${activityPersonTable(personRows)}
+</div>
 
             <div class="reports-grid" style="margin-top:16px">
               <div class="panel"><h3>Personel Bazlı İçerik Fikri</h3>${barChart(ideaPersonData)}</div>
@@ -7012,7 +7216,20 @@ function exportAnnualScorecardPdf() {
           <div style="margin-top:14px"><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
         `;
       }
+setTimeout(() => {
+          renderAnimatedBarChart("chartTaskCategory", categoryData, "İş Kategori Dağılımı");
+          renderAnimatedBarChart("chartSocialStatus", socialStatusData, "Sosyal Medya Yayın Durumları");
+          renderAnimatedBarChart("chartMeetingStatus", meetingStatusData, "Toplantı / Ziyaret Durumları");
+          renderAnimatedBarChart("chartIdeaStatus", ideaStatusData, "İçerik Fikir Havuzu Durumları");
 
+          renderAnimatedLineChart("chartSocialMonth", socialMonthRows, "Sosyal Medya İçerik Sayıları - Ay Bazlı", "İçerik Sayısı");
+          renderAnimatedLineChart("chartSocialWeek", socialWeekRows, "Sosyal Medya İçerik Sayıları - Hafta Bazlı", "İçerik Sayısı");
+          renderAnimatedLineChart("chartMeetingMonth", meetingMonthRows, "Toplantı / Ziyaret Sayıları - Ay Bazlı", "Kayıt Sayısı");
+          renderAnimatedLineChart("chartMeetingWeek", meetingWeekRows, "Toplantı / Ziyaret Sayıları - Hafta Bazlı", "Kayıt Sayısı");
+
+          renderAnimatedBarChart("chartPersonWorkload", personRowsToChartObject(personRows), "Personel Bazlı İş Yükü", "Toplam Faaliyet");
+        }, 120);
+      }
        function countBy(items, getter) {
         return items.reduce((acc, item) => {
           const key = getter(item) || "Belirsiz";
@@ -7028,7 +7245,305 @@ function exportAnnualScorecardPdf() {
           <div class="bar-row"><div class="bar-label" title="${esc(label)}">${esc(label)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(4, Math.round(value / max * 100))}%"></div></div><div class="bar-num">${value}</div></div>
         `).join("");
       }
+function plotlyChartBox(id) {
+  return `<div id="${esc(id)}" class="plotly-chart"></div>`;
+}
 
+function rowsToChartObject(rows) {
+  const output = {};
+  (rows || []).forEach(row => {
+    const label = row.label || row.name || "Belirsiz";
+    output[label] = Number(row.total || row.value || 0);
+  });
+  return output;
+}
+
+function personRowsToChartObject(rows) {
+  const output = {};
+  (rows || []).forEach(row => {
+    output[row.name || "Belirsiz"] = Number(row.total || 0);
+  });
+  return output;
+}
+
+function renderAnimatedBarChart(id, data, title = "", xTitle = "Sayı") {
+  const node = $(id);
+  if (!node) return;
+
+  const rows = Object.entries(data || {})
+    .map(([label, value]) => ({ label, value: Number(value || 0) }))
+    .filter(row => row.value > 0)
+    .sort((a, b) => b.value - a.value);
+
+  if (!rows.length) {
+    node.innerHTML = `<p class="muted plotly-empty">Veri bulunmuyor.</p>`;
+    return;
+  }
+
+  if (!window.Plotly) {
+    node.innerHTML = barChart(data);
+    return;
+  }
+
+  const labels = rows.map(row => row.label);
+  const values = rows.map(row => row.value);
+  const maxValue = Math.max(...values, 1);
+
+  const frames = Array.from({ length: 14 }, (_, index) => {
+    const rate = (index + 1) / 14;
+    return {
+      data: [{
+        x: values.map(value => Math.round(value * rate * 100) / 100)
+      }]
+    };
+  });
+
+  const trace = {
+    type: "bar",
+    orientation: "h",
+    y: labels,
+    x: values.map(() => 0),
+    text: values.map(String),
+    textposition: "auto",
+    hovertemplate: "%{y}<br>Sayı: %{x}<extra></extra>"
+  };
+
+  const layout = {
+    title: { text: "" },
+    margin: { l: 150, r: 24, t: 16, b: 42 },
+    paper_bgcolor: "rgba(0,0,0,0)",
+    plot_bgcolor: "rgba(0,0,0,0)",
+    font: {
+      family: 'Inter, "Segoe UI", Roboto, Arial, sans-serif',
+      size: 12
+    },
+    xaxis: {
+      title: { text: xTitle },
+      range: [0, maxValue * 1.18],
+      fixedrange: true,
+      zeroline: false
+    },
+    yaxis: {
+      automargin: true,
+      autorange: "reversed",
+      fixedrange: true
+    },
+    showlegend: false
+  };
+
+  const config = {
+    displayModeBar: false,
+    responsive: true
+  };
+
+  Plotly.newPlot(node, [trace], layout, config).then(() => {
+    Plotly.animate(node, frames, {
+      frame: { duration: 45, redraw: true },
+      transition: { duration: 35 },
+      mode: "immediate"
+    });
+  });
+}
+
+function renderAnimatedLineChart(id, rows, title = "", yTitle = "Sayı") {
+  const node = $(id);
+  if (!node) return;
+
+  const cleanRows = (rows || [])
+    .filter(row => row && row.label && row.key !== "Tarihsiz")
+    .map(row => ({
+      label: row.label,
+      total: Number(row.total || 0)
+    }));
+
+  if (!cleanRows.length) {
+    node.innerHTML = `<p class="muted plotly-empty">Veri bulunmuyor.</p>`;
+    return;
+  }
+
+  if (!window.Plotly) {
+    node.innerHTML = dateRowsTable(rows, yTitle);
+    return;
+  }
+
+  const labels = cleanRows.map(row => row.label);
+  const values = cleanRows.map(row => row.total);
+
+  const frames = labels.map((_, index) => ({
+    data: [{
+      x: labels.slice(0, index + 1),
+      y: values.slice(0, index + 1)
+    }]
+  }));
+
+  const trace = {
+    type: "scatter",
+    mode: "lines+markers",
+    x: [labels[0]],
+    y: [values[0]],
+    line: {
+      shape: "spline",
+      width: 3
+    },
+    marker: {
+      size: 8
+    },
+    hovertemplate: "%{x}<br>" + yTitle + ": %{y}<extra></extra>"
+  };
+
+  const layout = {
+    margin: { l: 48, r: 24, t: 16, b: 54 },
+    paper_bgcolor: "rgba(0,0,0,0)",
+    plot_bgcolor: "rgba(0,0,0,0)",
+    font: {
+      family: 'Inter, "Segoe UI", Roboto, Arial, sans-serif',
+      size: 12
+    },
+    xaxis: {
+      fixedrange: true,
+      automargin: true
+    },
+    yaxis: {
+      title: { text: yTitle },
+      rangemode: "tozero",
+      fixedrange: true
+    },
+    showlegend: false
+  };
+
+  const config = {
+    displayModeBar: false,
+    responsive: true
+  };
+
+  Plotly.newPlot(node, [trace], layout, config).then(() => {
+    Plotly.animate(node, frames, {
+      frame: { duration: 120, redraw: true },
+      transition: { duration: 80 },
+      mode: "immediate"
+    });
+  });
+}
+
+const CORPORATE_LOTTIE_DATA = {
+  v: "5.7.4",
+  fr: 30,
+  ip: 0,
+  op: 90,
+  w: 240,
+  h: 240,
+  nm: "TURKAK Loading",
+  ddd: 0,
+  assets: [],
+  layers: [
+    {
+      ddd: 0,
+      ind: 1,
+      ty: 4,
+      nm: "Dönen kırmızı halka",
+      sr: 1,
+      ks: {
+        o: { a: 0, k: 100 },
+        r: {
+          a: 1,
+          k: [
+            { t: 0, s: [0], e: [360], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+            { t: 90, s: [360] }
+          ]
+        },
+        p: { a: 0, k: [120, 120, 0] },
+        a: { a: 0, k: [0, 0, 0] },
+        s: { a: 0, k: [100, 100, 100] }
+      },
+      shapes: [
+        {
+          ty: "gr",
+          it: [
+            { ty: "el", p: { a: 0, k: [0, 0] }, s: { a: 0, k: [138, 138] }, d: 1 },
+            { ty: "st", c: { a: 0, k: [0.784, 0.063, 0.180, 1] }, o: { a: 0, k: 100 }, w: { a: 0, k: 11 }, lc: 2, lj: 2 },
+            { ty: "tm", s: { a: 0, k: 8 }, e: { a: 0, k: 82 }, o: { a: 0, k: 0 }, m: 1 },
+            { ty: "tr", p: { a: 0, k: [0, 0] }, a: { a: 0, k: [0, 0] }, s: { a: 0, k: [100, 100] }, r: { a: 0, k: 0 }, o: { a: 0, k: 100 } }
+          ]
+        }
+      ],
+      ip: 0,
+      op: 90,
+      st: 0,
+      bm: 0
+    },
+    {
+      ddd: 0,
+      ind: 2,
+      ty: 4,
+      nm: "Merkez nokta",
+      sr: 1,
+      ks: {
+        o: {
+          a: 1,
+          k: [
+            { t: 0, s: [45], e: [100] },
+            { t: 45, s: [100], e: [45] },
+            { t: 90, s: [45] }
+          ]
+        },
+        r: { a: 0, k: 0 },
+        p: { a: 0, k: [120, 120, 0] },
+        a: { a: 0, k: [0, 0, 0] },
+        s: {
+          a: 1,
+          k: [
+            { t: 0, s: [80, 80, 100], e: [108, 108, 100] },
+            { t: 45, s: [108, 108, 100], e: [80, 80, 100] },
+            { t: 90, s: [80, 80, 100] }
+          ]
+        }
+      },
+      shapes: [
+        {
+          ty: "gr",
+          it: [
+            { ty: "el", p: { a: 0, k: [0, 0] }, s: { a: 0, k: [56, 56] }, d: 1 },
+            { ty: "fl", c: { a: 0, k: [0.784, 0.063, 0.180, 1] }, o: { a: 0, k: 100 } },
+            { ty: "tr", p: { a: 0, k: [0, 0] }, a: { a: 0, k: [0, 0] }, s: { a: 0, k: [100, 100] }, r: { a: 0, k: 0 }, o: { a: 0, k: 100 } }
+          ]
+        }
+      ],
+      ip: 0,
+      op: 90,
+      st: 0,
+      bm: 0
+    }
+  ]
+};
+
+function corporateLoadingHtml(title, message, lottieId = "corporateLottieLoading") {
+  return `
+    <div class="panel loading-panel">
+      <div>
+        <div id="${esc(lottieId)}" class="lottie-wrap">
+          <div class="lottie-fallback-spinner"></div>
+        </div>
+        <h3>${esc(title)}</h3>
+        <p class="muted">${esc(message)}</p>
+      </div>
+    </div>
+  `;
+}
+
+function mountCorporateLottie(lottieId = "corporateLottieLoading") {
+  const container = $(lottieId);
+  if (!container || !window.lottie) return;
+
+  container.innerHTML = "";
+
+  window.lottie.loadAnimation({
+    container,
+    renderer: "svg",
+    loop: true,
+    autoplay: true,
+    animationData: CORPORATE_LOTTIE_DATA
+  });
+}
       function exportFields() {
         return [
           ["workNo", "İş No"], ["title", "İş Adı"], ["mainCategory", "Ana Kategori"], ["subCategory", "Alt Kategori"], ["description", "İşin Açıklaması"], ["requester", "Talep Eden"],
