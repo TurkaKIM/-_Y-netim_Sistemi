@@ -5867,7 +5867,7 @@ function exportSocialCsv() {
 );
         $("view").innerHTML = `
           <div class="page-head">
-            <div><h2>${editing ? 'İş Kaydını Düzenle' : 'YENİ İŞ KAYDI'}</h2><p></p></div>
+            <div><h2>${editing ? 'İş Kaydını Düzenle' : 'YENİ İŞ KAYDI'}</h2><p>Her iş zamanında, her süreç kontrol altında</p></div>
             <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
           </div>
           <form id="taskForm" class="panel" onsubmit="App.saveTask(event, '${js(id || '')}')">
