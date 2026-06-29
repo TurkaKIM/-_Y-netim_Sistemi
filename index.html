@@ -1897,6 +1897,137 @@ body.ux-dark .timeline-desc-inner {
       .app, .main, .view { display: block; height: auto; overflow: visible; padding: 0; }
       .panel { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
     }
+  /* --- TÜRKAK 2026 Faaliyet Karnesi 3D görsel paket --- */
+
+#annualScorecardPrintArea {
+  position: relative;
+  overflow: hidden;
+}
+
+#annualScorecardPrintArea::before {
+  content: "";
+  position: absolute;
+  inset: -120px;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(200,16,46,.08), transparent 24%),
+    radial-gradient(circle at 88% 26%, rgba(143,13,33,.06), transparent 26%),
+    linear-gradient(120deg, transparent 0 42%, rgba(200,16,46,.035) 48%, transparent 56%);
+  animation: scorecardBgFloat 14s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#annualScorecardPrintArea > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes scorecardBgFloat {
+  from {
+    transform: translate3d(-12px, -8px, 0) scale(1);
+  }
+  to {
+    transform: translate3d(14px, 10px, 0) scale(1.035);
+  }
+}
+
+#annualScorecardPrintArea .scorecard-hero {
+  background:
+    radial-gradient(circle at 16% 18%, rgba(255,255,255,.24), transparent 24%),
+    radial-gradient(circle at 86% 74%, rgba(255,255,255,.16), transparent 28%),
+    linear-gradient(135deg, #c8102e 0%, #8f0d21 100%);
+  box-shadow:
+    0 24px 55px rgba(143,13,33,.24),
+    inset 0 1px 0 rgba(255,255,255,.28);
+}
+
+#annualScorecardPrintArea .scorecard-kpi,
+#annualScorecardPrintArea .stat-card {
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,1), rgba(255,246,247,.98));
+  box-shadow:
+    0 18px 35px rgba(31,41,55,.10),
+    0 5px 12px rgba(200,16,46,.045),
+    inset 0 1px 0 rgba(255,255,255,.92);
+}
+
+#annualScorecardPrintArea .scorecard-kpi::after,
+#annualScorecardPrintArea .stat-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -20% -45% -20%;
+  height: 80%;
+  background: radial-gradient(circle at center, rgba(200,16,46,.12), transparent 62%);
+  transform: rotateX(68deg);
+  pointer-events: none;
+}
+
+#annualScorecardPrintArea .scorecard-kpi:hover,
+#annualScorecardPrintArea .stat-card:hover {
+  transform: translateY(-4px) rotateX(2deg) rotateY(-2deg);
+  box-shadow:
+    0 24px 48px rgba(31,41,55,.15),
+    0 10px 22px rgba(200,16,46,.10),
+    inset 0 1px 0 rgba(255,255,255,.96);
+}
+
+.chart3d-box {
+  width: 100%;
+  height: 360px;
+  min-height: 330px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.chart3d-card {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(200,16,46,.08), transparent 30%),
+    linear-gradient(145deg, #ffffff, #fff8f9);
+  box-shadow:
+    0 18px 38px rgba(31,41,55,.10),
+    inset 0 1px 0 rgba(255,255,255,.95);
+  transition: transform .20s ease, box-shadow .20s ease, border-color .20s ease;
+}
+
+.chart3d-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(200,16,46,.24);
+  box-shadow:
+    0 24px 52px rgba(31,41,55,.15),
+    0 8px 18px rgba(200,16,46,.08);
+}
+
+.chart3d-card h3 {
+  margin-bottom: 6px;
+}
+
+.chart3d-card .muted {
+  font-size: 12px;
+}
+
+.chart3d-empty {
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+
+@media print {
+  #annualScorecardPrintArea::before,
+  .chart3d-card::before,
+  .chart3d-card::after {
+    display: none !important;
+  }
+
+  .chart3d-box {
+    height: 300px !important;
+  }
+}
   </style>
 </head>
 <body>
@@ -2034,6 +2165,7 @@ const MATERIAL_LOCATIONS = ["Depo", "Müdürlük", "Özel Kalem", "Toplantı Sal
 const AI_PROXY_URL_PLACEHOLDER = "__AI_PROXY_URL__";
 const DEFAULT_AI_PROXY_URL = "";
 const STREAMLIT_AI_TIMEOUT_MS = 180000;
+const AI_RESULT_VIEW_LOCK_MS = 10 * 60 * 1000;
 const streamlitAiResolvers = new Map();
 const passwordResetEmailResolvers = new Map();
 let lastHandledStreamlitAiResponseId = "";
@@ -2495,6 +2627,14 @@ function startSharedRefresh() {
     if (!state.currentUser) return;
 
     if (["new", "socialNew", "meetingNew", "profile", "admin", "brandLibrary", "contentIdeas", "timeline"].includes(state.viewKey)) {
+  return;
+}
+
+if (
+  ["contentAssistant", "sensitiveChecker"].includes(state.viewKey) &&
+  state.lastAiResultAt &&
+  Date.now() - state.lastAiResultAt < AI_RESULT_VIEW_LOCK_MS
+) {
   return;
 }
 
@@ -3068,7 +3208,7 @@ function toast(message) {
         if (state.currentUser?.role === "admin") buttons.push(["admin", "Admin", "⚙", "showAdmin"]);
         $("nav").innerHTML = buttons.map(([key, label, icon, fn]) => {
           const active = state.viewKey === key ? "active" : "";
-          const badgeHtml = key === "dashboard" && unread ? `<span class="badge">${unread}</span>` : "";
+         const badgeHtml = key === "notificationCenter" && unread ? `<span class="badge">${unread}</span>` : "";
           return `<button class="${active}" onclick="App.${fn}()"><span>${icon} ${label}</span>${badgeHtml}</button>`;
         }).join("");
       }
@@ -5969,6 +6109,7 @@ mountCorporateLottie("contentAssistantLottie");
     });
 
     state.contentAssistant = { rawText, outputs, result: data.result };
+    state.lastAiResultAt = Date.now();
     recordContentAssistantUsage({ outputs, success: true });
     await pushSharedData(false);
     renderContentAssistantResults();
@@ -7678,6 +7819,8 @@ function exportAnnualScorecardPdf() {
         const socialPublished = socialPosts.filter(item => item.status === "Yayınlandı").length;
         const socialPlanned = socialPosts.filter(item => item.status === "Planlandı").length;
         const socialDraft = socialPosts.filter(item => item.status === "Taslak").length;
+        const monthlyTaskData = monthlyTaskRows(tasks);
+        const completionDayChartRows = chartRowsFromCompletionDays(tasks);
 
         $("view").innerHTML = `
           <div class="page-head">
@@ -7727,56 +7870,90 @@ function exportAnnualScorecardPdf() {
             ])}
 
 <div class="reports-grid">
-  <div class="panel"><h3>İş Kategori Dağılımı</h3>${plotlyChartBox("chartTaskCategory")}</div>
-  <div class="panel"><h3>Sosyal Medya Yayın Durumları</h3>${plotlyChartBox("chartSocialStatus")}</div>
-  <div class="panel"><h3>Toplantı / Ziyaret Durumları</h3>${plotlyChartBox("chartMeetingStatus")}</div>
-  <div class="panel"><h3>İçerik Fikir Havuzu Durumları</h3>${plotlyChartBox("chartIdeaStatus")}</div>
+  ${chart3DPanel("İş Kategori Dağılımı", "chartTaskCategory", "Kategori bazlı iş yoğunluğu - 3D karşılaştırma")}
+  ${chart3DPanel("Sosyal Medya Yayın Durumları", "chartSocialStatus", "Yayınlandı / Planlandı / Taslak oran dağılımı")}
+  ${chart3DPanel("Toplantı / Ziyaret Durumları", "chartMeetingStatus", "Durum bazlı toplantı ve ziyaret dağılımı")}
+  ${chart3DPanel("İçerik Fikir Havuzu Durumları", "chartIdeaStatus", "Fikir havuzu durum oranları")}
 </div>
 
             <div class="reports-grid" style="margin-top:16px">
-  <div class="panel">
+  <div class="panel chart3d-card">
     <h3>Sosyal Medya İçerik Sayıları - Ay Bazlı</h3>
-    ${plotlyChartBox("chartSocialMonth")}
+    <p class="muted">Trend takibi için animasyonlu 3D çizgi grafik.</p>
+    ${chart3DBox("chartSocialMonth")}
     ${dateRowsTable(socialMonthRows, "İçerik Sayısı")}
   </div>
-  <div class="panel">
+
+  <div class="panel chart3d-card">
     <h3>Sosyal Medya İçerik Sayıları - Hafta Bazlı</h3>
-    ${plotlyChartBox("chartSocialWeek")}
+    <p class="muted">Haftalık içerik yoğunluğu için 3D bar karşılaştırma.</p>
+    ${chart3DBox("chartSocialWeek")}
     ${dateRowsTable(socialWeekRows, "İçerik Sayısı")}
   </div>
-  <div class="panel">
+
+  <div class="panel chart3d-card">
     <h3>Toplantı / Ziyaret Sayıları - Ay Bazlı</h3>
-    ${plotlyChartBox("chartMeetingMonth")}
+    <p class="muted">Aylık değişim için 3D dalgalı alan grafiği.</p>
+    ${chart3DBox("chartMeetingMonth")}
     ${dateRowsTable(meetingMonthRows, "Kayıt Sayısı")}
   </div>
-  <div class="panel">
+
+  <div class="panel chart3d-card">
     <h3>Toplantı / Ziyaret Sayıları - Hafta Bazlı</h3>
-    ${plotlyChartBox("chartMeetingWeek")}
+    <p class="muted">Haftalık trend için animasyonlu 3D çizgi grafik.</p>
+    ${chart3DBox("chartMeetingWeek")}
     ${dateRowsTable(meetingWeekRows, "Kayıt Sayısı")}
   </div>
 </div>
 
-            <div class="panel" style="margin-top:16px">
+            <div class="panel chart3d-card" style="margin-top:16px">
   <h3>Personel Bazlı Faaliyet ve Performans Analizi</h3>
-  <p class="muted">İş yükü, tamamlanan/açık/geciken işler, sosyal medya, toplantı/ziyaret, fikir ve içerik asistanı kullanımı birlikte gösterilir.</p>
-  ${plotlyChartBox("chartPersonWorkload")}
+  <p class="muted">İş yükü, tamamlanan/açık/geciken işler, sosyal medya, toplantı/ziyaret, fikir ve içerik asistanı kullanımı 3D karşılaştırma grafiğiyle gösterilir.</p>
+  ${chart3DBox("chartPersonWorkload")}
   ${activityPersonTable(personRows)}
 </div>
 
             <div class="reports-grid" style="margin-top:16px">
-              <div class="panel"><h3>Personel Bazlı İçerik Fikri</h3>${barChart(ideaPersonData)}</div>
-              <div class="panel"><h3>Kurumsal İçerik Asistanı Kullanıcı Dağılımı</h3>${barChart(assistantUserData)}</div>
-              <div class="panel"><h3>Kurumsal İçerik Asistanı Çıktı Dağılımı</h3>${barChart(assistantOutputData)}</div>
-              <div class="panel"><h3>İçerik Fikri - Ay Bazlı</h3>${dateRowsTable(ideaMonthRows, "Fikir Sayısı")}</div>
-            </div>
+  ${chart3DPanel("Personel Bazlı İçerik Fikri", "chartIdeaPerson", "Personel bazında fikir üretimi - 3D bar karşılaştırma")}
+  ${chart3DPanel("Kurumsal İçerik Asistanı Kullanıcı Dağılımı", "chartAssistantUser", "Kullanıcı bazlı AI kullanım yoğunluğu")}
+  ${chart3DPanel("Kurumsal İçerik Asistanı Çıktı Dağılımı", "chartAssistantOutput", "Çıktı türlerine göre 3D donut oran dağılımı")}
+  <div class="panel chart3d-card">
+    <h3>İçerik Fikri - Ay Bazlı</h3>
+    <p class="muted">Aylara göre fikir trendi.</p>
+    ${chart3DBox("chartIdeaMonth")}
+    ${dateRowsTable(ideaMonthRows, "Fikir Sayısı")}
+  </div>
+</div>
 
-            <div class="reports-grid" style="margin-top:16px">
-              <div class="panel"><h3>Kurumsal İçerik Asistanı - Ay Bazlı</h3>${dateRowsTable(assistantMonthRows, "Kullanım")}</div>
-              <div class="panel"><h3>Kurumsal İçerik Asistanı - Hafta Bazlı</h3>${dateRowsTable(assistantWeekRows, "Kullanım")}</div>
-              <div class="panel"><h3>Aylık İş Sayısı Detayı</h3>${monthlyTaskTable(monthlyTaskRows(tasks))}</div>
-              <div class="panel"><h3>İşlerin Tamamlanma Gün Sayıları</h3><p class="muted">En kısa: ${completion.shortestDays} gün | En uzun: ${completion.longestDays} gün | Ortalama: ${completion.averageDays} gün</p>${completionDaysTable(tasks)}</div>
-            </div>
-          </div>
+           <div class="reports-grid" style="margin-top:16px">
+  <div class="panel chart3d-card">
+    <h3>Kurumsal İçerik Asistanı - Ay Bazlı</h3>
+    <p class="muted">Aylık AI kullanım değişimi için 3D dalgalı alan grafiği.</p>
+    ${chart3DBox("chartAssistantMonth")}
+    ${dateRowsTable(assistantMonthRows, "Kullanım")}
+  </div>
+
+  <div class="panel chart3d-card">
+    <h3>Kurumsal İçerik Asistanı - Hafta Bazlı</h3>
+    <p class="muted">Haftalık AI kullanım trendi.</p>
+    ${chart3DBox("chartAssistantWeek")}
+    ${dateRowsTable(assistantWeekRows, "Kullanım")}
+  </div>
+
+  <div class="panel chart3d-card">
+    <h3>Aylık İş Sayısı Detayı</h3>
+    <p class="muted">Aylık iş yoğunluğu için 3D dalgalı alan grafiği.</p>
+    ${chart3DBox("chartTaskMonthly")}
+    ${monthlyTaskTable(monthlyTaskData)}
+  </div>
+
+  <div class="panel chart3d-card">
+    <h3>İşlerin Tamamlanma Gün Sayıları</h3>
+    <p class="muted">En kısa: ${completion.shortestDays} gün | En uzun: ${completion.longestDays} gün | Ortalama: ${completion.averageDays} gün</p>
+    ${chart3DBox("chartCompletionDays")}
+    ${completionDaysTable(tasks)}
+  </div>
+</div>
 
           <div class="panel" style="margin-top:16px">
             <h3>Yedekten Geri Yükleme</h3>
@@ -7789,21 +7966,30 @@ function exportAnnualScorecardPdf() {
          `;
 
        setTimeout(() => {
-          animateVisibleScorecardNumbers();
+  animateVisibleScorecardNumbers();
 
-          renderAnimatedBarChart("chartTaskCategory", categoryData, "İş Kategori Dağılımı");
-          renderAnimatedBarChart("chartSocialStatus", socialStatusData, "Sosyal Medya Yayın Durumları");
-          renderAnimatedBarChart("chartMeetingStatus", meetingStatusData, "Toplantı / Ziyaret Durumları");
-          renderAnimatedBarChart("chartIdeaStatus", ideaStatusData, "İçerik Fikir Havuzu Durumları");
+  render3DBarChart("chartTaskCategory", chartRowsFromObject(categoryData), "İş Kategori Dağılımı", "İş Sayısı");
+  render3DDonutChart("chartSocialStatus", chartRowsFromObject(socialStatusData), "Sosyal Medya Yayın Durumları");
+  render3DDonutChart("chartMeetingStatus", chartRowsFromObject(meetingStatusData), "Toplantı / Ziyaret Durumları");
+  render3DDonutChart("chartIdeaStatus", chartRowsFromObject(ideaStatusData), "İçerik Fikir Havuzu Durumları");
 
-          renderAnimatedLineChart("chartSocialMonth", socialMonthRows, "Sosyal Medya İçerik Sayıları - Ay Bazlı", "İçerik Sayısı");
-          renderAnimatedLineChart("chartSocialWeek", socialWeekRows, "Sosyal Medya İçerik Sayıları - Hafta Bazlı", "İçerik Sayısı");
-          renderAnimatedLineChart("chartMeetingMonth", meetingMonthRows, "Toplantı / Ziyaret Sayıları - Ay Bazlı", "Kayıt Sayısı");
-          renderAnimatedLineChart("chartMeetingWeek", meetingWeekRows, "Toplantı / Ziyaret Sayıları - Hafta Bazlı", "Kayıt Sayısı");
+  render3DLineChart("chartSocialMonth", socialMonthRows, "Sosyal Medya İçerik Sayıları - Ay Bazlı", "İçerik Sayısı");
+  render3DBarChart("chartSocialWeek", chartRowsFromDateRows(socialWeekRows), "Sosyal Medya İçerik Sayıları - Hafta Bazlı", "İçerik Sayısı");
+  render3DWaveAreaChart("chartMeetingMonth", meetingMonthRows, "Toplantı / Ziyaret Sayıları - Ay Bazlı", "Kayıt Sayısı");
+  render3DLineChart("chartMeetingWeek", meetingWeekRows, "Toplantı / Ziyaret Sayıları - Hafta Bazlı", "Kayıt Sayısı");
 
-          renderAnimatedBarChart("chartPersonWorkload", personRowsToChartObject(personRows), "Personel Bazlı İş Yükü", "Toplam Faaliyet");
-        }, 120);
-      }
+  render3DBarChart("chartPersonWorkload", chartRowsFromPersonRows(personRows), "Personel Bazlı İş Yükü", "Toplam Faaliyet");
+
+  render3DBarChart("chartIdeaPerson", chartRowsFromObject(ideaPersonData), "Personel Bazlı İçerik Fikri", "Fikir Sayısı");
+  render3DBarChart("chartAssistantUser", chartRowsFromObject(assistantUserData), "Kurumsal İçerik Asistanı Kullanıcı Dağılımı", "Kullanım");
+  render3DDonutChart("chartAssistantOutput", chartRowsFromObject(assistantOutputData), "Kurumsal İçerik Asistanı Çıktı Dağılımı");
+  render3DLineChart("chartIdeaMonth", ideaMonthRows, "İçerik Fikri - Ay Bazlı", "Fikir Sayısı");
+
+  render3DWaveAreaChart("chartAssistantMonth", assistantMonthRows, "Kurumsal İçerik Asistanı - Ay Bazlı", "Kullanım");
+  render3DLineChart("chartAssistantWeek", assistantWeekRows, "Kurumsal İçerik Asistanı - Hafta Bazlı", "Kullanım");
+  render3DWaveAreaChart("chartTaskMonthly", monthlyTaskData, "Aylık İş Sayısı Detayı", "İş Sayısı");
+  render3DBarChart("chartCompletionDays", completionDayChartRows, "İşlerin Tamamlanma Gün Sayıları", "Gün");
+}, 160);
 
       function countBy(items, getter) {
         return items.reduce((acc, item) => {
@@ -7950,7 +8136,366 @@ function renderAnimatedLineChart(id, rows, title = "", yTitle = "Sayı") {
       y: values.slice(0, index + 1)
     }]
   }));
+function chart3DBox(id) {
+  return `<div id="${esc(id)}" class="chart3d-box"></div>`;
+}
 
+function chart3DPanel(title, id, note = "") {
+  return `
+    <div class="panel chart3d-card">
+      <h3>${esc(title)}</h3>
+      ${note ? `<p class="muted">${esc(note)}</p>` : ""}
+      ${chart3DBox(id)}
+    </div>
+  `;
+}
+
+function chart3DColors(index) {
+  const colors = [
+    "#c8102e",
+    "#8f0d21",
+    "#ef4444",
+    "#f97316",
+    "#dc2626",
+    "#991b1b",
+    "#fb7185",
+    "#b91c1c",
+    "#7f1d1d"
+  ];
+
+  return colors[index % colors.length];
+}
+
+function chart3DNumber(value) {
+  return Number(value || 0).toLocaleString("tr-TR");
+}
+
+function chartRowsFromObject(data) {
+  return Object.entries(data || {})
+    .map(([label, value]) => ({
+      label,
+      value: Number(value || 0)
+    }))
+    .filter(row => row.label && Number.isFinite(row.value))
+    .sort((a, b) => b.value - a.value);
+}
+
+function chartRowsFromDateRows(rows) {
+  return (rows || [])
+    .filter(row => row && row.label && row.key !== "Tarihsiz")
+    .map(row => ({
+      label: row.label,
+      value: Number(row.total || 0)
+    }))
+    .filter(row => Number.isFinite(row.value));
+}
+
+function chartRowsFromPersonRows(rows) {
+  return (rows || [])
+    .map(row => ({
+      label: row.name || "Belirsiz",
+      value: Number(row.total || 0)
+    }))
+    .filter(row => Number.isFinite(row.value))
+    .sort((a, b) => b.value - a.value);
+}
+
+function chartRowsFromMonthlyTaskRows(rows) {
+  return (rows || [])
+    .filter(row => row && row.label && row.key !== "Tarihsiz")
+    .map(row => ({
+      label: row.label,
+      value: Number(row.total || 0)
+    }))
+    .filter(row => Number.isFinite(row.value));
+}
+
+function chartRowsFromCompletionDays(tasks) {
+  return (tasks || [])
+    .filter(task => task.status === "Tamamlandı")
+    .map(task => ({
+      label: task.workNo || task.title || "İş",
+      value: taskCompletionDays(task)
+    }))
+    .filter(row => row.value !== null && Number.isFinite(row.value))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 12);
+}
+
+function chartSafeRows(rows) {
+  return (rows || [])
+    .map(row => ({
+      label: String(row.label || "Belirsiz"),
+      value: Number(row.value || 0)
+    }))
+    .filter(row => Number.isFinite(row.value))
+    .slice(0, 14);
+}
+
+function chart3DLayout(title = "") {
+  return {
+    title: { text: "" },
+    margin: { l: 0, r: 0, t: 4, b: 0 },
+    paper_bgcolor: "rgba(0,0,0,0)",
+    plot_bgcolor: "rgba(0,0,0,0)",
+    font: {
+      family: 'Inter, "Segoe UI", Roboto, Arial, sans-serif',
+      size: 11,
+      color: "#374151"
+    },
+    showlegend: false,
+    scene: {
+      bgcolor: "rgba(0,0,0,0)",
+      camera: {
+        eye: { x: 1.55, y: 1.55, z: 1.12 }
+      },
+      xaxis: {
+        showgrid: false,
+        zeroline: false,
+        tickfont: { size: 10 }
+      },
+      yaxis: {
+        showgrid: false,
+        zeroline: false,
+        visible: false
+      },
+      zaxis: {
+        showgrid: true,
+        gridcolor: "rgba(200,16,46,.10)",
+        zeroline: false,
+        tickfont: { size: 10 }
+      }
+    }
+  };
+}
+
+function chart3DConfig() {
+  return {
+    displayModeBar: false,
+    responsive: true
+  };
+}
+
+function cuboidTrace(index, value, color, label) {
+  const width = .58;
+  const depth = .72;
+  const x0 = index - width / 2;
+  const x1 = index + width / 2;
+  const y0 = 0;
+  const y1 = depth;
+  const z0 = 0;
+  const z1 = Math.max(Number(value || 0), .04);
+
+  return {
+    type: "mesh3d",
+    x: [x0, x1, x1, x0, x0, x1, x1, x0],
+    y: [y0, y0, y1, y1, y0, y0, y1, y1],
+    z: [z0, z0, z0, z0, z1, z1, z1, z1],
+    i: [0, 0, 4, 4, 0, 0, 1, 1, 2, 2, 3, 3],
+    j: [1, 2, 5, 6, 1, 5, 2, 6, 3, 7, 0, 4],
+    k: [2, 3, 6, 7, 5, 4, 6, 5, 7, 6, 4, 7],
+    color,
+    opacity: .92,
+    flatshading: true,
+    hovertemplate: `${esc(label)}<br>Sayı: ${chart3DNumber(value)}<extra></extra>`,
+    name: label,
+    showscale: false
+  };
+}
+
+function render3DBarChart(id, rows, title = "", valueTitle = "Sayı") {
+  const node = $(id);
+  if (!node) return;
+
+  const cleanRows = chartSafeRows(rows);
+
+  if (!cleanRows.length) {
+    node.innerHTML = `<div class="chart3d-empty">Veri bulunmuyor.</div>`;
+    return;
+  }
+
+  if (!window.Plotly) {
+    node.innerHTML = barChart(Object.fromEntries(cleanRows.map(row => [row.label, row.value])));
+    return;
+  }
+
+  const traces = cleanRows.map((row, index) =>
+    cuboidTrace(index, row.value, chart3DColors(index), row.label)
+  );
+
+  traces.push({
+    type: "scatter3d",
+    mode: "text",
+    x: cleanRows.map((_, index) => index),
+    y: cleanRows.map(() => .88),
+    z: cleanRows.map(row => Math.max(row.value, .04) + .25),
+    text: cleanRows.map(row => chart3DNumber(row.value)),
+    textfont: { size: 11, color: "#1f2937" },
+    hoverinfo: "skip",
+    showlegend: false
+  });
+
+  const layout = chart3DLayout(title);
+  layout.scene.xaxis.tickvals = cleanRows.map((_, index) => index);
+  layout.scene.xaxis.ticktext = cleanRows.map(row => row.label.length > 13 ? `${row.label.slice(0, 13)}…` : row.label);
+  layout.scene.zaxis.title = { text: valueTitle };
+
+  Plotly.newPlot(node, traces, layout, chart3DConfig());
+}
+
+function render3DLineChart(id, rows, title = "", valueTitle = "Sayı") {
+  const node = $(id);
+  if (!node) return;
+
+  const cleanRows = chartSafeRows(
+    Array.isArray(rows) && rows[0]?.value !== undefined ? rows : chartRowsFromDateRows(rows)
+  );
+
+  if (!cleanRows.length) {
+    node.innerHTML = `<div class="chart3d-empty">Veri bulunmuyor.</div>`;
+    return;
+  }
+
+  if (!window.Plotly) {
+    node.innerHTML = dateRowsTable(cleanRows.map(row => ({ label: row.label, total: row.value })), valueTitle);
+    return;
+  }
+
+  const trace = {
+    type: "scatter3d",
+    mode: "lines+markers+text",
+    x: cleanRows.map((_, index) => index),
+    y: cleanRows.map(row => row.value),
+    z: cleanRows.map((_, index) => Math.sin(index / 1.6) * .45),
+    text: cleanRows.map(row => chart3DNumber(row.value)),
+    textposition: "top center",
+    line: {
+      width: 8,
+      color: "#c8102e"
+    },
+    marker: {
+      size: 6,
+      color: cleanRows.map(row => row.value),
+      colorscale: [
+        [0, "#fff1f3"],
+        [.45, "#ef4444"],
+        [1, "#8f0d21"]
+      ],
+      opacity: .95
+    },
+    hovertemplate: "%{text}<br>%{x}<extra></extra>"
+  };
+
+  const layout = chart3DLayout(title);
+  layout.scene.xaxis.tickvals = cleanRows.map((_, index) => index);
+  layout.scene.xaxis.ticktext = cleanRows.map(row => row.label);
+  layout.scene.yaxis.visible = true;
+  layout.scene.yaxis.title = { text: valueTitle };
+  layout.scene.zaxis.visible = false;
+
+  Plotly.newPlot(node, [trace], layout, chart3DConfig());
+}
+
+function render3DWaveAreaChart(id, rows, title = "", valueTitle = "Sayı") {
+  const node = $(id);
+  if (!node) return;
+
+  const cleanRows = chartSafeRows(
+    Array.isArray(rows) && rows[0]?.value !== undefined ? rows : chartRowsFromDateRows(rows)
+  );
+
+  if (!cleanRows.length) {
+    node.innerHTML = `<div class="chart3d-empty">Veri bulunmuyor.</div>`;
+    return;
+  }
+
+  if (!window.Plotly) {
+    node.innerHTML = dateRowsTable(cleanRows.map(row => ({ label: row.label, total: row.value })), valueTitle);
+    return;
+  }
+
+  const x = cleanRows.map((_, index) => index);
+  const y = Array.from({ length: 9 }, (_, index) => index);
+  const z = y.map(depth =>
+    cleanRows.map((row, index) => {
+      const wave = .72 + Math.sin((index + depth) / 1.7) * .12;
+      return Math.max(0, row.value * wave);
+    })
+  );
+
+  const trace = {
+    type: "surface",
+    x,
+    y,
+    z,
+    colorscale: [
+      [0, "#fff1f3"],
+      [.45, "#fb7185"],
+      [1, "#8f0d21"]
+    ],
+    opacity: .94,
+    showscale: false,
+    hovertemplate: `${valueTitle}: %{z}<extra></extra>`
+  };
+
+  const layout = chart3DLayout(title);
+  layout.scene.xaxis.tickvals = x;
+  layout.scene.xaxis.ticktext = cleanRows.map(row => row.label);
+  layout.scene.yaxis.visible = false;
+  layout.scene.zaxis.title = { text: valueTitle };
+
+  Plotly.newPlot(node, [trace], layout, chart3DConfig());
+}
+
+function render3DDonutChart(id, rows, title = "") {
+  const node = $(id);
+  if (!node) return;
+
+  const cleanRows = chartSafeRows(rows);
+
+  if (!cleanRows.length) {
+    node.innerHTML = `<div class="chart3d-empty">Veri bulunmuyor.</div>`;
+    return;
+  }
+
+  if (!window.Plotly) {
+    node.innerHTML = barChart(Object.fromEntries(cleanRows.map(row => [row.label, row.value])));
+    return;
+  }
+
+  const trace = {
+    type: "pie",
+    labels: cleanRows.map(row => row.label),
+    values: cleanRows.map(row => row.value),
+    hole: .58,
+    sort: false,
+    pull: cleanRows.map((_, index) => index === 0 ? .05 : 0),
+    marker: {
+      colors: cleanRows.map((_, index) => chart3DColors(index)),
+      line: {
+        color: "#ffffff",
+        width: 2
+      }
+    },
+    textinfo: "label+percent",
+    textposition: "inside",
+    hovertemplate: "%{label}<br>Sayı: %{value}<br>Oran: %{percent}<extra></extra>"
+  };
+
+  const layout = {
+    margin: { l: 8, r: 8, t: 8, b: 8 },
+    paper_bgcolor: "rgba(0,0,0,0)",
+    plot_bgcolor: "rgba(0,0,0,0)",
+    showlegend: false,
+    font: {
+      family: 'Inter, "Segoe UI", Roboto, Arial, sans-serif',
+      size: 11,
+      color: "#374151"
+    }
+  };
+
+  Plotly.newPlot(node, [trace], layout, chart3DConfig());
+}
   const trace = {
     type: "scatter",
     mode: "lines+markers",
@@ -9559,6 +10104,7 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
         $("sensitiveResults").innerHTML = `<div class="panel"><h3>Kontrol ediliyor...</h3><p class="muted">AI metni hassasiyet ve kurumsal dil açısından inceliyor.</p></div>`;
         try {
           const data = await callAI(["sensitive_check"], rawText, "sensitiveChecker");
+          state.lastAiResultAt = Date.now();
           const warnings = Array.isArray(data.sensitive_warnings) ? data.sensitive_warnings : [];
           const notes = Array.isArray(data.term_notes) ? data.term_notes : [];
           $("sensitiveResults").innerHTML = `
