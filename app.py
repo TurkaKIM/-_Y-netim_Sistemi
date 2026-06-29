@@ -519,3 +519,4 @@ if isinstance(component_value, dict) and component_value.get("type") == "passwor
         st.session_state.turkak_last_password_reset_email_request_id = request_id
         st.session_state.turkak_ai_response = process_password_reset_email_request(request_id, payload)
         st.rerun()
+        
