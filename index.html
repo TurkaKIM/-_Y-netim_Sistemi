@@ -8080,7 +8080,7 @@ body {
             ])}
 
 <div class="reports-grid">
-  ${chart3DPanel("İş Kategori Dağılımı", "chartTaskCategory", "Kategori bazlı iş yoğunluğu - 3D karşılaştırma")}
+  ${chart3DPanel("İş Kategori Dağılımı", "chartTaskCategory", "Kategori bazlı iş yoğunluğu")}
   ${chart3DPanel("Sosyal Medya Yayın Durumları", "chartSocialStatus", "Yayınlandı / Planlandı / Taslak oran dağılımı")}
   ${chart3DPanel("Toplantı / Ziyaret Durumları", "chartMeetingStatus", "Durum bazlı toplantı ve ziyaret dağılımı")}
   ${chart3DPanel("İçerik Fikir Havuzu Durumları", "chartIdeaStatus", "Fikir havuzu durum oranları")}
@@ -8089,28 +8089,28 @@ body {
             <div class="reports-grid" style="margin-top:16px">
   <div class="panel chart3d-card">
     <h3>Sosyal Medya İçerik Sayıları - Ay Bazlı</h3>
-    <p class="muted">Trend takibi için animasyonlu 3D çizgi grafik.</p>
+    <p class="muted">Trend takibi grafiği</p>
     ${chart3DBox("chartSocialMonth")}
     ${dateRowsTable(socialMonthRows, "İçerik Sayısı")}
   </div>
 
   <div class="panel chart3d-card">
     <h3>Sosyal Medya İçerik Sayıları - Hafta Bazlı</h3>
-    <p class="muted">Haftalık içerik yoğunluğu için 3D bar karşılaştırma.</p>
+    <p class="muted">Haftalık içerik yoğunluğu grafiği</p>
     ${chart3DBox("chartSocialWeek")}
     ${dateRowsTable(socialWeekRows, "İçerik Sayısı")}
   </div>
 
   <div class="panel chart3d-card">
     <h3>Toplantı / Ziyaret Sayıları - Ay Bazlı</h3>
-    <p class="muted">Aylık değişim için 3D dalgalı alan grafiği.</p>
+    <p class="muted">Aylık değişim grafiği</p>
     ${chart3DBox("chartMeetingMonth")}
     ${dateRowsTable(meetingMonthRows, "Kayıt Sayısı")}
   </div>
 
   <div class="panel chart3d-card">
     <h3>Toplantı / Ziyaret Sayıları - Hafta Bazlı</h3>
-    <p class="muted">Haftalık trend için animasyonlu 3D çizgi grafik.</p>
+    <p class="muted">Haftalık trend grafiği</p>
     ${chart3DBox("chartMeetingWeek")}
     ${dateRowsTable(meetingWeekRows, "Kayıt Sayısı")}
   </div>
@@ -8118,15 +8118,15 @@ body {
 
             <div class="panel chart3d-card" style="margin-top:16px">
   <h3>Personel Bazlı Faaliyet ve Performans Analizi</h3>
-  <p class="muted">İş yükü, tamamlanan/açık/geciken işler, sosyal medya, toplantı/ziyaret, fikir ve içerik asistanı kullanımı 3D karşılaştırma grafiğiyle gösterilir.</p>
+  <p class="muted">İş yükü, tamamlanan/açık/geciken işler, sosyal medya, toplantı/ziyaret, fikir ve içerik asistanı kullanımı gösterilir.</p>
   ${chart3DBox("chartPersonWorkload")}
   ${activityPersonTable(personRows)}
 </div>
 
             <div class="reports-grid" style="margin-top:16px">
-  ${chart3DPanel("Personel Bazlı İçerik Fikri", "chartIdeaPerson", "Personel bazında fikir üretimi - 3D bar karşılaştırma")}
+  ${chart3DPanel("Personel Bazlı İçerik Fikri", "chartIdeaPerson", "Personel bazında fikir üretimi grafiği")}
   ${chart3DPanel("Kurumsal İçerik Asistanı Kullanıcı Dağılımı", "chartAssistantUser", "Kullanıcı bazlı AI kullanım yoğunluğu")}
-  ${chart3DPanel("Kurumsal İçerik Asistanı Çıktı Dağılımı", "chartAssistantOutput", "Çıktı türlerine göre 3D donut oran dağılımı")}
+  ${chart3DPanel("Kurumsal İçerik Asistanı Çıktı Dağılımı", "chartAssistantOutput", "Çıktı türlerine göre dağılım grafiği")}
   <div class="panel chart3d-card">
     <h3>İçerik Fikri - Ay Bazlı</h3>
     <p class="muted">Aylara göre fikir trendi.</p>
@@ -8138,7 +8138,7 @@ body {
            <div class="reports-grid" style="margin-top:16px">
   <div class="panel chart3d-card">
     <h3>Kurumsal İçerik Asistanı - Ay Bazlı</h3>
-    <p class="muted">Aylık AI kullanım değişimi için 3D dalgalı alan grafiği.</p>
+    <p class="muted">Aylık AI kullanım grafiği</p>
     ${chart3DBox("chartAssistantMonth")}
     ${dateRowsTable(assistantMonthRows, "Kullanım")}
   </div>
@@ -8152,7 +8152,7 @@ body {
 
   <div class="panel chart3d-card">
     <h3>Aylık İş Sayısı Detayı</h3>
-    <p class="muted">Aylık iş yoğunluğu için 3D dalgalı alan grafiği.</p>
+    <p class="muted">Aylık iş yoğunluğu grafiği</p>
     ${chart3DBox("chartTaskMonthly")}
     ${monthlyTaskTable(monthlyTaskData)}
   </div>
