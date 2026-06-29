@@ -1490,6 +1490,89 @@ body.ux-dark .timeline-desc-inner {
 .task-file-compact small {
   font-size: 11px;
 }
+
+/* --- Yeni İş Kaydı ve Yeni Sosyal Medya Paylaşımı kompakt yerleşim düzeltmeleri --- */
+.task-form-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.task-helper-compact select[multiple] {
+  height: 46px;
+  min-height: 46px;
+  max-height: 46px;
+  padding: 8px 10px;
+  overflow-y: auto;
+  font-size: 12.5px;
+  line-height: 1.25;
+}
+
+.task-helper-compact option {
+  padding: 4px 6px;
+}
+
+.task-helper-compact small {
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.social-form-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.social-two-col {
+  grid-column: span 3;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.social-two-col .field {
+  margin-bottom: 0;
+}
+
+.social-text-compact textarea {
+  height: 86px;
+  min-height: 86px;
+  max-height: 150px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  padding: 10px 11px;
+}
+
+.social-channels-compact .social-channel-grid {
+  grid-template-columns: repeat(auto-fit, minmax(142px, 1fr));
+}
+
+.social-media-compact input[type="file"] {
+  padding: 7px 9px;
+  font-size: 12px;
+}
+
+.social-media-compact .file-upload-preview {
+  min-height: 52px;
+  padding: 7px 8px;
+  gap: 4px;
+  font-size: 11.5px;
+  border-radius: 12px;
+}
+
+.social-media-compact .file-upload-preview img {
+  max-height: 118px;
+}
+
+.social-media-compact small {
+  font-size: 11px;
+}
+
+@media (max-width: 820px) {
+  .social-two-col {
+    grid-template-columns: 1fr;
+  }
+}
 .file-upload-preview a {
   font-weight: 800;
   word-break: break-word;
@@ -5400,7 +5483,7 @@ function showSocialForm(id = null) {
   hashtags: "",
   publishDate: today(),
   channels: [],
-  publishOnWebsite: "Evet",
+  publishOnWebsite: "Hayır",
   showOnSlider: "Hayır",
   status: "Taslak",
 
@@ -5434,7 +5517,7 @@ function showSocialForm(id = null) {
     </div>
 
     <form id="socialForm" class="panel" onsubmit="App.saveSocialPost(event, '${js(id || "")}')">
-      <div class="form-grid">
+      <div class="form-grid social-form-grid">
         <div class="field">
           <label>Kayıt No</label>
           <input id="socialNo" value="${esc(item.socialNo)}" readonly>
@@ -5445,41 +5528,24 @@ function showSocialForm(id = null) {
           <input id="socialTitle" required maxlength="180" value="${esc(item.title)}" placeholder="Örn. Mayıs Ayı Akreditasyon Gündemi">
         </div>
 
-        <div class="field span-3">
-          <label>Kısa Açıklama</label>
-          <textarea id="socialShortDescription" placeholder="Sosyal medya ve web haber girişinde kullanılacak kısa açıklama.">${esc(item.shortDescription)}</textarea>
+        <div class="social-two-col">
+          <div class="field social-text-compact">
+            <label>Kısa Açıklama</label>
+            <textarea id="socialShortDescription" placeholder="Sosyal medya ve web haber girişinde kullanılacak kısa açıklama.">${esc(item.shortDescription)}</textarea>
+          </div>
+
+          <div class="field social-text-compact">
+            <label>Detaylı İçerik</label>
+            <textarea id="socialDetailContent" placeholder="Web sitesi haber metni, sosyal medya açıklama metni veya içerik notları.">${esc(item.detailContent)}</textarea>
+          </div>
         </div>
 
         <div class="field span-3">
-          <label>Detaylı İçerik</label>
-          <textarea id="socialDetailContent" placeholder="Web sitesi haber metni, sosyal medya açıklama metni veya içerik notları.">${esc(item.detailContent)}</textarea>
+          <label>Kullanılacak Hashtag</label>
+          <input id="socialHashtags" value="${esc(item.hashtags || "")}" placeholder="#TÜRKAK #Akreditasyon #Kalite">
         </div>
 
-        <div class="field span-3">
-          <label>Görsel / Medya Dosyası</label>
-          <input type="file" id="socialMediaFile" accept="image/*,video/*,application/pdf" onchange="App.handleSocialMediaFile(event)">
-          <input id="socialMediaUrl" type="hidden" value="${esc(item.mediaUrl || "")}">
-          <input id="socialMediaData" type="hidden" value="${esc(item.mediaDataUrl || "")}">
-          <input id="socialMediaName" type="hidden" value="${esc(item.mediaFileName || "")}">
-          <input id="socialMediaType" type="hidden" value="${esc(item.mediaFileType || "")}">
-          <input id="socialMediaSize" type="hidden" value="${esc(item.mediaFileSize || 0)}">
-          <div id="socialMediaPreview" class="file-upload-preview">${uploadFilePreviewHtml(item.mediaFileName, item.mediaDataUrl, item.mediaFileSize, item.mediaFileType, item.mediaUrl, "Görsel / medya dosyası yüklenmedi.")}</div>
-          <small>Dosya uygulama verisi içinde saklanır. Sistemin hızlı ve stabil çalışması için 2 MB altında dosya kullanın.</small>
-        </div>
-
-        <div class="field">
-          <label>Yayın Tarihi *</label>
-          <input id="socialPublishDate" type="date" required value="${esc(item.publishDate)}">
-        </div>
-
-        <div class="field">
-          <label>Yayın Durumu</label>
-          <select id="socialStatus">
-            ${SOCIAL_STATUS.map(status => `<option ${item.status === status ? "selected" : ""}>${esc(status)}</option>`).join("")}
-          </select>
-        </div>
-
-        <div class="field span-3">
+        <div class="field span-3 social-channels-compact">
           <label>Yayın Kanalları</label>
           <div class="social-channel-grid">
             ${channelCheckboxes(item.channels || [])}
@@ -5495,9 +5561,28 @@ function showSocialForm(id = null) {
           <small>Birden fazla kanal seçilebilir.</small>
         </div>
 
-        <div class="field span-3">
-          <label>Kullanılacak Hashtag</label>
-          <input id="socialHashtags" value="${esc(item.hashtags || "")}" placeholder="#TÜRKAK #Akreditasyon #Kalite">
+        <div class="field">
+          <label>Yayın Tarihi *</label>
+          <input id="socialPublishDate" type="date" required value="${esc(item.publishDate)}">
+        </div>
+
+        <div class="field">
+          <label>Yayın Durumu</label>
+          <select id="socialStatus">
+            ${SOCIAL_STATUS.map(status => `<option ${item.status === status ? "selected" : ""}>${esc(status)}</option>`).join("")}
+          </select>
+        </div>
+
+        <div class="field social-media-compact">
+          <label>Görsel / Medya Dosyası</label>
+          <input type="file" id="socialMediaFile" accept="image/*,video/*,application/pdf" onchange="App.handleSocialMediaFile(event)">
+          <input id="socialMediaUrl" type="hidden" value="${esc(item.mediaUrl || "")}">
+          <input id="socialMediaData" type="hidden" value="${esc(item.mediaDataUrl || "")}">
+          <input id="socialMediaName" type="hidden" value="${esc(item.mediaFileName || "")}">
+          <input id="socialMediaType" type="hidden" value="${esc(item.mediaFileType || "")}">
+          <input id="socialMediaSize" type="hidden" value="${esc(item.mediaFileSize || 0)}">
+          <div id="socialMediaPreview" class="file-upload-preview">${uploadFilePreviewHtml(item.mediaFileName, item.mediaDataUrl, item.mediaFileSize, item.mediaFileType, item.mediaUrl, "Görsel / medya dosyası yüklenmedi.")}</div>
+          <small>2 MB altındaki dosyalar önerilir.</small>
         </div>
       </div>
             <div class="form-actions btn-row">
@@ -5976,6 +6061,31 @@ function exportSocialCsv() {
         return activeUsers().map(u => `<option value="${esc(u.id)}" ${selectedIds.includes(u.id) ? "selected" : ""}>${esc(u.fullName)} - ${roleName(u.role)}</option>`).join("");
       }
 
+      function setupHelperSelectToggle() {
+        const select = $("helperIds");
+        if (!select) return;
+
+        select.addEventListener("mousedown", (event) => {
+          if (!event.target || event.target.tagName !== "OPTION") return;
+
+          event.preventDefault();
+          event.target.selected = !event.target.selected;
+          select.focus();
+          select.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+
+        select.addEventListener("keydown", (event) => {
+          if (event.key !== " " && event.key !== "Enter") return;
+
+          const option = select.options[select.selectedIndex];
+          if (!option) return;
+
+          event.preventDefault();
+          option.selected = !option.selected;
+          select.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+      }
+
       function showTaskForm(id = null) {
         const editing = Boolean(id);
         const old = editing ? getTasks().find(t => t.id === id) : null;
@@ -6024,25 +6134,31 @@ function exportSocialCsv() {
             <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
           </div>
           <form id="taskForm" class="panel" onsubmit="App.saveTask(event, '${js(id || '')}')">
-            <div class="form-grid">
+            <div class="form-grid task-form-grid">
               <div class="field"><label>İş No</label><input id="workNo" value="${esc(task.workNo)}" readonly /></div>
               <div class="field span-2"><label>İş Adı *</label><input id="title" required maxlength="180" value="${esc(task.title)}" placeholder="Mayıs Ayı Sosyal Medya Planı Hazırlığı" /></div>
+
               <div class="field"><label>Ana Kategori *</label><select id="mainCategory" required onchange="App.categoryChanged()">${categoryOptions(task.mainCategory)}</select></div>
               <div class="field"><label>Alt Kategori *</label><select id="subCategory" required>${subCategoryOptions(task.mainCategory, task.subCategory)}</select></div>
               <div class="field"><label>Çıktı Türü</label><select id="outputType">${OUTPUT_TYPES.map(x => `<option ${task.outputType === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
-              <div class="field span-2 task-description-compact"><label>İşin Açıklaması</label><textarea id="description" placeholder="İşin kapsamını, beklentisini ve açıklamasını yazın.">${esc(task.description)}</textarea></div>
+
               <div class="field"><label>Sorumlu Personel *</label><select id="responsibleId" required>${userOptions(task.responsibleId, true)}</select></div>
-              <div class="field span-2"><label>Yardımcı Personel</label><select id="helperIds" multiple size="4">${multiUserOptions(task.helperIds || [])}</select><small>Ctrl / Cmd ile birden fazla seçim yapılabilir.</small></div>
+              <div class="field task-helper-compact"><label>Yardımcı Personel</label><select id="helperIds" multiple size="2">${multiUserOptions(task.helperIds || [])}</select><small>Bir personeli tekrar tıklayarak seçimden kaldırabilirsiniz.</small></div>
               <div class="field"><label>Öncelik</label><select id="priority">${PRIORITIES.map(x => `<option ${task.priority === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
-              <div class="field"><label>Gizlilik Düzeyi</label><select id="confidentiality">${CONFIDENTIALITY.map(x => `<option ${task.confidentiality === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
+
               <div class="field"><label>Durum</label><select id="status" onchange="App.statusChanged()">${STATUS.map(x => `<option ${task.status === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
+              <div class="field"><label>Gizlilik Düzeyi</label><select id="confidentiality">${CONFIDENTIALITY.map(x => `<option ${task.confidentiality === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
+              <div class="field"><label>Takvimde Gösterilsin mi?</label><select id="showOnCalendar"><option ${task.showOnCalendar === 'Evet' ? 'selected' : ''}>Evet</option><option ${task.showOnCalendar === 'Hayır' ? 'selected' : ''}>Hayır</option></select></div>
+
               <div class="field"><label>Başlangıç Tarihi</label><input id="startDate" type="date" value="${esc(task.startDate)}" /></div>
               <div class="field"><label>Hedef Bitiş Tarihi *</label><input id="targetEndDate" type="date" required value="${esc(task.targetEndDate)}" /></div>
               <div class="field"><label>Fiili Bitiş Tarihi</label><input id="actualEndDate" type="date" value="${esc(task.actualEndDate)}" /></div>
-              <div class="field"><label>Takvimde Gösterilsin mi?</label><select id="showOnCalendar"><option ${task.showOnCalendar === 'Evet' ? 'selected' : ''}>Evet</option><option ${task.showOnCalendar === 'Hayır' ? 'selected' : ''}>Hayır</option></select></div>
+
               <div class="field"><label>Takvim Tarihi</label><input id="calendarDate" type="date" value="${esc(task.calendarDate || task.targetEndDate || today())}" /></div>
               <div class="field"><label>Takvim Başlığı</label><input id="calendarTitle" value="${esc(task.calendarTitle || task.mainCategory)}" placeholder="ana kategori" /></div>
               <div class="field task-note-compact"><label>Takvim Notu</label><textarea id="calendarNote" placeholder="Takvim pop-up için kısa ve genel not.">${esc(task.calendarNote)}</textarea></div>
+
+              <div class="field span-2 task-description-compact"><label>İşin Açıklaması</label><textarea id="description" placeholder="İşin kapsamını, beklentisini ve açıklamasını yazın.">${esc(task.description)}</textarea></div>
               <div class="field task-file-compact">
                 <label>Dosya</label>
                 <input type="file" id="taskFileUpload" onchange="App.handleTaskFile(event)">
@@ -6054,6 +6170,7 @@ function exportSocialCsv() {
                 <div id="taskFilePreview" class="file-upload-preview">${uploadFilePreviewHtml(task.fileName, task.fileDataUrl, task.fileSize, task.fileType, task.fileLink, "Dosya yüklenmedi.")}</div>
                 <small>2 MB altındaki dosyalar önerilir.</small>
               </div>
+
               <div class="field task-note-compact"><label>Son Güncelleme Notu</label><textarea id="updateNote" placeholder="Herkesin güncel durumu anlayacağı kısa not.">${esc(task.updateNote)}</textarea></div>
               <div class="field task-note-compact"><label>Tamamlanma Notu</label><textarea id="completionNote" placeholder="İş kapatılırken sonuç bilgisi.">${esc(task.completionNote)}</textarea></div>
               <div class="field task-note-compact"><label>Gecikme Nedeni</label><textarea id="delayReason" placeholder="Süresi geçen işler için açıklama.">${esc(task.delayReason)}</textarea></div>
@@ -6065,6 +6182,7 @@ function exportSocialCsv() {
             </div>
           </form>
         `;
+        setupHelperSelectToggle();
       }
 
       function categoryChanged() {
