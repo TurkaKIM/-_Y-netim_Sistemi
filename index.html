@@ -8118,7 +8118,7 @@ body {
 
             <div class="panel chart3d-card" style="margin-top:16px">
   <h3>Personel Bazlı Faaliyet ve Performans Analizi</h3>
-  <p class="muted">İş yükü, tamamlanan/açık/geciken işler, sosyal medya, toplantı/ziyaret, fikir ve içerik asistanı kullanımı gösterilir.</p>
+  <p class="muted">İş yükü, tamamlanan/açık/geciken işler, sosyal medya, toplantı/ziyaret, fikir ve içerik asistanı kullanım grafiği</p>
   ${chart3DBox("chartPersonWorkload")}
   ${activityPersonTable(personRows)}
 </div>
@@ -8129,7 +8129,7 @@ body {
   ${chart3DPanel("Kurumsal İçerik Asistanı Çıktı Dağılımı", "chartAssistantOutput", "Çıktı türlerine göre dağılım grafiği")}
   <div class="panel chart3d-card">
     <h3>İçerik Fikri - Ay Bazlı</h3>
-    <p class="muted">Aylara göre fikir trendi.</p>
+    <p class="muted">Aylara göre fikir trend grafiği</p>
     ${chart3DBox("chartIdeaMonth")}
     ${dateRowsTable(ideaMonthRows, "Fikir Sayısı")}
   </div>
@@ -8145,7 +8145,7 @@ body {
 
   <div class="panel chart3d-card">
     <h3>Kurumsal İçerik Asistanı - Hafta Bazlı</h3>
-    <p class="muted">Haftalık AI kullanım trendi.</p>
+    <p class="muted">Haftalık AI kullanım trend grafiği</p>
     ${chart3DBox("chartAssistantWeek")}
     ${dateRowsTable(assistantWeekRows, "Kullanım")}
   </div>
