@@ -2238,12 +2238,11 @@ function setupStreamlitAiBridge() {
   if (!streamlitApi || typeof streamlitApi.setComponentValue !== "function") return;
 
   const syncFrameHeight = () => {
-    const height = Math.max(
-      window.innerHeight || 0,
-      document.documentElement?.clientHeight || 0,
-      document.body?.scrollHeight || 0,
-      900
-    );
+    const height =
+      window.innerHeight ||
+      document.documentElement?.clientHeight ||
+      720;
+
     streamlitApi.setFrameHeight(height);
   };
 
@@ -7565,6 +7564,64 @@ function exportAnnualScorecardPdf() {
         @media print {
           body { padding: 12mm; }
         }
+        /* --- Login tam ekran gri şerit düzeltmesi --- */
+
+html,
+body {
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+}
+
+#loginPage.login-page {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  display: grid !important;
+  place-items: center !important;
+  background-color: #ffffff !important;
+  background-image: url("login-bg.jpg") !important;
+  background-size: cover !important;
+  background-position: center bottom !important;
+  background-repeat: no-repeat !important;
+}
+
+#loginPage.login-page::before,
+#loginPage.login-page::after {
+  content: none !important;
+  display: none !important;
+  animation: none !important;
+  background: none !important;
+}
+
+#loginPage .login-card {
+  max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
+}
+
+@media (max-height: 760px) {
+  #loginPage .login-card {
+    min-height: 0;
+    height: calc(100vh - 24px);
+    height: calc(100dvh - 24px);
+  }
+
+  #loginPage .login-hero,
+  #loginPage .login-form-wrap {
+    padding: 32px;
+  }
+}
       </style>
     </head>
     <body>
@@ -7990,6 +8047,7 @@ function exportAnnualScorecardPdf() {
   render3DWaveAreaChart("chartTaskMonthly", monthlyTaskData, "Aylık İş Sayısı Detayı", "İş Sayısı");
   render3DBarChart("chartCompletionDays", completionDayChartRows, "İşlerin Tamamlanma Gün Sayıları", "Gün");
 }, 160);
+      }
 
       function countBy(items, getter) {
         return items.reduce((acc, item) => {
@@ -8130,12 +8188,61 @@ function renderAnimatedLineChart(id, rows, title = "", yTitle = "Sayı") {
   const labels = cleanRows.map(row => row.label);
   const values = cleanRows.map(row => row.total);
 
-  const frames = labels.map((_, index) => ({
+onst frames = labels.map((_, index) => ({
     data: [{
       x: labels.slice(0, index + 1),
       y: values.slice(0, index + 1)
     }]
   }));
+
+  const trace = {
+    type: "scatter",
+    mode: "lines+markers",
+    x: [labels[0]],
+    y: [values[0]],
+    line: {
+      shape: "spline",
+      width: 3
+    },
+    marker: {
+      size: 8
+    },
+    hovertemplate: "%{x}<br>" + yTitle + ": %{y}<extra></extra>"
+  };
+
+  const layout = {
+    margin: { l: 48, r: 24, t: 16, b: 54 },
+    paper_bgcolor: "rgba(0,0,0,0)",
+    plot_bgcolor: "rgba(0,0,0,0)",
+    font: {
+      family: 'Inter, "Segoe UI", Roboto, Arial, sans-serif',
+      size: 12
+    },
+    xaxis: {
+      fixedrange: true,
+      automargin: true
+    },
+    yaxis: {
+      title: { text: yTitle },
+      rangemode: "tozero",
+      fixedrange: true
+    },
+    showlegend: false
+  };
+
+  const config = {
+    displayModeBar: false,
+    responsive: true
+  };
+
+  Plotly.newPlot(node, [trace], layout, config).then(() => {
+    Plotly.animate(node, frames, {
+      frame: { duration: 120, redraw: true },
+      transition: { duration: 80 },
+      mode: "immediate"
+    });
+  });
+}
 function chart3DBox(id) {
   return `<div id="${esc(id)}" class="chart3d-box"></div>`;
 }
@@ -8496,55 +8603,7 @@ function render3DDonutChart(id, rows, title = "") {
 
   Plotly.newPlot(node, [trace], layout, chart3DConfig());
 }
-  const trace = {
-    type: "scatter",
-    mode: "lines+markers",
-    x: [labels[0]],
-    y: [values[0]],
-    line: {
-      shape: "spline",
-      width: 3
-    },
-    marker: {
-      size: 8
-    },
-    hovertemplate: "%{x}<br>" + yTitle + ": %{y}<extra></extra>"
-  };
-
-  const layout = {
-    margin: { l: 48, r: 24, t: 16, b: 54 },
-    paper_bgcolor: "rgba(0,0,0,0)",
-    plot_bgcolor: "rgba(0,0,0,0)",
-    font: {
-      family: 'Inter, "Segoe UI", Roboto, Arial, sans-serif',
-      size: 12
-    },
-    xaxis: {
-      fixedrange: true,
-      automargin: true
-    },
-    yaxis: {
-      title: { text: yTitle },
-      rangemode: "tozero",
-      fixedrange: true
-    },
-    showlegend: false
-  };
-
-  const config = {
-    displayModeBar: false,
-    responsive: true
-  };
-
-  Plotly.newPlot(node, [trace], layout, config).then(() => {
-    Plotly.animate(node, frames, {
-      frame: { duration: 120, redraw: true },
-      transition: { duration: 80 },
-      mode: "immediate"
-    });
-  });
-}
-
+  
 const CORPORATE_LOTTIE_DATA = {
   v: "5.7.4",
   fr: 30,
