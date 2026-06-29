@@ -2270,7 +2270,7 @@ body {
       <header class="topbar">
         <div>
           <h1 id="topTitle">Anasayfa</h1>
-          <div id="topSub" class="sub">Günün özeti, takvim ve aktif işler</div>
+          <div id="topSub" class="sub">Bildirimler, takvim ve aktif işler</div>
         </div>
         <div class="btn-row">
           <button class="btn secondary small" onclick="App.showProfile()">Profil / Şifre</button>
@@ -3402,7 +3402,7 @@ function toast(message) {
 
       function showDashboard() {
         state.viewKey = "dashboard";
-        setTitle("Anasayfa", "Günün özeti, bildirimler, takvim ve aktif işler");
+        setTitle("Anasayfa", "Bildirimler, takvim ve aktif işler");
         generateAutomaticNotifications();
         const counts = taskCounts();
         const openTasks = visibleTasks().filter(isOpen).sort((a,b) => String(a.targetEndDate).localeCompare(String(b.targetEndDate)));
@@ -3423,36 +3423,15 @@ function toast(message) {
             <button class="stat-card" onclick="App.showTaskList('completed')"><div class="label">Tamamlanan</div><div class="num success-text">${counts.completed}</div><div class="hint">Kapanan işler</div></button>
           </div>
           <div class="marquee"><span>${esc(marquee)}</span></div>
-          ${dailyCorporateAssistantHtml()}
           <div class="dashboard-grid">
   <div class="panel">${calendarHtml()}</div>
   <div>
-    ${dailySummaryHtml()}
+    ${dailyCorporateAssistantHtml()}
     ${notificationsHtml()}
   </div>
 </div>
-<div class="panel" style="margin-top:16px">
-            <div class="page-head" style="margin-bottom:10px"><div><h2 style="font-size:20px">Bana Atanan İşler</h2><p>Kendi sorumluluğunuzdaki ve yardımcı olduğunuz açık işler.</p></div><button class="btn secondary small" onclick="App.showTaskList('mine')">Tümünü gör</button></div>
-            ${miniTaskTable(openTasks.filter(isMine).slice(0, 8))}
-          </div>
         `;
         setTimeout(() => { showEntryPopupAlerts(); autoRefreshDailyAssistant(); }, 120);
-      }
-
-      function dailySummaryHtml() {
-        const tasks = visibleTasks();
-        const todayTasks = tasks.filter(t => isOpen(t) && (t.calendarDate === today() || t.targetEndDate === today()));
-        const dueTomorrow = tasks.filter(t => isOpen(t) && diffDays(today(), t.targetEndDate) === 1);
-        const overdue = tasks.filter(isOverdue);
-        return `
-          <div class="panel summary-card">
-            <h3>Günün Özeti</h3>
-            <div class="summary-list">
-              <div class="mini-item"><div><strong>Bugün takvimde / hedefte</strong><span>${todayTasks.length} iş</span></div><button class="btn secondary small" onclick="App.showTaskList('today')">Aç</button></div>
-              <div class="mini-item"><div><strong>Yarın tamamlanacak</strong><span>${dueTomorrow.length} iş</span></div><button class="btn secondary small" onclick="App.showTaskList('tomorrow')">Aç</button></div>
-              <div class="mini-item"><div><strong>Gecikmiş açık iş</strong><span>${overdue.length} iş</span></div><button class="btn secondary small" onclick="App.showTaskList('overdue')">Aç</button></div>
-            </div>
-          </div>`;
       }
 
       function notificationsHtml() {
