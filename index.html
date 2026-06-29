@@ -1461,6 +1461,32 @@ body.ux-dark .timeline-desc-inner {
   display: block;
   border-radius: 12px;
 }
+
+.task-description-compact textarea {
+  min-height: 66px;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.task-file-compact {
+  max-width: 760px;
+}
+.task-file-compact input[type="file"] {
+  padding: 9px 10px;
+  font-size: 12.5px;
+}
+.task-file-compact .file-upload-preview {
+  min-height: 56px;
+  padding: 8px 10px;
+  gap: 5px;
+  font-size: 12px;
+  border-radius: 13px;
+}
+.task-file-compact .file-upload-preview img {
+  max-height: 120px;
+}
+.task-file-compact small {
+  font-size: 11.5px;
+}
 .file-upload-preview a {
   font-weight: 800;
   word-break: break-word;
@@ -5922,7 +5948,7 @@ function exportSocialCsv() {
         $('taskRows').innerHTML = `<div class="table-wrap"><table><thead><tr><th>İş No</th><th>İş Adı</th><th>Kategori</th><th>Sorumlu / Yardımcı</th><th>Tarih</th><th>Durum</th><th>Öncelik</th><th>İşlem</th></tr></thead><tbody>
           ${tasks.map(task => `<tr>
             <td><b>${esc(task.workNo)}</b></td>
-            <td><b>${esc(task.title)}</b><br><small class="muted">${esc(task.requester || '')}</small>${isOverdue(task) ? '<br><small class="danger-text"><b>Gecikmiş</b></small>' : ''}</td>
+            <td><b>${esc(task.title)}</b>${isOverdue(task) ? '<br><small class="danger-text"><b>Gecikmiş</b></small>' : ''}</td>
             <td>${esc(task.mainCategory)}<br><small class="muted">${esc(task.subCategory || '')}</small></td>
             <td>${esc(userName(task.responsibleId))}<br><small class="muted">${(task.helperIds || []).map(userName).map(esc).join(', ') || 'Yardımcı yok'}</small></td>
             <td>Başlangıç: ${formatDate(task.startDate)}<br>Hedef: <b>${formatDate(task.targetEndDate)}</b>${task.actualEndDate ? `<br>Fiili: ${formatDate(task.actualEndDate)}` : ''}</td>
@@ -6001,22 +6027,20 @@ function exportSocialCsv() {
               <div class="field"><label>Ana Kategori *</label><select id="mainCategory" required onchange="App.categoryChanged()">${categoryOptions(task.mainCategory)}</select></div>
               <div class="field"><label>Alt Kategori *</label><select id="subCategory" required>${subCategoryOptions(task.mainCategory, task.subCategory)}</select></div>
               <div class="field"><label>Çıktı Türü</label><select id="outputType">${OUTPUT_TYPES.map(x => `<option ${task.outputType === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
-              <div class="field span-3"><label>İşin Açıklaması</label><textarea id="description" placeholder="İşin kapsamını, beklentisini ve açıklamasını yazın.">${esc(task.description)}</textarea></div>
-              <div class="field"><label>Talep Eden</label><input id="requester" value="${esc(task.requester)}" placeholder="Kişi / birim" /></div>
+              <div class="field span-3 task-description-compact"><label>İşin Açıklaması</label><textarea id="description" placeholder="İşin kapsamını, beklentisini ve açıklamasını yazın.">${esc(task.description)}</textarea></div>
               <div class="field"><label>Sorumlu Personel *</label><select id="responsibleId" required>${userOptions(task.responsibleId, true)}</select></div>
-              <div class="field"><label>Yardımcı Personel</label><select id="helperIds" multiple size="4">${multiUserOptions(task.helperIds || [])}</select><small>Ctrl / Cmd ile birden fazla seçim yapılabilir.</small></div>
+              <div class="field span-2"><label>Yardımcı Personel</label><select id="helperIds" multiple size="4">${multiUserOptions(task.helperIds || [])}</select><small>Ctrl / Cmd ile birden fazla seçim yapılabilir.</small></div>
               <div class="field"><label>Öncelik</label><select id="priority">${PRIORITIES.map(x => `<option ${task.priority === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
+              <div class="field"><label>Gizlilik Düzeyi</label><select id="confidentiality">${CONFIDENTIALITY.map(x => `<option ${task.confidentiality === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
+              <div class="field"><label>Durum</label><select id="status" onchange="App.statusChanged()">${STATUS.map(x => `<option ${task.status === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
               <div class="field"><label>Başlangıç Tarihi</label><input id="startDate" type="date" value="${esc(task.startDate)}" /></div>
               <div class="field"><label>Hedef Bitiş Tarihi *</label><input id="targetEndDate" type="date" required value="${esc(task.targetEndDate)}" /></div>
+              <div class="field"><label>Fiili Bitiş Tarihi</label><input id="actualEndDate" type="date" value="${esc(task.actualEndDate)}" /></div>
               <div class="field"><label>Takvimde Gösterilsin mi?</label><select id="showOnCalendar"><option ${task.showOnCalendar === 'Evet' ? 'selected' : ''}>Evet</option><option ${task.showOnCalendar === 'Hayır' ? 'selected' : ''}>Hayır</option></select></div>
               <div class="field"><label>Takvim Tarihi</label><input id="calendarDate" type="date" value="${esc(task.calendarDate || task.targetEndDate || today())}" /></div>
               <div class="field"><label>Takvim Başlığı</label><input id="calendarTitle" value="${esc(task.calendarTitle || task.mainCategory)}" placeholder="ana kategori" /></div>
               <div class="field span-3"><label>Takvim Notu</label><textarea id="calendarNote" placeholder="Takvim pop-up için kısa ve genel not.">${esc(task.calendarNote)}</textarea></div>
-              <div class="field"><label>Durum</label><select id="status" onchange="App.statusChanged()">${STATUS.map(x => `<option ${task.status === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
-              <div class="field"><label>Onay Gerekiyor mu?</label><select id="approvalRequired"><option ${task.approvalRequired === 'Hayır' ? 'selected' : ''}>Hayır</option><option ${task.approvalRequired === 'Evet' ? 'selected' : ''}>Evet</option></select></div>
-              <div class="field"><label>Fiili Bitiş Tarihi</label><input id="actualEndDate" type="date" value="${esc(task.actualEndDate)}" /></div>
-              <div class="field"><label>Gizlilik Düzeyi</label><select id="confidentiality">${CONFIDENTIALITY.map(x => `<option ${task.confidentiality === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
-              <div class="field span-3">
+              <div class="field span-2 task-file-compact">
                 <label>Dosya</label>
                 <input type="file" id="taskFileUpload" onchange="App.handleTaskFile(event)">
                 <input id="fileLink" type="hidden" value="${esc(task.fileLink || "")}" />
@@ -6025,7 +6049,7 @@ function exportSocialCsv() {
                 <input id="taskFileType" type="hidden" value="${esc(task.fileType || "")}" />
                 <input id="taskFileSize" type="hidden" value="${esc(task.fileSize || 0)}" />
                 <div id="taskFilePreview" class="file-upload-preview">${uploadFilePreviewHtml(task.fileName, task.fileDataUrl, task.fileSize, task.fileType, task.fileLink, "Dosya yüklenmedi.")}</div>
-                <small>Dosya uygulama verisi içinde saklanır. Sistemin hızlı ve stabil çalışması için 2 MB altında dosya kullanın.</small>
+                <small>2 MB altındaki dosyalar önerilir.</small>
               </div>
               <div class="field span-3"><label>Son Güncelleme Notu</label><textarea id="updateNote" placeholder="Herkesin güncel durumu anlayacağı kısa not.">${esc(task.updateNote)}</textarea></div>
               <div class="field span-3"><label>Tamamlanma Notu</label><textarea id="completionNote" placeholder="İş kapatılırken sonuç bilgisi.">${esc(task.completionNote)}</textarea></div>
@@ -6060,14 +6084,14 @@ function exportSocialCsv() {
           mainCategory: $("mainCategory").value,
           subCategory: $("subCategory").value,
           description: $("description").value.trim(),
-          requester: $("requester").value.trim(),
+          requester: existing?.requester || "",
           responsibleId,
           helperIds: cleanedHelpers,
           priority: $("priority").value,
           startDate: $("startDate").value,
           targetEndDate: $("targetEndDate").value,
           status: $("status").value,
-          approvalRequired: $("approvalRequired").value,
+          approvalRequired: "Hayır",
           fileLink: $("fileLink")?.value.trim() || "",
           fileName: $("taskFileName")?.value || "",
           fileDataUrl: $("taskFileData")?.value || "",
@@ -6199,7 +6223,6 @@ showDashboard();
             ${detail("İş Adı", task.title)}
             ${detail("Ana Kategori", task.mainCategory)}
             ${detail("Alt Kategori", task.subCategory)}
-            ${detail("Talep Eden", task.requester)}
             ${detail("Sorumlu Personel", userName(task.responsibleId))}
             ${detail("Yardımcı Personel", helpers)}
             ${detail("Öncelik", task.priority)}
@@ -6207,7 +6230,6 @@ showDashboard();
             ${detail("Hedef Bitiş Tarihi", formatDate(task.targetEndDate))}
             ${detail("Fiili Bitiş Tarihi", formatDate(task.actualEndDate))}
             ${detail("Durum", task.status)}
-            ${detail("Onay Gerekiyor mu?", task.approvalRequired)}
             ${detail("Çıktı Türü", task.outputType)}
             ${detail("Gizlilik Düzeyi", task.confidentiality)}
             ${detail("Dosya", uploadFilePreviewHtml(task.fileName, task.fileDataUrl, task.fileSize, task.fileType, task.fileLink, "Dosya yüklenmedi."), true, true)}
