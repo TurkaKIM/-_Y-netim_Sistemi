@@ -6010,7 +6010,7 @@ function exportSocialCsv() {
               <div class="field"><label>Hedef Bitiş Tarihi *</label><input id="targetEndDate" type="date" required value="${esc(task.targetEndDate)}" /></div>
               <div class="field"><label>Takvimde Gösterilsin mi?</label><select id="showOnCalendar"><option ${task.showOnCalendar === 'Evet' ? 'selected' : ''}>Evet</option><option ${task.showOnCalendar === 'Hayır' ? 'selected' : ''}>Hayır</option></select></div>
               <div class="field"><label>Takvim Tarihi</label><input id="calendarDate" type="date" value="${esc(task.calendarDate || task.targetEndDate || today())}" /></div>
-              <div class="field"><label>Takvim Başlığı</label><input id="calendarTitle" value="${esc(task.calendarTitle || task.mainCategory)}" placeholder="Otomatik ana kategori" /></div>
+              <div class="field"><label>Takvim Başlığı</label><input id="calendarTitle" value="${esc(task.calendarTitle || task.mainCategory)}" placeholder="ana kategori" /></div>
               <div class="field span-3"><label>Takvim Notu</label><textarea id="calendarNote" placeholder="Takvim pop-up için kısa ve genel not.">${esc(task.calendarNote)}</textarea></div>
               <div class="field"><label>Durum</label><select id="status" onchange="App.statusChanged()">${STATUS.map(x => `<option ${task.status === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
               <div class="field"><label>Onay Gerekiyor mu?</label><select id="approvalRequired"><option ${task.approvalRequired === 'Hayır' ? 'selected' : ''}>Hayır</option><option ${task.approvalRequired === 'Evet' ? 'selected' : ''}>Evet</option></select></div>
@@ -6274,7 +6274,7 @@ showDashboard();
         <div class="field span-3">
           <label>Ham Metin *</label>
           <textarea id="contentRawText" style="min-height:220px" placeholder="Toplantı notu, ziyaret bilgisi, etkinlik özeti veya duyuru metnini buraya yapıştırın."></textarea>
-          <small>Üretilecek içerikler Admin &gt; Yapay Zekâ Prompt Yönetimi alanındaki promptlara göre oluşturulur.</small>
+          <small>Üretilecek içerikler ham metinde verilen hususlara göre oluşturulur.</small>
         </div>
 
         <div class="field span-3">
