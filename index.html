@@ -1462,30 +1462,33 @@ body.ux-dark .timeline-desc-inner {
   border-radius: 12px;
 }
 
-.task-description-compact textarea {
-  min-height: 66px;
+.task-description-compact textarea,
+.task-note-compact textarea {
+  height: 88px;
+  min-height: 88px;
   font-size: 12.5px;
-  line-height: 1.45;
+  line-height: 1.4;
+  padding: 10px 11px;
 }
 .task-file-compact {
-  max-width: 760px;
+  max-width: 100%;
 }
 .task-file-compact input[type="file"] {
-  padding: 9px 10px;
-  font-size: 12.5px;
+  padding: 7px 9px;
+  font-size: 12px;
 }
 .task-file-compact .file-upload-preview {
-  min-height: 56px;
-  padding: 8px 10px;
-  gap: 5px;
-  font-size: 12px;
-  border-radius: 13px;
+  min-height: 38px;
+  padding: 6px 8px;
+  gap: 4px;
+  font-size: 11.5px;
+  border-radius: 12px;
 }
 .task-file-compact .file-upload-preview img {
-  max-height: 120px;
+  max-height: 82px;
 }
 .task-file-compact small {
-  font-size: 11.5px;
+  font-size: 11px;
 }
 .file-upload-preview a {
   font-weight: 800;
@@ -6027,7 +6030,7 @@ function exportSocialCsv() {
               <div class="field"><label>Ana Kategori *</label><select id="mainCategory" required onchange="App.categoryChanged()">${categoryOptions(task.mainCategory)}</select></div>
               <div class="field"><label>Alt Kategori *</label><select id="subCategory" required>${subCategoryOptions(task.mainCategory, task.subCategory)}</select></div>
               <div class="field"><label>Çıktı Türü</label><select id="outputType">${OUTPUT_TYPES.map(x => `<option ${task.outputType === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
-              <div class="field span-3 task-description-compact"><label>İşin Açıklaması</label><textarea id="description" placeholder="İşin kapsamını, beklentisini ve açıklamasını yazın.">${esc(task.description)}</textarea></div>
+              <div class="field span-2 task-description-compact"><label>İşin Açıklaması</label><textarea id="description" placeholder="İşin kapsamını, beklentisini ve açıklamasını yazın.">${esc(task.description)}</textarea></div>
               <div class="field"><label>Sorumlu Personel *</label><select id="responsibleId" required>${userOptions(task.responsibleId, true)}</select></div>
               <div class="field span-2"><label>Yardımcı Personel</label><select id="helperIds" multiple size="4">${multiUserOptions(task.helperIds || [])}</select><small>Ctrl / Cmd ile birden fazla seçim yapılabilir.</small></div>
               <div class="field"><label>Öncelik</label><select id="priority">${PRIORITIES.map(x => `<option ${task.priority === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
@@ -6039,8 +6042,8 @@ function exportSocialCsv() {
               <div class="field"><label>Takvimde Gösterilsin mi?</label><select id="showOnCalendar"><option ${task.showOnCalendar === 'Evet' ? 'selected' : ''}>Evet</option><option ${task.showOnCalendar === 'Hayır' ? 'selected' : ''}>Hayır</option></select></div>
               <div class="field"><label>Takvim Tarihi</label><input id="calendarDate" type="date" value="${esc(task.calendarDate || task.targetEndDate || today())}" /></div>
               <div class="field"><label>Takvim Başlığı</label><input id="calendarTitle" value="${esc(task.calendarTitle || task.mainCategory)}" placeholder="ana kategori" /></div>
-              <div class="field span-3"><label>Takvim Notu</label><textarea id="calendarNote" placeholder="Takvim pop-up için kısa ve genel not.">${esc(task.calendarNote)}</textarea></div>
-              <div class="field span-2 task-file-compact">
+              <div class="field task-note-compact"><label>Takvim Notu</label><textarea id="calendarNote" placeholder="Takvim pop-up için kısa ve genel not.">${esc(task.calendarNote)}</textarea></div>
+              <div class="field task-file-compact">
                 <label>Dosya</label>
                 <input type="file" id="taskFileUpload" onchange="App.handleTaskFile(event)">
                 <input id="fileLink" type="hidden" value="${esc(task.fileLink || "")}" />
@@ -6051,9 +6054,9 @@ function exportSocialCsv() {
                 <div id="taskFilePreview" class="file-upload-preview">${uploadFilePreviewHtml(task.fileName, task.fileDataUrl, task.fileSize, task.fileType, task.fileLink, "Dosya yüklenmedi.")}</div>
                 <small>2 MB altındaki dosyalar önerilir.</small>
               </div>
-              <div class="field span-3"><label>Son Güncelleme Notu</label><textarea id="updateNote" placeholder="Herkesin güncel durumu anlayacağı kısa not.">${esc(task.updateNote)}</textarea></div>
-              <div class="field span-3"><label>Tamamlanma Notu</label><textarea id="completionNote" placeholder="İş kapatılırken sonuç bilgisi.">${esc(task.completionNote)}</textarea></div>
-              <div class="field span-3"><label>Gecikme Nedeni</label><textarea id="delayReason" placeholder="Süresi geçen işler için açıklama.">${esc(task.delayReason)}</textarea></div>
+              <div class="field task-note-compact"><label>Son Güncelleme Notu</label><textarea id="updateNote" placeholder="Herkesin güncel durumu anlayacağı kısa not.">${esc(task.updateNote)}</textarea></div>
+              <div class="field task-note-compact"><label>Tamamlanma Notu</label><textarea id="completionNote" placeholder="İş kapatılırken sonuç bilgisi.">${esc(task.completionNote)}</textarea></div>
+              <div class="field task-note-compact"><label>Gecikme Nedeni</label><textarea id="delayReason" placeholder="Süresi geçen işler için açıklama.">${esc(task.delayReason)}</textarea></div>
             </div>
             <div class="form-actions btn-row">
               <button class="btn" type="submit">Kaydet ve Anasayfaya Dön</button>
