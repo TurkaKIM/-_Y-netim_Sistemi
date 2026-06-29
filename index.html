@@ -1441,6 +1441,47 @@ body.ux-dark .timeline-desc-inner {
 .social-channel-card span {
   line-height: 1.15;
 }
+
+.file-upload-preview {
+  min-height: 98px;
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  border: 1px dashed rgba(200,16,46,.28);
+  border-radius: 16px;
+  padding: 12px;
+  background: #fffafa;
+  color: var(--muted);
+  text-align: center;
+}
+.file-upload-preview img {
+  max-width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+  display: block;
+  border-radius: 12px;
+}
+.file-upload-preview a {
+  font-weight: 800;
+  word-break: break-word;
+}
+.meeting-compact-pair {
+  grid-column: span 3;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.meeting-compact-pair .field { margin-bottom: 0; }
+.meeting-compact-pair textarea { min-height: 82px; }
+.content-output-groups { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.content-output-group {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px;
+  background: linear-gradient(180deg, #fff, #fffafa);
+}
+.content-output-group h3 { margin: 0 0 10px; color: var(--turkak-red); font-size: 14px; }
+@media (max-width: 820px) { .meeting-compact-pair { grid-template-columns: 1fr; } }
 .activity-table-small table { min-width: 760px; }
 @media (max-width: 820px) {
   .content-output-grid {
@@ -2567,29 +2608,33 @@ const BRAND_LIBRARY_TITLES = ["TÜRKAK Logosu", "TÜRKAK Markası", "Doğru / ya
 const IDEA_STATUS = ["Fikir", "Araştırılıyor", "Metin hazırla", "Görsel hazırla", "Tamamlandı"];
 const AI_PROMPT_AREAS = [
   ["contentAssistant", "Kurumsal İçerik Asistanı - Genel"],
-  ["content_title", "Başlık Öner"],
-  ["content_spot", "Spot Metin Öner"],
-  ["content_web_news", "Kurumsal Web Sitesi Haberi"],
+  ["content_title", "Haber Başlığı"],
+  ["content_spot", "Spot Metin"],
+  ["content_web_news", "Haber Metni"],
+  ["content_english_news", "Haber Metni (İngilizce)"],
   ["content_linkedin", "LinkedIn Paylaşımı"],
   ["content_x", "X Paylaşımı"],
   ["content_instagram", "Instagram Paylaşımı"],
-  ["content_bulletin", "Bülten Metni"],
-  ["content_english_news", "İngilizce Haber Versiyonu"],
-  ["content_press_note", "Basın Notu"],
+  ["content_nsocial", "Nsosyal Paylaşımı"],
+  ["content_bluesky", "Bluesky Paylaşımı"],
   ["dailyAssistant", "Günün Kurumsal İletişim Asistanı"],
   ["ideaPool", "İçerik Fikir Havuzu"],
   ["sensitiveChecker", "Hassas İçerik Uyarı Sistemi"]
 ];
 const CONTENT_OUTPUTS = [
-  ["title", "Başlık Öner", "content_title"],
-  ["spot", "Spot Metin Öner", "content_spot"],
-  ["web_news", "Kurumsal Web Sitesi Haberi", "content_web_news"],
+  ["title", "Haber Başlığı", "content_title"],
+  ["spot", "Spot Metin", "content_spot"],
+  ["web_news", "Haber Metni", "content_web_news"],
+  ["english_news", "Haber Metni (İngilizce)", "content_english_news"],
   ["linkedin_post", "LinkedIn Paylaşımı", "content_linkedin"],
   ["x_post", "X Paylaşımı", "content_x"],
   ["instagram_post", "Instagram Paylaşımı", "content_instagram"],
-  ["bulletin_text", "Bülten Metni", "content_bulletin"],
-  ["english_news", "İngilizce Haber Versiyonu", "content_english_news"],
-  ["press_note", "Basın Notu", "content_press_note"]
+  ["nsocial_post", "Nsosyal Paylaşımı", "content_nsocial"],
+  ["bluesky_post", "Bluesky Paylaşımı", "content_bluesky"]
+];
+const CONTENT_OUTPUT_GROUPS = [
+  ["TÜRKAK Web Sayfası", ["title", "spot", "web_news", "english_news"]],
+  ["Sosyal Medya", ["linkedin_post", "x_post", "instagram_post", "nsocial_post", "bluesky_post"]]
 ];
 
       const CATEGORIES = {
@@ -2972,15 +3017,15 @@ function saveMaterialLogs(items) { store.set(KEYS.materialLogs, items.slice(-150
 function defaultAiPrompts() {
   return {
     contentAssistant: "Ham metni TÜRKAK kurumsal diliyle, resmi, sade, açıklayıcı ve yayınlanabilir çıktı formatlarına dönüştür.",
-    content_title: "Ham metinden haber diline uygun, kısa ve güçlü başlık önerileri üret.",
+    content_title: "Ham metinden haber diline uygun, kısa ve güçlü haber başlığı önerileri üret.",
     content_spot: "Ham metinden tek paragraflık, açıklayıcı ve kurumsal spot metin üret.",
     content_web_news: "TÜRKAK web sitesi için amaç, kapsam, teknik bilgi paylaşımı, iş birliği ve kurumsal katkı vurgusu içeren haber metni üret.",
+    content_english_news: "Haber metninin İngilizce versiyonunu üret; Turkey yerine Türkiye, assessment/evaluation terim tercihlerini uygula.",
     content_linkedin: "LinkedIn için kurumsal, bilgilendirici, profesyonel ve paylaşılabilir bir metin üret.",
     content_x: "X için kısa, net, resmi ve etkili bir paylaşım metni üret.",
     content_instagram: "Instagram için sade, anlaşılır, kurumsal ve görselle uyumlu paylaşım metni üret.",
-    content_bulletin: "TÜRKAK Bülteni için daha açıklayıcı, akıcı ve kurumsal bülten metni üret.",
-    content_english_news: "İngilizce haber versiyonunu üret; Turkey yerine Türkiye, assessment/evaluation terim tercihlerini uygula.",
-    content_press_note: "Basına verilebilecek kısa, resmi ve haber değeri taşıyan basın notu üret.",
+    content_nsocial: "Nsosyal için kısa, yerli platform diline uygun, resmi ve anlaşılır bir paylaşım metni üret.",
+    content_bluesky: "Bluesky için kısa, doğal, kurumsal ve paylaşılabilir bir metin üret.",
     dailyAssistant: "Günün iş, toplantı, sosyal medya ve gecikme verilerini değerlendir; kullanıcıya bugün neye odaklanması gerektiğini kısa ve aksiyon odaklı anlat.",
     ideaPool: "Kullanıcının başlık ve fikir notunu geliştir; uygulanabilir haber/sosyal medya önerisi, hedef kitle, çıktı önerileri ve görsel yaklaşım üret.",
     sensitiveChecker: "Metni hassas içerik açısından denetle; fazla iddialı ifade, resmi dile uygun olmayan ifade, yanlış kurum adı, eksik unvan, yanlış tarih, politik hassasiyet ve akreditasyon terminolojisi risklerini açık uyarılar halinde raporla."
@@ -4157,11 +4202,6 @@ function showMeetingForm(id = null) {
           </select>
         </div>
 
-        <div class="field span-3">
-          <label>Ziyaret Eden Kurum / Kişi *</label>
-          <input id="meetingVisitorName" required value="${esc(item.visitorName)}" placeholder="Kurum, heyet, kişi veya misafir adı">
-        </div>
-
         <div class="field">
           <label>Ziyaret Başlangıç Tarihi *</label>
           <input id="meetingVisitStartDate" type="date" required value="${esc(item.visitStartDate)}">
@@ -4180,45 +4220,51 @@ function showMeetingForm(id = null) {
 </div>
 
         <div class="field span-3">
-          <label>Katılımcılar</label>
-          <textarea id="meetingParticipants" placeholder="TÜRKAK katılımcıları, misafir katılımcılar, protokol bilgileri...">${esc(item.participants)}</textarea>
+          <label>Ziyaret Eden Kurum / Kişi *</label>
+          <input id="meetingVisitorName" required value="${esc(item.visitorName)}" placeholder="Kurum, heyet, kişi veya misafir adı">
         </div>
 
-        <div class="field span-3">
-          <label>Görüşme Konusu *</label>
-          <textarea id="meetingSubject" required placeholder="Toplantı / ziyaret / heyet kabulü / protokol / etkinlik konusu">${esc(item.subject)}</textarea>
+        <div class="meeting-compact-pair">
+          <div class="field">
+            <label>Katılımcılar</label>
+            <textarea id="meetingParticipants" placeholder="TÜRKAK katılımcıları, misafir katılımcılar, protokol bilgileri...">${esc(item.participants)}</textarea>
+          </div>
+          <div class="field">
+            <label>Görüşme Konusu *</label>
+            <textarea id="meetingSubject" required placeholder="Toplantı / ziyaret / heyet kabulü / protokol / etkinlik konusu">${esc(item.subject)}</textarea>
+          </div>
         </div>
 
         <div class="field">
-          <label>Fotoğraf Çekimi Yapılacak mı?</label>
+          <label>Fotoğraf Çekimi</label>
           <select id="meetingPhotoRequired">
             ${YES_NO.map(value => `<option ${item.photoRequired === value ? "selected" : ""}>${esc(value)}</option>`).join("")}
           </select>
         </div>
 
         <div class="field">
-          <label>Hediye Takdimi Yapılacak mı?</label>
+          <label>Hediye Takdimi</label>
           <select id="meetingGiftRequired">
             ${YES_NO.map(value => `<option ${item.giftRequired === value ? "selected" : ""}>${esc(value)}</option>`).join("")}
           </select>
         </div>
 
         <div class="field">
-          <label>Haber Yapılacak mı?</label>
+          <label>Web Haberi</label>
           <select id="meetingNewsRequired">
             ${YES_NO.map(value => `<option ${item.newsRequired === value ? "selected" : ""}>${esc(value)}</option>`).join("")}
           </select>
         </div>
 
         <div class="field">
-          <label>Sosyal Medya Paylaşımı Yapılacak mı?</label>
+          <label>Sosyal Medya Paylaşımı</label>
           <select id="meetingSocialRequired">
             ${YES_NO.map(value => `<option ${item.socialRequired === value ? "selected" : ""}>${esc(value)}</option>`).join("")}
           </select>
         </div>
 
         <div class="field">
-          <label>Ulaşım Seçeneği</label>
+          <label>Ulaşım Seçenekleri</label>
           <select id="meetingTransportOption">
             ${transportOptions(item.transportOption)}
           </select>
@@ -4230,7 +4276,7 @@ function showMeetingForm(id = null) {
         </div>
 
         <div class="field">
-          <label>Konaklama Olacak mı?</label>
+          <label>Konaklama Durumu</label>
           <select id="meetingAccommodationRequired">
             ${YES_NO.map(value => `<option ${item.accommodationRequired === value ? "selected" : ""}>${esc(value)}</option>`).join("")}
           </select>
@@ -4345,11 +4391,11 @@ function openMeetingDetail(id) {
       ${detail("Görüşme Konusu", item.subject, true)}
       ${detail("Fotoğraf Çekimi", item.photoRequired)}
       ${detail("Hediye Takdimi", item.giftRequired)}
-      ${detail("Haber Yapılacak mı?", item.newsRequired)}
+      ${detail("Web Haberi", item.newsRequired)}
       ${detail("Sosyal Medya Paylaşımı", item.socialRequired)}
-      ${detail("Ulaşım Seçeneği", item.transportOption)}
+      ${detail("Ulaşım Seçenekleri", item.transportOption)}
       ${detail("Ulaşım Notu", item.transportNote || "-", true)}
-      ${detail("Konaklama Olacak mı?", item.accommodationRequired)}
+      ${detail("Konaklama Durumu", item.accommodationRequired)}
       ${detail("Tesis Adı", item.accommodationFacility || "-")}
       ${detail("Konaklama Ödeme Durumu", item.accommodationPayment)}
       ${detail("Takip Edilecek Aksiyon", item.followUpAction || "-", true)}
@@ -4672,6 +4718,69 @@ function materialPhotoPreviewHtml(value) {
     return `<img src="${esc(value)}" alt="Malzeme fotoğrafı">`;
   }
   return `<span class="muted">${esc(value)}</span>`;
+}
+
+function formatFileSize(bytes) {
+  const size = Number(bytes || 0);
+  if (!size) return "";
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function uploadFilePreviewHtml(fileName, dataUrl, fileSize = 0, fileType = "", fallbackLink = "", emptyText = "Dosya yüklenmedi.") {
+  const name = String(fileName || "").trim();
+  const data = String(dataUrl || "").trim();
+  const oldLink = String(fallbackLink || "").trim();
+  const sizeText = formatFileSize(fileSize);
+  const meta = [fileType, sizeText].filter(Boolean).join(" | ");
+
+  if (data) {
+    const safeName = esc(name || "Yüklü dosya");
+    const downloadName = esc(name || "dosya");
+    const safeData = esc(data);
+    if (/^data:image\//i.test(data)) {
+      return `<div><img src="${safeData}" alt="${safeName}"><br><a href="${safeData}" download="${downloadName}">${safeName}</a>${meta ? `<br><small>${esc(meta)}</small>` : ""}</div>`;
+    }
+    return `<div><a href="${safeData}" download="${downloadName}">${safeName}</a>${meta ? `<br><small>${esc(meta)}</small>` : ""}</div>`;
+  }
+
+  if (oldLink) {
+    if (/^https?:\/\//i.test(oldLink) || /^data:/i.test(oldLink)) {
+      return `<div><a href="${esc(oldLink)}" target="_blank" rel="noopener noreferrer">${esc(name || oldLink)}</a></div>`;
+    }
+    return `<div><strong>${esc(name || oldLink)}</strong></div>`;
+  }
+
+  return `<span class="muted">${esc(emptyText)}</span>`;
+}
+
+function handleStoredFileUpload(event, config) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  const maxSize = config.maxSize || (2 * 1024 * 1024);
+  if (file.size > maxSize) {
+    event.target.value = "";
+    return toast(`Dosya boyutu ${formatFileSize(maxSize)} altında olmalıdır.`);
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    if ($(config.dataId)) $(config.dataId).value = reader.result || "";
+    if ($(config.nameId)) $(config.nameId).value = file.name || "";
+    if ($(config.typeId)) $(config.typeId).value = file.type || "";
+    if ($(config.sizeId)) $(config.sizeId).value = String(file.size || 0);
+    if ($(config.oldLinkId)) $(config.oldLinkId).value = "";
+    if ($(config.previewId)) $(config.previewId).innerHTML = uploadFilePreviewHtml(file.name, reader.result, file.size, file.type, "", config.emptyText || "Dosya yüklenmedi.");
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleSocialMediaFile(event) {
+  handleStoredFileUpload(event, { dataId: "socialMediaData", nameId: "socialMediaName", typeId: "socialMediaType", sizeId: "socialMediaSize", oldLinkId: "socialMediaUrl", previewId: "socialMediaPreview", maxSize: 2 * 1024 * 1024, emptyText: "Görsel / medya dosyası yüklenmedi." });
+}
+
+function handleTaskFile(event) {
+  handleStoredFileUpload(event, { dataId: "taskFileData", nameId: "taskFileName", typeId: "taskFileType", sizeId: "taskFileSize", oldLinkId: "fileLink", previewId: "taskFilePreview", maxSize: 2 * 1024 * 1024, emptyText: "Dosya yüklenmedi." });
 }
 
 function materialBarcodeHtml(item) {
@@ -5255,6 +5364,11 @@ function showSocialForm(id = null) {
   shortDescription: "",
   detailContent: "",
   mediaUrl: "",
+  mediaFileName: "",
+  mediaDataUrl: "",
+  mediaFileType: "",
+  mediaFileSize: 0,
+  hashtags: "",
   publishDate: today(),
   channels: [],
   publishOnWebsite: "Evet",
@@ -5313,8 +5427,15 @@ function showSocialForm(id = null) {
         </div>
 
         <div class="field span-3">
-          <label>Görsel / Medya Bağlantısı</label>
-          <input id="socialMediaUrl" value="${esc(item.mediaUrl)}" placeholder="https://... veya ortak klasör dosya yolu">
+          <label>Görsel / Medya Dosyası</label>
+          <input type="file" id="socialMediaFile" accept="image/*,video/*,application/pdf" onchange="App.handleSocialMediaFile(event)">
+          <input id="socialMediaUrl" type="hidden" value="${esc(item.mediaUrl || "")}">
+          <input id="socialMediaData" type="hidden" value="${esc(item.mediaDataUrl || "")}">
+          <input id="socialMediaName" type="hidden" value="${esc(item.mediaFileName || "")}">
+          <input id="socialMediaType" type="hidden" value="${esc(item.mediaFileType || "")}">
+          <input id="socialMediaSize" type="hidden" value="${esc(item.mediaFileSize || 0)}">
+          <div id="socialMediaPreview" class="file-upload-preview">${uploadFilePreviewHtml(item.mediaFileName, item.mediaDataUrl, item.mediaFileSize, item.mediaFileType, item.mediaUrl, "Görsel / medya dosyası yüklenmedi.")}</div>
+          <small>Dosya uygulama verisi içinde saklanır. Sistemin hızlı ve stabil çalışması için 2 MB altında dosya kullanın.</small>
         </div>
 
         <div class="field">
@@ -5329,31 +5450,25 @@ function showSocialForm(id = null) {
           </select>
         </div>
 
-        <div class="field">
-          <label>Web Sitesinde Yayınlanacak mı?</label>
-          <select id="socialPublishOnWebsite">
-            ${YES_NO.map(value => `<option ${item.publishOnWebsite === value ? "selected" : ""}>${esc(value)}</option>`).join("")}
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Ana Sayfa Slider’da Gösterilecek mi?</label>
-          <select id="socialShowOnSlider">
-            ${YES_NO.map(value => `<option ${item.showOnSlider === value ? "selected" : ""}>${esc(value)}</option>`).join("")}
-          </select>
-        </div>
         <div class="field span-3">
-          <label>Paylaşılacak Sosyal Medya Kanalları</label>
+          <label>Yayın Kanalları</label>
           <div class="social-channel-grid">
             ${channelCheckboxes(item.channels || [])}
+            <label class="social-channel-card">
+              <input type="checkbox" id="socialPublishOnWebsite" ${item.publishOnWebsite === "Evet" ? "checked" : ""}>
+              <span>Web Sitesi</span>
+            </label>
+            <label class="social-channel-card">
+              <input type="checkbox" id="socialShowOnSlider" ${item.showOnSlider === "Evet" ? "checked" : ""}>
+              <span>Ana Sayfa Slider</span>
+            </label>
           </div>
           <small>Birden fazla kanal seçilebilir.</small>
         </div>
 
         <div class="field span-3">
-          <label>Resmî Hesap Bilgisi</label>
-          <textarea readonly>${esc(socialOfficialAccountsText(item))}</textarea>
-          <small>Bu alan seçilen platformlara göre TÜRKAK resmî hesaplarını gösterir.</small>
+          <label>Kullanılacak Hashtag</label>
+          <input id="socialHashtags" value="${esc(item.hashtags || "")}" placeholder="#TÜRKAK #Akreditasyon #Kalite">
         </div>
       </div>
             <div class="form-actions btn-row">
@@ -5372,11 +5487,16 @@ function readSocialForm(existing) {
     title: $("socialTitle").value.trim(),
     shortDescription: $("socialShortDescription").value.trim(),
     detailContent: $("socialDetailContent").value.trim(),
-    mediaUrl: $("socialMediaUrl").value.trim(),
+    mediaUrl: $("socialMediaUrl")?.value.trim() || "",
+    mediaFileName: $("socialMediaName")?.value || "",
+    mediaDataUrl: $("socialMediaData")?.value || "",
+    mediaFileType: $("socialMediaType")?.value || "",
+    mediaFileSize: metricNumber($("socialMediaSize")?.value),
+    hashtags: $("socialHashtags")?.value.trim() || "",
     publishDate: $("socialPublishDate").value,
     channels: checkedSocialChannels(),
-    publishOnWebsite: $("socialPublishOnWebsite").value,
-    showOnSlider: $("socialShowOnSlider").value,
+    publishOnWebsite: $("socialPublishOnWebsite")?.checked ? "Evet" : "Hayır",
+    showOnSlider: $("socialShowOnSlider")?.checked ? "Evet" : "Hayır",
     status: $("socialStatus").value,
 
 reach: metricNumber($("socialReach")?.value),
@@ -5616,13 +5736,13 @@ function openSocialDetail(id) {
       ${detail("Yayın Tarihi", formatDate(item.publishDate))}
       ${detail("Durum", item.status)}
       ${detail("Kanallar", (item.channels || []).join(", ") || "-", true)}
-      ${detail("Web Sitesinde Yayınlanacak mı?", item.publishOnWebsite)}
-      ${detail("Ana Sayfa Slider’da Gösterilecek mi?", item.showOnSlider)}
+      ${detail("Web Sitesi", item.publishOnWebsite)}
+      ${detail("Ana Sayfa Slider", item.showOnSlider)}
       ${detail("Oluşturan", userName(item.createdBy))}
-      ${detail("Görsel / Medya", item.mediaUrl ? `<a href="${esc(item.mediaUrl)}" target="_blank" rel="noopener noreferrer">${esc(item.mediaUrl)}</a>` : "-", true, true)}
+      ${detail("Görsel / Medya Dosyası", uploadFilePreviewHtml(item.mediaFileName, item.mediaDataUrl, item.mediaFileSize, item.mediaFileType, item.mediaUrl, "Görsel / medya dosyası yüklenmedi."), true, true)}
+      ${detail("Kullanılacak Hashtag", item.hashtags, true)}
       ${detail("Kısa Açıklama", item.shortDescription, true)}
       ${detail("Detaylı İçerik", item.detailContent, true)}
-      ${detail("TÜRKAK Resmî Hesapları", socialOfficialAccountsText(item), true)}
     </div>
   `;
 
@@ -5659,20 +5779,20 @@ function exportSocialCsv() {
     ["title", "Başlık"],
     ["shortDescription", "Kısa Açıklama"],
     ["detailContent", "Detaylı İçerik"],
-    ["mediaUrl", "Görsel / Medya"],
+    ["mediaText", "Görsel / Medya Dosyası"],
+    ["hashtags", "Kullanılacak Hashtag"],
     ["publishDate", "Yayın Tarihi"],
     ["channelsText", "Kanallar"],
-    ["publishOnWebsite", "Web Sitesinde Yayınlanacak mı"],
+    ["publishOnWebsite", "Web Sitesi"],
     ["showOnSlider", "Ana Sayfa Slider"],
     ["status", "Yayın Durumu"],
-    ["officialAccountsText", "TÜRKAK Resmî Hesapları"],
     ["createdByName", "Oluşturan"]
   ];
 
   const rows = baseFilteredSocialPosts().map(item => ({
   ...item,
   channelsText: (item.channels || []).join(", "),
-  officialAccountsText: socialOfficialAccountsText(item).replaceAll("\n", " | "),
+  mediaText: item.mediaFileName || item.mediaUrl || "",
   createdByName: userName(item.createdBy)
 }));
 
@@ -5848,6 +5968,10 @@ function exportSocialCsv() {
           status: "Yeni",
           approvalRequired: "Hayır",
           fileLink: "",
+          fileName: "",
+          fileDataUrl: "",
+          fileType: "",
+          fileSize: 0,
           actualEndDate: "",
           delayReason: "",
           nextAction: "",
@@ -5884,19 +6008,28 @@ function exportSocialCsv() {
               <div class="field"><label>Öncelik</label><select id="priority">${PRIORITIES.map(x => `<option ${task.priority === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
               <div class="field"><label>Başlangıç Tarihi</label><input id="startDate" type="date" value="${esc(task.startDate)}" /></div>
               <div class="field"><label>Hedef Bitiş Tarihi *</label><input id="targetEndDate" type="date" required value="${esc(task.targetEndDate)}" /></div>
-              <div class="field"><label>Durum</label><select id="status" onchange="App.statusChanged()">${STATUS.map(x => `<option ${task.status === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
-              <div class="field"><label>Onay Gerekiyor mu?</label><select id="approvalRequired"><option ${task.approvalRequired === 'Hayır' ? 'selected' : ''}>Hayır</option><option ${task.approvalRequired === 'Evet' ? 'selected' : ''}>Evet</option></select></div>
-              <div class="field"><label>Dosya / Bağlantı</label><input id="fileLink" value="${esc(task.fileLink)}" placeholder="https://... veya dosya yolu" /></div>
-              <div class="field"><label>Fiili Bitiş Tarihi</label><input id="actualEndDate" type="date" value="${esc(task.actualEndDate)}" /></div>
-              <div class="field"><label>Gizlilik Düzeyi</label><select id="confidentiality">${CONFIDENTIALITY.map(x => `<option ${task.confidentiality === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
-              <div class="field span-3"><label>Gecikme Nedeni</label><textarea id="delayReason" placeholder="Süresi geçen işler için açıklama.">${esc(task.delayReason)}</textarea></div>
-              <div class="field span-3"><label>Sonraki Aksiyon</label><textarea id="nextAction" placeholder="Müdür onayı beklenecek, ilgili birimden bilgi istenecek...">${esc(task.nextAction)}</textarea></div>
-              <div class="field span-3"><label>Son Güncelleme Notu</label><textarea id="updateNote" placeholder="Herkesin güncel durumu anlayacağı kısa not.">${esc(task.updateNote)}</textarea></div>
-              <div class="field span-3"><label>Tamamlanma Notu</label><textarea id="completionNote" placeholder="İş kapatılırken sonuç bilgisi.">${esc(task.completionNote)}</textarea></div>
               <div class="field"><label>Takvimde Gösterilsin mi?</label><select id="showOnCalendar"><option ${task.showOnCalendar === 'Evet' ? 'selected' : ''}>Evet</option><option ${task.showOnCalendar === 'Hayır' ? 'selected' : ''}>Hayır</option></select></div>
               <div class="field"><label>Takvim Tarihi</label><input id="calendarDate" type="date" value="${esc(task.calendarDate || task.targetEndDate || today())}" /></div>
               <div class="field"><label>Takvim Başlığı</label><input id="calendarTitle" value="${esc(task.calendarTitle || task.mainCategory)}" placeholder="Otomatik ana kategori" /></div>
               <div class="field span-3"><label>Takvim Notu</label><textarea id="calendarNote" placeholder="Takvim pop-up için kısa ve genel not.">${esc(task.calendarNote)}</textarea></div>
+              <div class="field"><label>Durum</label><select id="status" onchange="App.statusChanged()">${STATUS.map(x => `<option ${task.status === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
+              <div class="field"><label>Onay Gerekiyor mu?</label><select id="approvalRequired"><option ${task.approvalRequired === 'Hayır' ? 'selected' : ''}>Hayır</option><option ${task.approvalRequired === 'Evet' ? 'selected' : ''}>Evet</option></select></div>
+              <div class="field"><label>Fiili Bitiş Tarihi</label><input id="actualEndDate" type="date" value="${esc(task.actualEndDate)}" /></div>
+              <div class="field"><label>Gizlilik Düzeyi</label><select id="confidentiality">${CONFIDENTIALITY.map(x => `<option ${task.confidentiality === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
+              <div class="field span-3">
+                <label>Dosya</label>
+                <input type="file" id="taskFileUpload" onchange="App.handleTaskFile(event)">
+                <input id="fileLink" type="hidden" value="${esc(task.fileLink || "")}" />
+                <input id="taskFileData" type="hidden" value="${esc(task.fileDataUrl || "")}" />
+                <input id="taskFileName" type="hidden" value="${esc(task.fileName || "")}" />
+                <input id="taskFileType" type="hidden" value="${esc(task.fileType || "")}" />
+                <input id="taskFileSize" type="hidden" value="${esc(task.fileSize || 0)}" />
+                <div id="taskFilePreview" class="file-upload-preview">${uploadFilePreviewHtml(task.fileName, task.fileDataUrl, task.fileSize, task.fileType, task.fileLink, "Dosya yüklenmedi.")}</div>
+                <small>Dosya uygulama verisi içinde saklanır. Sistemin hızlı ve stabil çalışması için 2 MB altında dosya kullanın.</small>
+              </div>
+              <div class="field span-3"><label>Son Güncelleme Notu</label><textarea id="updateNote" placeholder="Herkesin güncel durumu anlayacağı kısa not.">${esc(task.updateNote)}</textarea></div>
+              <div class="field span-3"><label>Tamamlanma Notu</label><textarea id="completionNote" placeholder="İş kapatılırken sonuç bilgisi.">${esc(task.completionNote)}</textarea></div>
+              <div class="field span-3"><label>Gecikme Nedeni</label><textarea id="delayReason" placeholder="Süresi geçen işler için açıklama.">${esc(task.delayReason)}</textarea></div>
             </div>
             <div class="form-actions btn-row">
               <button class="btn" type="submit">Kaydet ve Anasayfaya Dön</button>
@@ -5935,10 +6068,14 @@ function exportSocialCsv() {
           targetEndDate: $("targetEndDate").value,
           status: $("status").value,
           approvalRequired: $("approvalRequired").value,
-          fileLink: $("fileLink").value.trim(),
+          fileLink: $("fileLink")?.value.trim() || "",
+          fileName: $("taskFileName")?.value || "",
+          fileDataUrl: $("taskFileData")?.value || "",
+          fileType: $("taskFileType")?.value || "",
+          fileSize: metricNumber($("taskFileSize")?.value),
           actualEndDate: $("actualEndDate").value,
           delayReason: $("delayReason").value.trim(),
-          nextAction: $("nextAction").value.trim(),
+          nextAction: existing?.nextAction || "",
           updateNote: $("updateNote").value.trim(),
           outputType: $("outputType").value,
           confidentiality: $("confidentiality").value,
@@ -6073,12 +6210,11 @@ showDashboard();
             ${detail("Onay Gerekiyor mu?", task.approvalRequired)}
             ${detail("Çıktı Türü", task.outputType)}
             ${detail("Gizlilik Düzeyi", task.confidentiality)}
-            ${detail("Dosya / Bağlantı", task.fileLink ? `<a href="${esc(task.fileLink)}" target="_blank" rel="noopener">${esc(task.fileLink)}</a>` : "-", false, true)}
+            ${detail("Dosya", uploadFilePreviewHtml(task.fileName, task.fileDataUrl, task.fileSize, task.fileType, task.fileLink, "Dosya yüklenmedi."), true, true)}
             ${detail("İşin Açıklaması", task.description, true)}
-            ${detail("Gecikme Nedeni", task.delayReason, true)}
-            ${detail("Sonraki Aksiyon", task.nextAction, true)}
             ${detail("Son Güncelleme Notu", task.updateNote, true)}
             ${detail("Tamamlanma Notu", task.completionNote, true)}
+            ${detail("Gecikme Nedeni", task.delayReason, true)}
             ${detail("Takvim Bilgisi", `${task.showOnCalendar} | ${formatDate(task.calendarDate)} | ${task.calendarTitle || task.mainCategory}`, true)}
           </div>`;
         const footer = `
@@ -6121,7 +6257,7 @@ showDashboard();
 
   setTitle(
     "Kurumsal İçerik Asistanı",
-    "Sosyal Medya İçeriği, Haber Metni, Basın Notu, Bülten Metni Hazırlama Merkezi"
+    "TÜRKAK web sayfası ve sosyal medya içerik hazırlama merkezi"
   );
 
   $("view").innerHTML = `
@@ -6143,13 +6279,8 @@ showDashboard();
 
         <div class="field span-3">
           <label>Üretilecek Çıktılar</label>
-          <div class="content-output-grid">
-            ${CONTENT_OUTPUTS.map(([key, label]) => `
-              <label class="content-output-card">
-                <input type="checkbox" name="contentOutput" value="${esc(key)}">
-                <span>${esc(label)}</span>
-              </label>
-            `).join("")}
+          <div class="content-output-groups">
+            ${CONTENT_OUTPUT_GROUPS.map(([groupTitle, keys]) => contentOutputGroupHtml(groupTitle, keys)).join("")}
           </div>
           <small>Seçilen her çıktı türü, Admin sayfasındaki ilgili prompta göre oluşturulur.</small>
           <input id="contentProvider" type="hidden" value="general">
@@ -6163,6 +6294,23 @@ showDashboard();
     </div>
 
     <div id="contentAssistantResults" style="margin-top:16px"></div>
+  `;
+}
+
+function contentOutputGroupHtml(groupTitle, keys) {
+  const selectedOutputs = CONTENT_OUTPUTS.filter(([key]) => keys.includes(key));
+  return `
+    <div class="content-output-group">
+      <h3>${esc(groupTitle)}</h3>
+      <div class="content-output-grid">
+        ${selectedOutputs.map(([key, label]) => `
+          <label class="content-output-card">
+            <input type="checkbox" name="contentOutput" value="${esc(key)}">
+            <span>${esc(label)}</span>
+          </label>
+        `).join("")}
+      </div>
+    </div>
   `;
 }
 
@@ -6284,12 +6432,12 @@ function contentResultValue(data, key) {
     title: Array.isArray(data.title_suggestions) ? data.title_suggestions.map((title, index) => `${index + 1}. ${title}`).join("\n") : String(data.title_suggestions || ""),
     spot: data.spot_text || "",
     web_news: data.web_news || data.corporate_news || "",
+    english_news: data.english_news || "",
     linkedin_post: data.linkedin_post || data.social_media || "",
     x_post: data.x_post || "",
     instagram_post: data.instagram_post || "",
-    bulletin_text: data.bulletin_text || "",
-    english_news: data.english_news || "",
-    press_note: data.press_note || ""
+    nsocial_post: data.nsocial_post || "",
+    bluesky_post: data.bluesky_post || ""
   };
   return map[key] || "";
 }
@@ -6368,7 +6516,7 @@ async function createSocialPostFromAssistant() {
 
   const titles = Array.isArray(data.title_suggestions) ? data.title_suggestions : [];
   const title = titles[0] || firstSentence(data.spot_text) || "Kurumsal İçerik Asistanı İçeriği";
-  const socialText = data.linkedin_post || data.instagram_post || data.x_post || data.social_media || data.spot_text || rawText;
+  const socialText = data.linkedin_post || data.instagram_post || data.x_post || data.nsocial_post || data.bluesky_post || data.social_media || data.spot_text || rawText;
 
   if (!socialText) {
     return toast("Sosyal medya planına aktarılacak metin bulunamadı.");
@@ -6381,6 +6529,11 @@ async function createSocialPostFromAssistant() {
     shortDescription: data.spot_text || firstSentence(socialText),
     detailContent: socialText,
     mediaUrl: "",
+    mediaFileName: "",
+    mediaDataUrl: "",
+    mediaFileType: "",
+    mediaFileSize: 0,
+    hashtags: "",
     publishDate: today(),
     channels: ["LinkedIn"],
     publishOnWebsite: "Evet",
@@ -8909,8 +9062,8 @@ function mountCorporateLottie(lottieId = "corporateLottieLoading") {
         return [
           ["workNo", "İş No"], ["title", "İş Adı"], ["mainCategory", "Ana Kategori"], ["subCategory", "Alt Kategori"], ["description", "İşin Açıklaması"], ["requester", "Talep Eden"],
           ["responsibleName", "Sorumlu Personel"], ["helperNames", "Yardımcı Personel"], ["priority", "Öncelik"], ["startDate", "Başlangıç Tarihi"], ["targetEndDate", "Hedef Bitiş Tarihi"],
-          ["status", "Durum"], ["approvalRequired", "Onay Gerekiyor mu"], ["fileLink", "Dosya / Bağlantı"], ["actualEndDate", "Fiili Bitiş Tarihi"], ["delayReason", "Gecikme Nedeni"],
-          ["nextAction", "Sonraki Aksiyon"], ["updateNote", "Son Güncelleme Notu"], ["outputType", "Çıktı Türü"], ["confidentiality", "Gizlilik Düzeyi"], ["completionNote", "Tamamlanma Notu"],
+          ["status", "Durum"], ["approvalRequired", "Onay Gerekiyor mu"], ["fileName", "Dosya"], ["actualEndDate", "Fiili Bitiş Tarihi"],
+          ["updateNote", "Son Güncelleme Notu"], ["completionNote", "Tamamlanma Notu"], ["delayReason", "Gecikme Nedeni"], ["outputType", "Çıktı Türü"], ["confidentiality", "Gizlilik Düzeyi"],
           ["showOnCalendar", "Takvimde Gösterilsin mi"], ["calendarDate", "Takvim Tarihi"], ["calendarTitle", "Takvim Başlığı"], ["calendarNote", "Takvim Notu"]
         ];
       }
@@ -8957,14 +9110,13 @@ function mountCorporateLottie(lottieId = "corporateLottieLoading") {
     "Hedef Bitiş Tarihi*",
     "Durum",
     "Onay Gerekiyor mu",
-    "Dosya / Bağlantı",
+    "Dosya",
     "Fiili Bitiş Tarihi",
-    "Gecikme Nedeni",
-    "Sonraki Aksiyon",
     "Son Güncelleme Notu",
+    "Tamamlanma Notu",
+    "Gecikme Nedeni",
     "Çıktı Türü",
     "Gizlilik Düzeyi",
-    "Tamamlanma Notu",
     "Takvimde Gösterilsin mi",
     "Takvim Tarihi",
     "Takvim Başlığı",
@@ -8975,11 +9127,12 @@ function mountCorporateLottie(lottieId = "corporateLottieLoading") {
     "Başlık*",
     "Kısa Açıklama",
     "Detaylı İçerik",
-    "Görsel / Medya Bağlantısı",
+    "Görsel / Medya Dosyası",
+    "Kullanılacak Hashtag",
     "Yayın Tarihi*",
     "Kanallar",
-    "Web Sitesinde Yayınlanacak mı",
-    "Ana Sayfa Slider’da Gösterilecek mi",
+    "Web Sitesi",
+    "Ana Sayfa Slider",
     "Yayın Durumu"
   ];
 
@@ -9262,14 +9415,18 @@ async function importExcelFile(event) {
           targetEndDate,
           status: normalizeExcelChoice(row["Durum"], STATUS, "Yeni"),
           approvalRequired: normalizeExcelChoice(row["Onay Gerekiyor mu"], YES_NO, "Hayır"),
-          fileLink: excelText(row, "Dosya / Bağlantı"),
+          fileLink: excelText(row, "Dosya / Bağlantı") || "",
+          fileName: excelText(row, "Dosya"),
+          fileDataUrl: "",
+          fileType: "",
+          fileSize: 0,
           actualEndDate,
+          updateNote: excelText(row, "Son Güncelleme Notu"),
+          completionNote: excelText(row, "Tamamlanma Notu"),
           delayReason: excelText(row, "Gecikme Nedeni"),
           nextAction: excelText(row, "Sonraki Aksiyon"),
-          updateNote: excelText(row, "Son Güncelleme Notu"),
           outputType: normalizeExcelChoice(row["Çıktı Türü"], OUTPUT_TYPES, "Yazı"),
           confidentiality: normalizeExcelChoice(row["Gizlilik Düzeyi"], CONFIDENTIALITY, "Normal"),
-          completionNote: excelText(row, "Tamamlanma Notu"),
           showOnCalendar: normalizeExcelChoice(row["Takvimde Gösterilsin mi"], YES_NO, "Evet"),
           calendarDate,
           calendarTitle: excelText(row, "Takvim Başlığı") || mainCategory,
@@ -9298,8 +9455,8 @@ async function importExcelFile(event) {
           return;
         }
 
-        const publishOnWebsite = normalizeExcelChoice(row["Web Sitesinde Yayınlanacak mı"], YES_NO, "Evet");
-        const showOnSlider = normalizeExcelChoice(row["Ana Sayfa Slider’da Gösterilecek mi"], YES_NO, "Hayır");
+        const publishOnWebsite = normalizeExcelChoice(row["Web Sitesi"] || row["Web Sitesinde Yayınlanacak mı"], YES_NO, "Evet");
+        const showOnSlider = normalizeExcelChoice(row["Ana Sayfa Slider"] || row["Ana Sayfa Slider’da Gösterilecek mi"], YES_NO, "Hayır");
         const channels = splitSocialChannels(row["Kanallar"]);
 
         if (!channels.length && publishOnWebsite === "Hayır") {
@@ -9318,7 +9475,12 @@ async function importExcelFile(event) {
           title,
           shortDescription: excelText(row, "Kısa Açıklama"),
           detailContent: excelText(row, "Detaylı İçerik"),
-          mediaUrl: excelText(row, "Görsel / Medya Bağlantısı"),
+          mediaUrl: "",
+          mediaFileName: excelText(row, "Görsel / Medya Dosyası") || excelText(row, "Görsel / Medya Bağlantısı"),
+          mediaDataUrl: "",
+          mediaFileType: "",
+          mediaFileSize: 0,
+          hashtags: excelText(row, "Kullanılacak Hashtag"),
           publishDate,
           channels,
           publishOnWebsite,
@@ -10064,7 +10226,7 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
         const idea = getContentIdeas().find(x=>x.id===id); if (!idea) return toast("Fikir bulunamadı.");
         const data = idea.aiResult || {};
         const titles = Array.isArray(data.title_suggestions) ? data.title_suggestions : [];
-        saveSocialPosts([...getSocialPosts(), { id: "sp_" + Date.now().toString(36), socialNo: nextSocialNo(), title: (titles[0] || idea.title || "İçerik fikri").slice(0,180), shortDescription: data.spot_text || idea.idea || "", detailContent: data.linkedin_post || data.social_media || data.web_news || data.corporate_news || idea.idea || "", mediaUrl: "", publishDate: today(), channels: ["LinkedIn"], publishOnWebsite: "Evet", showOnSlider: "Hayır", status: "Taslak", reach:0, impressions:0, views:0, likes:0, shares:0, clicks:0, performanceNote: data.image_prompt || "", createdBy: state.currentUser.id, createdAt: dateTime(), updatedAt: dateTime(), updatedBy: state.currentUser.id }]);
+        saveSocialPosts([...getSocialPosts(), { id: "sp_" + Date.now().toString(36), socialNo: nextSocialNo(), title: (titles[0] || idea.title || "İçerik fikri").slice(0,180), shortDescription: data.spot_text || idea.idea || "", detailContent: data.linkedin_post || data.social_media || data.web_news || data.corporate_news || idea.idea || "", mediaUrl: "", mediaFileName: "", mediaDataUrl: "", mediaFileType: "", mediaFileSize: 0, hashtags: "", publishDate: today(), channels: ["LinkedIn"], publishOnWebsite: "Evet", showOnSlider: "Hayır", status: "Taslak", reach:0, impressions:0, views:0, likes:0, shares:0, clicks:0, performanceNote: data.image_prompt || "", createdBy: state.currentUser.id, createdAt: dateTime(), updatedAt: dateTime(), updatedBy: state.currentUser.id }]);
         saveContentIdeas(getContentIdeas().map(x=>x.id===idea.id ? { ...x, status:"Tamamlandı", updatedAt:dateTime(), updatedBy:state.currentUser.id } : x));
         await pushSharedData(false); closeModal(); toast("AI içeriği sosyal medya planına Taslak olarak eklendi."); showContentIdeas();
       }
@@ -10473,6 +10635,7 @@ openSocialDetail,
 deleteSocialPost,
 openSocialCalendarDay,
 exportSocialCsv,
+handleSocialMediaFile,
 showMeetingList,
 showMeetingForm,
 saveMeeting,
@@ -10523,6 +10686,7 @@ saveMaterialAssignment,
 adjustMaterialStock,
 deleteMaterial,
 handleMaterialPhoto,
+handleTaskFile,
 downloadMaterialExcelTemplate,
 openMaterialExcelImport,
 exportMaterialsExcel,
