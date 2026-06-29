@@ -2028,7 +2028,66 @@ body.ux-dark .timeline-desc-inner {
     height: 300px !important;
   }
 }
-  </style>
+  
+/* --- Login tam ekran gri şerit düzeltmesi - ANA STYLE ALANI --- */
+html,
+body {
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+}
+
+#loginPage.login-page {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  display: grid !important;
+  place-items: center !important;
+  background-color: #ffffff !important;
+  background-image: url("login-bg.jpg") !important;
+  background-size: cover !important;
+  background-position: center bottom !important;
+  background-repeat: no-repeat !important;
+}
+
+#loginPage.login-page::before,
+#loginPage.login-page::after {
+  content: none !important;
+  display: none !important;
+  animation: none !important;
+  background: none !important;
+}
+
+#loginPage .login-card {
+  max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
+}
+
+@media (max-height: 760px) {
+  #loginPage .login-card {
+    min-height: 0;
+    height: calc(100vh - 24px);
+    height: calc(100dvh - 24px);
+  }
+
+  #loginPage .login-hero,
+  #loginPage .login-form-wrap {
+    padding: 32px;
+  }
+}
+
+</style>
 </head>
 <body>
   <div id="toastArea" class="toast-area"></div>
@@ -8188,7 +8247,7 @@ function renderAnimatedLineChart(id, rows, title = "", yTitle = "Sayı") {
   const labels = cleanRows.map(row => row.label);
   const values = cleanRows.map(row => row.total);
 
-onst frames = labels.map((_, index) => ({
+  const frames = labels.map((_, index) => ({
     data: [{
       x: labels.slice(0, index + 1),
       y: values.slice(0, index + 1)
