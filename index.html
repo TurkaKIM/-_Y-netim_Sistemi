@@ -2358,7 +2358,28 @@ body {
 
 
 /* --- Modern SaaS form paketi: Yeni İş Kaydı ve Yeni Sosyal Medya Paylaşımı --- */
-.modern-form-page {
+/* --- Yeni İş Kaydı ve Yeni Sosyal Medya Paylaşımı başlık kırmızı şerit düzeltmesi --- */
+.modern-form-page > .page-head {
+  animation: pageHeadSoftFocus .36s ease-out both;
+}
+
+.modern-form-page > .page-head h2 {
+  position: relative;
+  display: inline-block;
+}
+
+.modern-form-page > .page-head h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -7px;
+  width: 44px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--turkak-red), rgba(200,16,46,.12));
+  animation: pageHeadLineGrow .42s ease-out both;
+}
+  .modern-form-page {
   display: flex;
   flex-direction: column;
   gap: 16px;
