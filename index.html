@@ -2355,6 +2355,385 @@ body {
   }
 }
 
+
+
+/* --- Modern SaaS form paketi: Yeni İş Kaydı ve Yeni Sosyal Medya Paylaşımı --- */
+.modern-form-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modern-stepper {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: 10px;
+  margin: 0 0 16px;
+}
+
+.modern-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 12px 14px;
+  border: 1px solid rgba(226, 232, 240, .95);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #fffafa 100%);
+  box-shadow: 0 8px 20px rgba(31, 41, 55, .06);
+  color: #374151;
+  font-weight: 850;
+}
+
+.modern-step-number {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #fff1f3;
+  color: var(--turkak-red);
+  border: 1px solid rgba(200, 16, 46, .20);
+  font-weight: 950;
+}
+
+.modern-step.active {
+  border-color: rgba(200, 16, 46, .32);
+  box-shadow: 0 12px 26px rgba(200, 16, 46, .10);
+}
+
+.modern-step.active .modern-step-number {
+  background: var(--turkak-red);
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(200, 16, 46, .22);
+}
+
+.modern-form-shell {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.modern-form-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  gap: 18px;
+  align-items: start;
+}
+
+.modern-form-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.modern-section-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, .95);
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 14px 32px rgba(31, 41, 55, .08);
+  padding: 18px;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.modern-section-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--turkak-red), rgba(200, 16, 46, .12));
+}
+
+.modern-section-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(200, 16, 46, .24);
+  box-shadow: 0 18px 40px rgba(31, 41, 55, .10);
+}
+
+.modern-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.modern-section-title {
+  margin: 0;
+  color: #111827;
+  font-size: 17px;
+  letter-spacing: -.01em;
+}
+
+.modern-section-subtitle {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.modern-section-icon {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: #fff1f3;
+  color: var(--turkak-red);
+  font-size: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .88);
+}
+
+.modern-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.modern-card-grid .span-2 {
+  grid-column: span 2;
+}
+
+.modern-form-shell .field {
+  margin-bottom: 0;
+}
+
+.modern-form-shell .field label {
+  color: #374151;
+  font-size: 12.5px;
+  letter-spacing: .01em;
+}
+
+.modern-form-shell .field input,
+.modern-form-shell .field select,
+.modern-form-shell .field textarea {
+  border-radius: 15px;
+  padding: 13px 14px;
+  min-height: 46px;
+  border-color: #e5e7eb;
+  background: #ffffff;
+  box-shadow: 0 1px 0 rgba(255,255,255,.9), inset 0 1px 2px rgba(31,41,55,.03);
+}
+
+.modern-form-shell .field textarea {
+  min-height: 110px;
+}
+
+.modern-form-shell .field input:focus,
+.modern-form-shell .field select:focus,
+.modern-form-shell .field textarea:focus {
+  border-color: rgba(200, 16, 46, .70) !important;
+  box-shadow: 0 0 0 4px rgba(200, 16, 46, .10), 0 8px 20px rgba(31,41,55,.06) !important;
+}
+
+.modern-form-shell select[multiple] {
+  min-height: 118px !important;
+  height: 118px !important;
+}
+
+.modern-date-field label::before {
+  content: "📅 ";
+}
+
+.modern-file-drop {
+  border: 1px dashed rgba(200, 16, 46, .32);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff, #fff7f8);
+  padding: 12px;
+}
+
+.modern-file-drop input[type="file"] {
+  width: 100%;
+  border: 1px dashed rgba(200, 16, 46, .30) !important;
+  background: #ffffff !important;
+  cursor: pointer;
+}
+
+.modern-file-drop .file-upload-preview {
+  margin-top: 10px;
+  min-height: 84px;
+  border-radius: 15px;
+  background: #ffffff;
+}
+
+.modern-summary-panel {
+  position: sticky;
+  top: 16px;
+  border: 1px solid rgba(226, 232, 240, .95);
+  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff 0%, #fffafa 100%);
+  box-shadow: 0 18px 44px rgba(31, 41, 55, .10);
+  padding: 18px;
+}
+
+.modern-summary-panel h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.modern-summary-panel .muted {
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.modern-summary-divider {
+  height: 1px;
+  background: var(--line);
+  margin: 14px 0;
+}
+
+.modern-summary-row {
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(229, 231, 235, .75);
+}
+
+.modern-summary-row:last-child {
+  border-bottom: 0;
+}
+
+.modern-summary-label {
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+}
+
+.modern-summary-value {
+  color: #111827;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.modern-summary-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.modern-mini-metric {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 12px;
+  box-shadow: 0 6px 16px rgba(31,41,55,.05);
+}
+
+.modern-mini-metric strong {
+  display: block;
+  color: var(--turkak-red);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.modern-mini-metric span {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 800;
+}
+
+.modern-actions-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding: 14px 0 2px;
+  background: linear-gradient(180deg, rgba(249,250,251,0), rgba(249,250,251,.96) 36%, #f9fafb 100%);
+}
+
+.modern-actions-card {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+  border: 1px solid rgba(226,232,240,.95);
+  border-radius: 18px;
+  background: rgba(255,255,255,.94);
+  backdrop-filter: blur(10px);
+  padding: 12px;
+  box-shadow: 0 12px 28px rgba(31,41,55,.08);
+}
+
+.modern-actions-card .btn {
+  min-height: 44px;
+}
+
+body.ux-dark .modern-step,
+body.ux-dark .modern-section-card,
+body.ux-dark .modern-summary-panel,
+body.ux-dark .modern-mini-metric,
+body.ux-dark .modern-actions-card,
+body.ux-dark .modern-file-drop,
+body.ux-dark .modern-file-drop .file-upload-preview {
+  background: #111827 !important;
+  color: var(--ink) !important;
+  border-color: #374151 !important;
+}
+
+body.ux-dark .modern-section-title,
+body.ux-dark .modern-summary-value {
+  color: var(--ink) !important;
+}
+
+@media (max-width: 1180px) {
+  .modern-form-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .modern-summary-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 820px) {
+  .modern-stepper,
+  .modern-card-grid,
+  .modern-summary-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .modern-card-grid .span-2 {
+    grid-column: span 1;
+  }
+
+  .modern-section-card,
+  .modern-summary-panel {
+    border-radius: 18px;
+    padding: 15px;
+  }
+
+  .modern-summary-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .modern-actions-card {
+    justify-content: stretch;
+  }
+
+  .modern-actions-card .btn {
+    width: 100%;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -5462,6 +5841,121 @@ function exportMaterialsExcel() {
   XLSX.writeFile(wb, `turkak-malzeme-listesi-${today()}.xlsx`);
 }
 
+
+function modernStepperHtml(steps) {
+  return `<div class="modern-stepper">${steps.map((step, index) => `
+    <div class="modern-step ${index === 0 ? "active" : ""}">
+      <span class="modern-step-number">${index + 1}</span>
+      <span>${esc(step)}</span>
+    </div>
+  `).join("")}</div>`;
+}
+
+function modernSummaryValue(value, fallback = "Henüz girilmedi") {
+  const text = String(value ?? "").trim();
+  return text ? esc(text) : `<span class="muted">${esc(fallback)}</span>`;
+}
+
+function modernSelectedText(id, fallback = "Henüz seçilmedi") {
+  const el = $(id);
+  if (!el) return `<span class="muted">${esc(fallback)}</span>`;
+  if (el.tagName === "SELECT") {
+    if (el.multiple) {
+      const values = Array.from(el.selectedOptions).map(option => option.textContent.trim()).filter(Boolean);
+      return values.length ? esc(values.join(", ")) : `<span class="muted">${esc(fallback)}</span>`;
+    }
+    return modernSummaryValue(el.selectedOptions?.[0]?.textContent || el.value, fallback);
+  }
+  return modernSummaryValue(el.value, fallback);
+}
+
+function modernSummaryRow(label, value) {
+  return `
+    <div class="modern-summary-row">
+      <div class="modern-summary-label">${esc(label)}</div>
+      <div class="modern-summary-value">${value}</div>
+    </div>`;
+}
+
+function setupModernSummarySync(formId, updateFn) {
+  const form = $(formId);
+  if (!form || typeof updateFn !== "function") return;
+
+  const runUpdate = () => window.requestAnimationFrame(updateFn);
+  form.querySelectorAll("input, select, textarea").forEach(el => {
+    el.addEventListener("input", runUpdate);
+    el.addEventListener("change", () => setTimeout(updateFn, 80));
+    el.addEventListener("keyup", runUpdate);
+  });
+
+  updateFn();
+}
+
+function taskDateDiffText(startDate, targetEndDate) {
+  if (!startDate || !targetEndDate) return "-";
+  const start = new Date(`${startDate}T00:00:00`);
+  const end = new Date(`${targetEndDate}T00:00:00`);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return "-";
+  const days = Math.round((end - start) / 86400000);
+  if (days === 0) return "Aynı gün";
+  return days > 0 ? `${days} gün` : `${Math.abs(days)} gün gecikmiş hedef`;
+}
+
+function updateTaskSummaryPanel() {
+  const panel = $("taskSummaryPanel");
+  if (!panel) return;
+
+  const helperCount = $("helperIds") ? Array.from($("helperIds").selectedOptions).filter(option => option.value).length : 0;
+  const fileName = $("taskFileName")?.value || $("taskFileUpload")?.files?.[0]?.name || "";
+  const duration = taskDateDiffText($("startDate")?.value, $("targetEndDate")?.value);
+
+  panel.innerHTML = `
+    <h3>Görev Özeti</h3>
+    <p class="muted">Girilen bilgiler bu panelde canlı olarak özetlenir.</p>
+    <div class="modern-summary-divider"></div>
+    ${modernSummaryRow("İş No", modernSummaryValue($("workNo")?.value))}
+    ${modernSummaryRow("Başlık", modernSummaryValue($("title")?.value))}
+    ${modernSummaryRow("Kategori", `${modernSelectedText("mainCategory")} / ${modernSelectedText("subCategory")}`)}
+    ${modernSummaryRow("Sorumlu", modernSelectedText("responsibleId"))}
+    ${modernSummaryRow("Yardımcı", modernSelectedText("helperIds", "Yardımcı seçilmedi"))}
+    ${modernSummaryRow("Öncelik", modernSelectedText("priority"))}
+    ${modernSummaryRow("Durum", modernSelectedText("status"))}
+    ${modernSummaryRow("Hedef", modernSummaryValue($("targetEndDate")?.value, "Hedef tarih seçilmedi"))}
+    ${modernSummaryRow("Dosya", modernSummaryValue(fileName, "Dosya yüklenmedi"))}
+    <div class="modern-summary-metrics">
+      <div class="modern-mini-metric"><strong>${esc(helperCount)}</strong><span>Yardımcı</span></div>
+      <div class="modern-mini-metric"><strong>${esc(duration)}</strong><span>Süre</span></div>
+    </div>`;
+}
+
+function updateSocialSummaryPanel() {
+  const panel = $("socialSummaryPanel");
+  if (!panel) return;
+
+  const channels = checkedSocialChannels();
+  const fileName = $("socialMediaName")?.value || $("socialMediaFile")?.files?.[0]?.name || "";
+  const web = $("socialPublishOnWebsite")?.checked ? "Evet" : "Hayır";
+  const slider = $("socialShowOnSlider")?.checked ? "Evet" : "Hayır";
+
+  panel.innerHTML = `
+    <h3>Paylaşım Özeti</h3>
+    <p class="muted">İçerik kaydı tamamlanmadan önce ana bilgileri buradan kontrol edin.</p>
+    <div class="modern-summary-divider"></div>
+    ${modernSummaryRow("Kayıt No", modernSummaryValue($("socialNo")?.value))}
+    ${modernSummaryRow("Başlık", modernSummaryValue($("socialTitle")?.value))}
+    ${modernSummaryRow("Kanallar", channels.length ? esc(channels.join(", ")) : `<span class="muted">Kanal seçilmedi</span>`)}
+    ${modernSummaryRow("Web", modernSummaryValue(web))}
+    ${modernSummaryRow("Slider", modernSummaryValue(slider))}
+    ${modernSummaryRow("Durum", modernSelectedText("socialStatus"))}
+    ${modernSummaryRow("Yayın Tarihi", modernSummaryValue($("socialPublishDate")?.value, "Yayın tarihi seçilmedi"))}
+    ${modernSummaryRow("Hashtag", modernSummaryValue($("socialHashtags")?.value, "Hashtag girilmedi"))}
+    ${modernSummaryRow("Medya", modernSummaryValue(fileName, "Medya dosyası yüklenmedi"))}
+    <div class="modern-summary-metrics">
+      <div class="modern-mini-metric"><strong>${esc(channels.length)}</strong><span>Sosyal Kanal</span></div>
+      <div class="modern-mini-metric"><strong>${web}</strong><span>Web Yayını</span></div>
+    </div>`;
+}
+
 function showSocialForm(id = null) {
   const editing = Boolean(id);
   const old = editing ? getSocialPosts().find(item => item.id === id) : null;
@@ -5508,90 +6002,143 @@ function showSocialForm(id = null) {
   );
 
   $("view").innerHTML = `
-    <div class="page-head">
-      <div>
-        <h2>${editing ? "Sosyal Medya Paylaşım Kaydını Düzenle" : "YENİ SOSYAL MEDYA PAYLAŞIMI"}</h2>
-        <p>Her Paylaşımda Kalite, Her Mesajda Güven</p>
+    <div class="modern-form-page">
+      <div class="page-head">
+        <div>
+          <h2>${editing ? "Sosyal Medya Paylaşım Kaydını Düzenle" : "YENİ SOSYAL MEDYA PAYLAŞIMI"}</h2>
+          <p>Her Paylaşımda Kalite, Her Mesajda Güven</p>
+        </div>
+        <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
       </div>
-      <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
+
+      ${modernStepperHtml(["Temel Bilgiler", "Yayın & Öncelik", "Tarih & Takvim", "Açıklamalar & Dosya"])}
+
+      <form id="socialForm" class="modern-form-shell" onsubmit="App.saveSocialPost(event, '${js(id || "")}')">
+        <div class="modern-form-layout">
+          <div class="modern-form-main">
+            <section class="modern-section-card">
+              <div class="modern-section-head">
+                <div>
+                  <h3 class="modern-section-title">Temel Bilgiler</h3>
+                  <p class="modern-section-subtitle">İçeriğin sistemde nasıl görüneceğini belirleyen ana alanlar.</p>
+                </div>
+                <div class="modern-section-icon">1</div>
+              </div>
+              <div class="modern-card-grid">
+                <div class="field">
+                  <label>Kayıt No</label>
+                  <input id="socialNo" value="${esc(item.socialNo)}" readonly>
+                </div>
+                <div class="field span-2">
+                  <label>Başlık *</label>
+                  <input id="socialTitle" required maxlength="180" value="${esc(item.title)}" placeholder="Örn. Mayıs Ayı Akreditasyon Gündemi">
+                </div>
+                <div class="field span-2">
+                  <label>Kullanılacak Hashtag</label>
+                  <input id="socialHashtags" value="${esc(item.hashtags || "")}" placeholder="#TÜRKAK #Akreditasyon #Kalite">
+                </div>
+              </div>
+            </section>
+
+            <section class="modern-section-card">
+              <div class="modern-section-head">
+                <div>
+                  <h3 class="modern-section-title">Yayın & Öncelik</h3>
+                  <p class="modern-section-subtitle">Kanal, web yayını ve içerik durumunu tek alanda yönetin.</p>
+                </div>
+                <div class="modern-section-icon">2</div>
+              </div>
+              <div class="modern-card-grid">
+                <div class="field span-2 social-channels-compact">
+                  <label>Yayın Kanalları</label>
+                  <div class="social-channel-grid">
+                    ${channelCheckboxes(item.channels || [])}
+                    <label class="social-channel-card">
+                      <input type="checkbox" id="socialPublishOnWebsite" ${item.publishOnWebsite === "Evet" ? "checked" : ""}>
+                      <span>Web Sitesi</span>
+                    </label>
+                    <label class="social-channel-card">
+                      <input type="checkbox" id="socialShowOnSlider" ${item.showOnSlider === "Evet" ? "checked" : ""}>
+                      <span>Ana Sayfa Slider</span>
+                    </label>
+                  </div>
+                  <small>Birden fazla kanal seçilebilir.</small>
+                </div>
+                <div class="field">
+                  <label>Yayın Durumu</label>
+                  <select id="socialStatus">
+                    ${SOCIAL_STATUS.map(status => `<option ${item.status === status ? "selected" : ""}>${esc(status)}</option>`).join("")}
+                  </select>
+                </div>
+              </div>
+            </section>
+
+            <section class="modern-section-card">
+              <div class="modern-section-head">
+                <div>
+                  <h3 class="modern-section-title">Tarih & Takvim</h3>
+                  <p class="modern-section-subtitle">Planlanan yayın tarihini net ve izlenebilir biçimde belirleyin.</p>
+                </div>
+                <div class="modern-section-icon">3</div>
+              </div>
+              <div class="modern-card-grid">
+                <div class="field modern-date-field">
+                  <label>Yayın Tarihi *</label>
+                  <input id="socialPublishDate" type="date" required value="${esc(item.publishDate)}">
+                </div>
+              </div>
+            </section>
+
+            <section class="modern-section-card">
+              <div class="modern-section-head">
+                <div>
+                  <h3 class="modern-section-title">Açıklamalar & Dosya</h3>
+                  <p class="modern-section-subtitle">Metin, haber notu ve görsel/medya dosyalarını ekleyin.</p>
+                </div>
+                <div class="modern-section-icon">4</div>
+              </div>
+              <div class="modern-card-grid">
+                <div class="field social-text-compact">
+                  <label>Kısa Açıklama</label>
+                  <textarea id="socialShortDescription" placeholder="Sosyal medya ve web haber girişinde kullanılacak kısa açıklama.">${esc(item.shortDescription)}</textarea>
+                </div>
+                <div class="field social-text-compact">
+                  <label>Detaylı İçerik</label>
+                  <textarea id="socialDetailContent" placeholder="Web sitesi haber metni, sosyal medya açıklama metni veya içerik notları.">${esc(item.detailContent)}</textarea>
+                </div>
+                <div class="field span-2 social-media-compact">
+                  <label>Görsel / Medya Dosyası</label>
+                  <div class="modern-file-drop">
+                    <input type="file" id="socialMediaFile" accept="image/*,video/*,application/pdf" onchange="App.handleSocialMediaFile(event)">
+                    <input id="socialMediaUrl" type="hidden" value="${esc(item.mediaUrl || "")}">
+                    <input id="socialMediaData" type="hidden" value="${esc(item.mediaDataUrl || "")}">
+                    <input id="socialMediaName" type="hidden" value="${esc(item.mediaFileName || "")}">
+                    <input id="socialMediaType" type="hidden" value="${esc(item.mediaFileType || "")}">
+                    <input id="socialMediaSize" type="hidden" value="${esc(item.mediaFileSize || 0)}">
+                    <div id="socialMediaPreview" class="file-upload-preview">${uploadFilePreviewHtml(item.mediaFileName, item.mediaDataUrl, item.mediaFileSize, item.mediaFileType, item.mediaUrl, "Görsel / medya dosyası yüklenmedi.")}</div>
+                    <small>2 MB altındaki dosyalar önerilir.</small>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <div class="modern-actions-bar btn-row">
+              <div class="modern-actions-card">
+                <button class="btn ghost" type="button" onclick="App.showSocialList()">Sosyal Medya Planına DÖN</button>
+                <button class="btn secondary" type="submit" data-save-mode="continue">Kaydet ve Devam Et</button>
+                <button class="btn" type="submit" data-save-mode="dashboard">Kaydet ve Anasayfaya Dön</button>
+                ${editing && canDeleteSocialPost(item) ? `<button class="btn danger" type="button" onclick="App.deleteSocialPost('${js(item.id)}')">Kaydı Sil</button>` : ""}
+              </div>
+            </div>
+          </div>
+
+          <aside id="socialSummaryPanel" class="modern-summary-panel"></aside>
+        </div>
+      </form>
     </div>
-
-    <form id="socialForm" class="panel" onsubmit="App.saveSocialPost(event, '${js(id || "")}')">
-      <div class="form-grid social-form-grid">
-        <div class="field">
-          <label>Kayıt No</label>
-          <input id="socialNo" value="${esc(item.socialNo)}" readonly>
-        </div>
-
-        <div class="field span-2">
-          <label>Başlık *</label>
-          <input id="socialTitle" required maxlength="180" value="${esc(item.title)}" placeholder="Örn. Mayıs Ayı Akreditasyon Gündemi">
-        </div>
-
-        <div class="social-two-col">
-          <div class="field social-text-compact">
-            <label>Kısa Açıklama</label>
-            <textarea id="socialShortDescription" placeholder="Sosyal medya ve web haber girişinde kullanılacak kısa açıklama.">${esc(item.shortDescription)}</textarea>
-          </div>
-
-          <div class="field social-text-compact">
-            <label>Detaylı İçerik</label>
-            <textarea id="socialDetailContent" placeholder="Web sitesi haber metni, sosyal medya açıklama metni veya içerik notları.">${esc(item.detailContent)}</textarea>
-          </div>
-        </div>
-
-        <div class="field span-3">
-          <label>Kullanılacak Hashtag</label>
-          <input id="socialHashtags" value="${esc(item.hashtags || "")}" placeholder="#TÜRKAK #Akreditasyon #Kalite">
-        </div>
-
-        <div class="field span-3 social-channels-compact">
-          <label>Yayın Kanalları</label>
-          <div class="social-channel-grid">
-            ${channelCheckboxes(item.channels || [])}
-            <label class="social-channel-card">
-              <input type="checkbox" id="socialPublishOnWebsite" ${item.publishOnWebsite === "Evet" ? "checked" : ""}>
-              <span>Web Sitesi</span>
-            </label>
-            <label class="social-channel-card">
-              <input type="checkbox" id="socialShowOnSlider" ${item.showOnSlider === "Evet" ? "checked" : ""}>
-              <span>Ana Sayfa Slider</span>
-            </label>
-          </div>
-          <small>Birden fazla kanal seçilebilir.</small>
-        </div>
-
-        <div class="field">
-          <label>Yayın Tarihi *</label>
-          <input id="socialPublishDate" type="date" required value="${esc(item.publishDate)}">
-        </div>
-
-        <div class="field">
-          <label>Yayın Durumu</label>
-          <select id="socialStatus">
-            ${SOCIAL_STATUS.map(status => `<option ${item.status === status ? "selected" : ""}>${esc(status)}</option>`).join("")}
-          </select>
-        </div>
-
-        <div class="field social-media-compact">
-          <label>Görsel / Medya Dosyası</label>
-          <input type="file" id="socialMediaFile" accept="image/*,video/*,application/pdf" onchange="App.handleSocialMediaFile(event)">
-          <input id="socialMediaUrl" type="hidden" value="${esc(item.mediaUrl || "")}">
-          <input id="socialMediaData" type="hidden" value="${esc(item.mediaDataUrl || "")}">
-          <input id="socialMediaName" type="hidden" value="${esc(item.mediaFileName || "")}">
-          <input id="socialMediaType" type="hidden" value="${esc(item.mediaFileType || "")}">
-          <input id="socialMediaSize" type="hidden" value="${esc(item.mediaFileSize || 0)}">
-          <div id="socialMediaPreview" class="file-upload-preview">${uploadFilePreviewHtml(item.mediaFileName, item.mediaDataUrl, item.mediaFileSize, item.mediaFileType, item.mediaUrl, "Görsel / medya dosyası yüklenmedi.")}</div>
-          <small>2 MB altındaki dosyalar önerilir.</small>
-        </div>
-      </div>
-            <div class="form-actions btn-row">
-        <button class="btn" type="submit">Kaydet ve Listeye Dön</button>
-        <button class="btn ghost" type="button" onclick="App.showSocialList()">Sosyal Medya Planına DÖN</button>
-        ${editing && canDeleteSocialPost(item) ? `<button class="btn danger" type="button" onclick="App.deleteSocialPost('${js(item.id)}')">Kaydı Sil</button>` : ""}
-      </div>
-    </form>
   `;
+
+  setupModernSummarySync("socialForm", updateSocialSummaryPanel);
 }
 
 function readSocialForm(existing) {
@@ -5664,8 +6211,15 @@ async function saveSocialPost(event, id) {
   saveSocialPosts(items);
   await pushSharedData();
 
-  toast("Sosyal medya paylaşım kaydı kaydedildi.");
-  showSocialList();
+  const saveMode = event?.submitter?.dataset?.saveMode || "dashboard";
+
+  if (saveMode === "continue") {
+    toast("Sosyal medya paylaşım kaydı kaydedildi. Form açık tutuldu.");
+    showSocialForm(item.id);
+  } else {
+    toast("Sosyal medya paylaşım kaydı kaydedildi. Anasayfaya dönüldü.");
+    showDashboard();
+  }
 }
 
 function showSocialList(type = "all") {
@@ -6129,60 +6683,116 @@ function exportSocialCsv() {
   editing ? `${task.workNo} numaralı iş güncelleniyor` : "Yeni görev giriş ekranı"
 );
         $("view").innerHTML = `
-          <div class="page-head">
-            <div><h2>${editing ? 'İş Kaydını Düzenle' : 'YENİ İŞ KAYDI'}</h2><p>Her iş zamanında, her süreç kontrol altında</p></div>
-            <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
-          </div>
-          <form id="taskForm" class="panel" onsubmit="App.saveTask(event, '${js(id || '')}')">
-            <div class="form-grid task-form-grid">
-              <div class="field"><label>İş No</label><input id="workNo" value="${esc(task.workNo)}" readonly /></div>
-              <div class="field span-2"><label>İş Adı *</label><input id="title" required maxlength="180" value="${esc(task.title)}" placeholder="Mayıs Ayı Sosyal Medya Planı Hazırlığı" /></div>
+          <div class="modern-form-page">
+            <div class="page-head">
+              <div><h2>${editing ? 'İş Kaydını Düzenle' : 'YENİ İŞ KAYDI'}</h2><p>Her iş zamanında, her süreç kontrol altında</p></div>
+              <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
+            </div>
 
-              <div class="field"><label>Ana Kategori *</label><select id="mainCategory" required onchange="App.categoryChanged()">${categoryOptions(task.mainCategory)}</select></div>
-              <div class="field"><label>Alt Kategori *</label><select id="subCategory" required>${subCategoryOptions(task.mainCategory, task.subCategory)}</select></div>
-              <div class="field"><label>Çıktı Türü</label><select id="outputType">${OUTPUT_TYPES.map(x => `<option ${task.outputType === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
+            ${modernStepperHtml(["Temel Bilgiler", "Atama & Öncelik", "Tarih & Takvim", "Açıklamalar & Dosya"])}
 
-              <div class="field"><label>Sorumlu Personel *</label><select id="responsibleId" required>${userOptions(task.responsibleId, true)}</select></div>
-              <div class="field task-helper-compact"><label>Yardımcı Personel</label><select id="helperIds" multiple size="2">${multiUserOptions(task.helperIds || [])}</select><small>Bir personeli tekrar tıklayarak seçimden kaldırabilirsiniz.</small></div>
-              <div class="field"><label>Öncelik</label><select id="priority">${PRIORITIES.map(x => `<option ${task.priority === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
+            <form id="taskForm" class="modern-form-shell" onsubmit="App.saveTask(event, '${js(id || '')}')">
+              <div class="modern-form-layout">
+                <div class="modern-form-main">
+                  <section class="modern-section-card">
+                    <div class="modern-section-head">
+                      <div>
+                        <h3 class="modern-section-title">Temel Bilgiler</h3>
+                        <p class="modern-section-subtitle">İş kaydının tanımı, kategorisi ve çıktı türünü belirleyin.</p>
+                      </div>
+                      <div class="modern-section-icon">1</div>
+                    </div>
+                    <div class="modern-card-grid">
+                      <div class="field"><label>İş No</label><input id="workNo" value="${esc(task.workNo)}" readonly /></div>
+                      <div class="field span-2"><label>İş Adı *</label><input id="title" required maxlength="180" value="${esc(task.title)}" placeholder="Örn. Mayıs Ayı Sosyal Medya Planı Hazırlığı" /></div>
+                      <div class="field"><label>Ana Kategori *</label><select id="mainCategory" required onchange="App.categoryChanged()">${categoryOptions(task.mainCategory)}</select></div>
+                      <div class="field"><label>Alt Kategori *</label><select id="subCategory" required>${subCategoryOptions(task.mainCategory, task.subCategory)}</select></div>
+                      <div class="field"><label>Çıktı Türü</label><select id="outputType">${OUTPUT_TYPES.map(x => `<option ${task.outputType === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
+                      <div class="field"><label>Gizlilik Düzeyi</label><select id="confidentiality">${CONFIDENTIALITY.map(x => `<option ${task.confidentiality === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
+                    </div>
+                  </section>
 
-              <div class="field"><label>Durum</label><select id="status" onchange="App.statusChanged()">${STATUS.map(x => `<option ${task.status === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
-              <div class="field"><label>Gizlilik Düzeyi</label><select id="confidentiality">${CONFIDENTIALITY.map(x => `<option ${task.confidentiality === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
-              <div class="field"><label>Takvimde Gösterilsin mi?</label><select id="showOnCalendar"><option ${task.showOnCalendar === 'Evet' ? 'selected' : ''}>Evet</option><option ${task.showOnCalendar === 'Hayır' ? 'selected' : ''}>Hayır</option></select></div>
+                  <section class="modern-section-card">
+                    <div class="modern-section-head">
+                      <div>
+                        <h3 class="modern-section-title">Atama & Öncelik</h3>
+                        <p class="modern-section-subtitle">Sorumluluk, yardımcı personel, durum ve öncelik bilgisini düzenleyin.</p>
+                      </div>
+                      <div class="modern-section-icon">2</div>
+                    </div>
+                    <div class="modern-card-grid">
+                      <div class="field"><label>Sorumlu Personel *</label><select id="responsibleId" required>${userOptions(task.responsibleId, true)}</select></div>
+                      <div class="field"><label>Öncelik</label><select id="priority">${PRIORITIES.map(x => `<option ${task.priority === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
+                      <div class="field"><label>Durum</label><select id="status" onchange="App.statusChanged()">${STATUS.map(x => `<option ${task.status === x ? 'selected' : ''}>${esc(x)}</option>`).join("")}</select></div>
+                      <div class="field task-helper-compact"><label>Yardımcı Personel</label><select id="helperIds" multiple size="5">${multiUserOptions(task.helperIds || [])}</select><small>Bir personeli tekrar tıklayarak seçimden kaldırabilirsiniz.</small></div>
+                    </div>
+                  </section>
 
-              <div class="field"><label>Başlangıç Tarihi</label><input id="startDate" type="date" value="${esc(task.startDate)}" /></div>
-              <div class="field"><label>Hedef Bitiş Tarihi *</label><input id="targetEndDate" type="date" required value="${esc(task.targetEndDate)}" /></div>
-              <div class="field"><label>Fiili Bitiş Tarihi</label><input id="actualEndDate" type="date" value="${esc(task.actualEndDate)}" /></div>
+                  <section class="modern-section-card">
+                    <div class="modern-section-head">
+                      <div>
+                        <h3 class="modern-section-title">Tarih & Takvim</h3>
+                        <p class="modern-section-subtitle">İşin hedef tarihlerini ve takvim görünümünü planlayın.</p>
+                      </div>
+                      <div class="modern-section-icon">3</div>
+                    </div>
+                    <div class="modern-card-grid">
+                      <div class="field modern-date-field"><label>Başlangıç Tarihi</label><input id="startDate" type="date" value="${esc(task.startDate)}" /></div>
+                      <div class="field modern-date-field"><label>Hedef Bitiş Tarihi *</label><input id="targetEndDate" type="date" required value="${esc(task.targetEndDate)}" /></div>
+                      <div class="field modern-date-field"><label>Fiili Bitiş Tarihi</label><input id="actualEndDate" type="date" value="${esc(task.actualEndDate)}" /></div>
+                      <div class="field"><label>Takvimde Gösterilsin mi?</label><select id="showOnCalendar"><option ${task.showOnCalendar === 'Evet' ? 'selected' : ''}>Evet</option><option ${task.showOnCalendar === 'Hayır' ? 'selected' : ''}>Hayır</option></select></div>
+                      <div class="field modern-date-field"><label>Takvim Tarihi</label><input id="calendarDate" type="date" value="${esc(task.calendarDate || task.targetEndDate || today())}" /></div>
+                      <div class="field"><label>Takvim Başlığı</label><input id="calendarTitle" value="${esc(task.calendarTitle || task.mainCategory)}" placeholder="Örn. Sosyal medya planı" /></div>
+                      <div class="field span-2 task-note-compact"><label>Takvim Notu</label><textarea id="calendarNote" placeholder="Takvim pop-up için kısa ve genel not.">${esc(task.calendarNote)}</textarea></div>
+                    </div>
+                  </section>
 
-              <div class="field"><label>Takvim Tarihi</label><input id="calendarDate" type="date" value="${esc(task.calendarDate || task.targetEndDate || today())}" /></div>
-              <div class="field"><label>Takvim Başlığı</label><input id="calendarTitle" value="${esc(task.calendarTitle || task.mainCategory)}" placeholder="ana kategori" /></div>
-              <div class="field task-note-compact"><label>Takvim Notu</label><textarea id="calendarNote" placeholder="Takvim pop-up için kısa ve genel not.">${esc(task.calendarNote)}</textarea></div>
+                  <section class="modern-section-card">
+                    <div class="modern-section-head">
+                      <div>
+                        <h3 class="modern-section-title">Açıklamalar & Dosya</h3>
+                        <p class="modern-section-subtitle">İş kapsamı, güncelleme notları ve destekleyici dosyaları ekleyin.</p>
+                      </div>
+                      <div class="modern-section-icon">4</div>
+                    </div>
+                    <div class="modern-card-grid">
+                      <div class="field span-2 task-description-compact"><label>İşin Açıklaması</label><textarea id="description" placeholder="İşin kapsamını, beklentisini ve açıklamasını yazın.">${esc(task.description)}</textarea></div>
+                      <div class="field span-2 task-file-compact">
+                        <label>Dosya</label>
+                        <div class="modern-file-drop">
+                          <input type="file" id="taskFileUpload" onchange="App.handleTaskFile(event)">
+                          <input id="fileLink" type="hidden" value="${esc(task.fileLink || "")}" />
+                          <input id="taskFileData" type="hidden" value="${esc(task.fileDataUrl || "")}" />
+                          <input id="taskFileName" type="hidden" value="${esc(task.fileName || "")}" />
+                          <input id="taskFileType" type="hidden" value="${esc(task.fileType || "")}" />
+                          <input id="taskFileSize" type="hidden" value="${esc(task.fileSize || 0)}" />
+                          <div id="taskFilePreview" class="file-upload-preview">${uploadFilePreviewHtml(task.fileName, task.fileDataUrl, task.fileSize, task.fileType, task.fileLink, "Dosya yüklenmedi.")}</div>
+                          <small>2 MB altındaki dosyalar önerilir.</small>
+                        </div>
+                      </div>
+                      <div class="field task-note-compact"><label>Son Güncelleme Notu</label><textarea id="updateNote" placeholder="Herkesin güncel durumu anlayacağı kısa not.">${esc(task.updateNote)}</textarea></div>
+                      <div class="field task-note-compact"><label>Tamamlanma Notu</label><textarea id="completionNote" placeholder="İş kapatılırken sonuç bilgisi.">${esc(task.completionNote)}</textarea></div>
+                      <div class="field span-2 task-note-compact"><label>Gecikme Nedeni</label><textarea id="delayReason" placeholder="Süresi geçen işler için açıklama.">${esc(task.delayReason)}</textarea></div>
+                    </div>
+                  </section>
 
-              <div class="field span-2 task-description-compact"><label>İşin Açıklaması</label><textarea id="description" placeholder="İşin kapsamını, beklentisini ve açıklamasını yazın.">${esc(task.description)}</textarea></div>
-              <div class="field task-file-compact">
-                <label>Dosya</label>
-                <input type="file" id="taskFileUpload" onchange="App.handleTaskFile(event)">
-                <input id="fileLink" type="hidden" value="${esc(task.fileLink || "")}" />
-                <input id="taskFileData" type="hidden" value="${esc(task.fileDataUrl || "")}" />
-                <input id="taskFileName" type="hidden" value="${esc(task.fileName || "")}" />
-                <input id="taskFileType" type="hidden" value="${esc(task.fileType || "")}" />
-                <input id="taskFileSize" type="hidden" value="${esc(task.fileSize || 0)}" />
-                <div id="taskFilePreview" class="file-upload-preview">${uploadFilePreviewHtml(task.fileName, task.fileDataUrl, task.fileSize, task.fileType, task.fileLink, "Dosya yüklenmedi.")}</div>
-                <small>2 MB altındaki dosyalar önerilir.</small>
+                  <div class="modern-actions-bar btn-row">
+                    <div class="modern-actions-card">
+                      <button class="btn ghost" type="button" onclick="App.showDashboard()">Vazgeç</button>
+                      <button class="btn secondary" type="submit" data-save-mode="continue">Kaydet ve Devam Et</button>
+                      <button class="btn" type="submit" data-save-mode="dashboard">Kaydet ve Anasayfaya Dön</button>
+                      ${editing && canDeleteTask(task) ? `<button class="btn danger" type="button" onclick="App.deleteTask('${js(task.id)}')">Görevi Sil</button>` : ""}
+                    </div>
+                  </div>
+                </div>
+
+                <aside id="taskSummaryPanel" class="modern-summary-panel"></aside>
               </div>
-
-              <div class="field task-note-compact"><label>Son Güncelleme Notu</label><textarea id="updateNote" placeholder="Herkesin güncel durumu anlayacağı kısa not.">${esc(task.updateNote)}</textarea></div>
-              <div class="field task-note-compact"><label>Tamamlanma Notu</label><textarea id="completionNote" placeholder="İş kapatılırken sonuç bilgisi.">${esc(task.completionNote)}</textarea></div>
-              <div class="field task-note-compact"><label>Gecikme Nedeni</label><textarea id="delayReason" placeholder="Süresi geçen işler için açıklama.">${esc(task.delayReason)}</textarea></div>
-            </div>
-            <div class="form-actions btn-row">
-              <button class="btn" type="submit">Kaydet ve Anasayfaya Dön</button>
-              <button class="btn ghost" type="button" onclick="App.showDashboard()">Anasayfaya DÖN</button>
-              ${editing && canDeleteTask(task) ? `<button class="btn danger" type="button" onclick="App.deleteTask('${js(task.id)}')">Görevi Sil</button>` : ""}
-            </div>
-          </form>
+            </form>
+          </div>
         `;
         setupHelperSelectToggle();
+        setupModernSummarySync("taskForm", updateTaskSummaryPanel);
       }
 
       function categoryChanged() {
@@ -6261,8 +6871,15 @@ generateAutomaticNotifications();
 
 await pushSharedData();
 
-toast("İş kaydedildi. Anasayfaya dönüldü.");
-showDashboard();
+const saveMode = event?.submitter?.dataset?.saveMode || "dashboard";
+
+if (saveMode === "continue") {
+  toast("İş kaydedildi. Form açık tutuldu.");
+  showTaskForm(task.id);
+} else {
+  toast("İş kaydedildi. Anasayfaya dönüldü.");
+  showDashboard();
+}
       }
 
       function notifyChanges(before, after) {
