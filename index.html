@@ -4120,6 +4120,8 @@ function toast(message) {
 
   if (state.viewKey === "social") {
     showSocialList(state.socialListType || "all");
+  } else if (state.viewKey === "meetings") {
+    showMeetingList(state.meetingListType || "all");
   } else if (state.viewKey === "reports") {
     showReports(state.scorecardYear || new Date().getFullYear());
   } else {
@@ -4132,6 +4134,8 @@ function thisMonth() {
 
   if (state.viewKey === "social") {
     showSocialList(state.socialListType || "all");
+  } else if (state.viewKey === "meetings") {
+    showMeetingList(state.meetingListType || "all");
   } else if (state.viewKey === "reports") {
     showReports(state.scorecardYear || new Date().getFullYear());
   } else {
@@ -4348,6 +4352,139 @@ function openSocialCalendarDay(iso) {
 
   openModal(`${formatDate(iso)} - Sosyal Medya Paylaşım Takvimi`, body, `<button class="btn ghost" onclick="App.closeModal()">Kapat</button>`);
 }
+
+function meetingsForDate(iso) {
+  return getMeetings()
+    .filter(item => {
+      const start = item.visitStartDate || "";
+      const end = item.visitEndDate || item.visitStartDate || "";
+
+      if (!start) return false;
+      return iso >= start && iso <= end;
+    })
+    .sort((a, b) =>
+      String(a.visitStartDate).localeCompare(String(b.visitStartDate)) ||
+      String(a.visitorName).localeCompare(String(b.visitorName), "tr")
+    );
+}
+
+function meetingCalendarClass(status) {
+  return {
+    "Planlandı": "cat-haber",
+    "Hazırlıkta": "cat-etkinlik",
+    "Gerçekleşti": "cat-bulten",
+    "Takipte": "cat-talep",
+    "Ertelendi": "cat-idari",
+    "İptal": "cat-sikayet"
+  }[status] || "cat-default";
+}
+
+function meetingCalendarHtml() {
+  const monthDate = new Date(state.calendarMonth.getFullYear(), state.calendarMonth.getMonth(), 1);
+  const monthTitle = monthDate.toLocaleDateString("tr-TR", { month: "long", year: "numeric" });
+
+  const year = monthDate.getFullYear();
+  const month = monthDate.getMonth();
+  const firstDayIndex = (new Date(year, month, 1).getDay() + 6) % 7;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysPrevMonth = new Date(year, month, 0).getDate();
+
+  const cells = [];
+
+  for (let i = 0; i < 42; i++) {
+    let dayNo;
+    let cellMonth = month;
+    let cls = "day";
+
+    if (i < firstDayIndex) {
+      dayNo = daysPrevMonth - firstDayIndex + i + 1;
+      cellMonth = month - 1;
+      cls += " other";
+    } else if (i >= firstDayIndex + daysInMonth) {
+      dayNo = i - firstDayIndex - daysInMonth + 1;
+      cellMonth = month + 1;
+      cls += " other";
+    } else {
+      dayNo = i - firstDayIndex + 1;
+    }
+
+    const dateObj = new Date(year, cellMonth, dayNo);
+    const iso = toISO(dateObj);
+
+    if (iso === today()) cls += " today";
+
+    const meetings = meetingsForDate(iso);
+
+    const chips = meetings.slice(0, 3).map(item => `
+      <button class="cal-chip ${meetingCalendarClass(item.status)}" title="${esc(item.visitorName)}" onclick="App.openMeetingCalendarDay('${js(iso)}')">
+        ${esc(item.visitorName || item.meetingType || "Toplantı")}
+      </button>
+    `).join("");
+
+    const more = meetings.length > 3
+      ? `<button class="cal-chip cat-default" onclick="App.openMeetingCalendarDay('${js(iso)}')">+${meetings.length - 3} kayıt</button>`
+      : "";
+
+    cells.push(`
+      <div class="${cls}">
+        <div class="day-num">
+          <span>${dayNo}</span>
+          ${iso === today() ? "<span>Bugün</span>" : ""}
+        </div>
+        ${chips}
+        ${more}
+      </div>
+    `);
+  }
+
+  return `
+    <div class="calendar-head">
+      <h3>Toplantı / Ziyaret Takvimi - ${esc(monthTitle)}</h3>
+      <div class="btn-row">
+        <button class="btn ghost small" onclick="App.moveMonth(-1)">‹ Önceki</button>
+        <button class="btn secondary small" onclick="App.thisMonth()">Bugün</button>
+        <button class="btn ghost small" onclick="App.moveMonth(1)">Sonraki ›</button>
+      </div>
+    </div>
+
+    <div class="weekdays">
+      ${["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"].map(day => `<div class="weekday">${day}</div>`).join("")}
+    </div>
+
+    <div class="calendar">${cells.join("")}</div>
+  `;
+}
+
+function openMeetingCalendarDay(iso) {
+  const list = meetingsForDate(iso);
+
+  const body = list.length ? list.map(item => `
+    <div class="mini-item">
+      <div>
+        <strong>${esc(item.meetingNo)} - ${esc(item.visitorName || item.meetingType)}</strong>
+        <span>
+          ${badge(item.status, meetingStatusClass(item.status))}
+          <br>
+          Başlık: ${esc(item.meetingType || "-")}
+          <br>
+          Tarih: ${formatDate(item.visitStartDate)} - ${formatDate(item.visitEndDate)}
+          <br>
+          Sorumlu: ${esc(userName(item.responsibleId || item.createdBy))}
+          <br>
+          ${esc(item.subject || "")}
+        </span>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn secondary small" onclick="App.openMeetingDetail('${js(item.id)}')">Detay</button>
+        ${canEditMeeting(item) ? `<button class="btn ghost small" onclick="App.showMeetingForm('${js(item.id)}')">Düzenle</button>` : ""}
+        ${canDeleteMeeting(item) ? `<button class="btn danger small" onclick="App.deleteMeeting('${js(item.id)}')">Sil</button>` : ""}
+      </div>
+    </div>
+  `).join("") : `<p>Bu gün için toplantı / ziyaret kaydı yok.</p>`;
+
+  openModal(`${formatDate(iso)} - Toplantı / Ziyaret Takvimi`, body, `<button class="btn ghost" onclick="App.closeModal()">Kapat</button>`);
+}
 function nextMeetingNo() {
   const y = new Date().getFullYear();
   const prefix = `TZ-${y}-`;
@@ -4524,6 +4661,10 @@ function showMeetingList(type = "all") {
       </div>
 
       <div id="meetingRows"></div>
+    </div>
+
+    <div class="panel" style="margin-top:16px">
+      ${meetingCalendarHtml()}
     </div>
 
     <div style="margin-top:14px">
@@ -6146,6 +6287,8 @@ function showSocialForm(id = null) {
             <div class="modern-actions-bar btn-row">
               <div class="modern-actions-card">
                 <button class="btn ghost" type="button" onclick="App.showSocialList()">Sosyal Medya Planına DÖN</button>
+                <button class="btn secondary" type="button" onclick="App.downloadExcelTemplate('social')">Boş Excel Şablonu</button>
+                <button class="btn secondary" type="button" onclick="App.openExcelImport('social')">Excel'den Toplu Yükle</button>
                 <button class="btn secondary" type="submit" data-save-mode="continue">Kaydet ve Devam Et</button>
                 <button class="btn" type="submit" data-save-mode="dashboard">Kaydet ve Anasayfaya Dön</button>
                 ${editing && canDeleteSocialPost(item) ? `<button class="btn danger" type="button" onclick="App.deleteSocialPost('${js(item.id)}')">Kaydı Sil</button>` : ""}
@@ -6255,12 +6398,7 @@ function showSocialList(type = "all") {
         <h2>Sosyal Medya ve Web İçerik Planı</h2>
         <p>Dijitalde de Güvenin Adresi: TÜRKAK</p>
       </div>
-      <div class="btn-row">
-  <button class="btn secondary" onclick="App.downloadExcelTemplate()">Boş Excel Şablonu</button>
-  <button class="btn secondary" onclick="App.openExcelImport()">Excel'den Toplu Yükle</button>
-  <button class="btn secondary" onclick="App.exportSocialCsv()">CSV Dışa Aktar</button>
-  <button class="btn" onclick="App.showSocialForm()">＋ Yeni Sosyal Medya Paylaşımı</button>
-</div>
+
     </div>
 
     <div class="panel">
@@ -6312,8 +6450,9 @@ function showSocialList(type = "all") {
       ${socialCalendarHtml()}
     </div>
 
-    <div style="margin-top:14px">
+    <div class="btn-row" style="margin-top:14px">
       <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
+      <button class="btn secondary" onclick="App.exportSocialCsv()">CSV Dışa Aktar</button>
     </div>
   `;
 
@@ -6514,12 +6653,7 @@ function exportSocialCsv() {
         <p>Çalışmaları Kayıt Altına Al, Süreci Güvenle Yönet</p>
       </div>
 
-      <div class="btn-row">
-        <button class="btn secondary" onclick="App.downloadExcelTemplate()">Boş Excel Şablonu</button>
-        <button class="btn secondary" onclick="App.openExcelImport()">Excel'den Toplu Yükle</button>
-        <button class="btn secondary" onclick="App.exportCurrentListCsv()">CSV Dışa Aktar</button>
-        <button class="btn" onclick="App.showTaskForm()">＋ Yeni İş</button>
-      </div>
+
     </div>
 
     <div class="panel">
@@ -6565,8 +6699,9 @@ function exportSocialCsv() {
       <div id="taskRows"></div>
     </div>
 
-    <div style="margin-top:14px">
+    <div class="btn-row" style="margin-top:14px">
       <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
+      <button class="btn secondary" onclick="App.exportCurrentListCsv()">CSV Dışa Aktar</button>
     </div>
   `;
 
@@ -6799,9 +6934,11 @@ function exportSocialCsv() {
 
                   <div class="modern-actions-bar btn-row">
                     <div class="modern-actions-card">
-                      <button class="btn ghost" type="button" onclick="App.showDashboard()">Vazgeç</button>
+                      <button class="btn secondary" type="button" onclick="App.downloadExcelTemplate('tasks')">Boş Excel Şablonu</button>
+                      <button class="btn secondary" type="button" onclick="App.openExcelImport('tasks')">Excel'den Toplu Yükle</button>
                       <button class="btn secondary" type="submit" data-save-mode="continue">Kaydet ve Devam Et</button>
                       <button class="btn" type="submit" data-save-mode="dashboard">Kaydet ve Anasayfaya Dön</button>
+                      <button class="btn ghost" type="button" onclick="App.showDashboard()">Vazgeç</button>
                       ${editing && canDeleteTask(task) ? `<button class="btn danger" type="button" onclick="App.deleteTask('${js(task.id)}')">Görevi Sil</button>` : ""}
                     </div>
                   </div>
@@ -9873,10 +10010,12 @@ function mountCorporateLottie(lottieId = "corporateLottieLoading") {
 
   download(JSON.stringify(data, null, 2), `turkak-yedek-${today()}.json`, "application/json;charset=utf-8");
 }
-    function downloadExcelTemplate() {
+    function downloadExcelTemplate(scope = "all") {
   if (!window.XLSX) {
     return toast("Excel kütüphanesi yüklenemedi. İnternet bağlantısını kontrol edin.");
   }
+
+  const mode = String(scope || "all").toLocaleLowerCase("tr-TR");
 
   const taskHeaders = [
     "İş Adı*",
@@ -9891,11 +10030,12 @@ function mountCorporateLottie(lottieId = "corporateLottieLoading") {
     "Hedef Bitiş Tarihi*",
     "Durum",
     "Onay Gerekiyor mu",
-    "Dosya",
+    "Dosya / Bağlantı",
     "Fiili Bitiş Tarihi",
     "Son Güncelleme Notu",
     "Tamamlanma Notu",
     "Gecikme Nedeni",
+    "Sonraki Aksiyon",
     "Çıktı Türü",
     "Gizlilik Düzeyi",
     "Takvimde Gösterilsin mi",
@@ -9919,9 +10059,11 @@ function mountCorporateLottie(lottieId = "corporateLottieLoading") {
 
   const guideRows = [
     ["Alan", "Açıklama"],
+    ["Şablon türü", mode === "tasks" ? "Yeni İş Kaydı toplu yükleme şablonu" : mode === "social" ? "Yeni Sosyal Medya Paylaşımı toplu yükleme şablonu" : "Genel toplu yükleme şablonu"],
     ["Tarih formatı", "GG.AA.YYYY veya YYYY-AA-GG yazabilirsiniz. Örnek: 25.05.2026"],
     ["Sorumlu Personel", "Kullanıcı adı veya ad soyad yazılabilir. Örnek: davut.kara veya Davut Kara"],
     ["Yardımcı Personel", "Birden fazla kişi için virgül kullanın. Örnek: Umut Halaza, Onur Karadayı"],
+    ["Ana Kategori", Object.keys(CATEGORIES).join(", ")],
     ["Öncelik", PRIORITIES.join(", ")],
     ["İş Durumu", STATUS.join(", ")],
     ["Çıktı Türü", OUTPUT_TYPES.join(", ")],
@@ -9935,18 +10077,28 @@ function mountCorporateLottie(lottieId = "corporateLottieLoading") {
 
   const wb = XLSX.utils.book_new();
 
-  const taskSheet = XLSX.utils.aoa_to_sheet([taskHeaders]);
-  const socialSheet = XLSX.utils.aoa_to_sheet([socialHeaders]);
-  const guideSheet = XLSX.utils.aoa_to_sheet(guideRows);
+  if (mode === "tasks" || mode === "all") {
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([taskHeaders]), "Isler");
+  }
 
-  XLSX.utils.book_append_sheet(wb, taskSheet, "Isler");
-  XLSX.utils.book_append_sheet(wb, socialSheet, "SosyalMedya");
-  XLSX.utils.book_append_sheet(wb, guideSheet, "Kilavuz");
+  if (mode === "social" || mode === "all") {
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([socialHeaders]), "SosyalMedya");
+  }
 
-  XLSX.writeFile(wb, `turkak-toplu-yukleme-sablonu-${today()}.xlsx`);
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(guideRows), "Kilavuz");
+
+  const fileName = mode === "tasks"
+    ? `turkak-yeni-is-kaydi-toplu-yukleme-sablonu-${today()}.xlsx`
+    : mode === "social"
+      ? `turkak-yeni-sosyal-medya-toplu-yukleme-sablonu-${today()}.xlsx`
+      : `turkak-toplu-yukleme-sablonu-${today()}.xlsx`;
+
+  XLSX.writeFile(wb, fileName);
 }
 
-function openExcelImport() {
+function openExcelImport(scope = "all") {
+  state.excelImportScope = String(scope || "all").toLocaleLowerCase("tr-TR");
+
   const input = document.createElement("input");
   input.type = "file";
   input.accept = ".xlsx,.xls";
@@ -10117,15 +10269,17 @@ async function importExcelFile(event) {
         cellDates: true
       });
 
+      const importScope = String(state.excelImportScope || "all").toLocaleLowerCase("tr-TR");
+
       const taskSheet =
-        workbook.Sheets["Isler"] ||
-        workbook.Sheets["İşler"] ||
-        null;
+        importScope !== "social"
+          ? (workbook.Sheets["Isler"] || workbook.Sheets["İşler"] || null)
+          : null;
 
       const socialSheet =
-        workbook.Sheets["SosyalMedya"] ||
-        workbook.Sheets["Sosyal Medya"] ||
-        null;
+        importScope !== "tasks"
+          ? (workbook.Sheets["SosyalMedya"] || workbook.Sheets["Sosyal Medya"] || null)
+          : null;
 
       const taskRows = taskSheet
         ? XLSX.utils.sheet_to_json(taskSheet, { defval: "", raw: false }).filter(excelHasContent)
@@ -10309,12 +10463,23 @@ async function importExcelFile(event) {
 
       await pushSharedData();
 
-      toast(`${newTasks.length} iş kaydı ve ${newSocialPosts.length} sosyal medya kaydı Excel'den yüklendi.`);
+      const importResultScope = String(state.excelImportScope || "all").toLocaleLowerCase("tr-TR");
+      const importMessage = importResultScope === "tasks"
+        ? `${newTasks.length} iş kaydı Excel'den yüklendi.`
+        : importResultScope === "social"
+          ? `${newSocialPosts.length} sosyal medya kaydı Excel'den yüklendi.`
+          : `${newTasks.length} iş kaydı ve ${newSocialPosts.length} sosyal medya kaydı Excel'den yüklendi.`;
+
+      toast(importMessage);
 
       if (state.viewKey === "tasks") {
         showTaskList(state.listType || "all");
       } else if (state.viewKey === "social") {
         showSocialList(state.socialListType || "all");
+      } else if (state.viewKey === "new") {
+        showTaskForm();
+      } else if (state.viewKey === "socialNew") {
+        showSocialForm();
       } else if (state.viewKey === "reports") {
         showReports();
       } else {
@@ -11422,6 +11587,7 @@ showMeetingForm,
 saveMeeting,
 renderMeetingRows,
 openMeetingDetail,
+openMeetingCalendarDay,
 deleteMeeting,
         
 showContentAssistant,
