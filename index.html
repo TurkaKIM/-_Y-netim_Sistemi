@@ -3158,6 +3158,43 @@ body.ux-dark .modern-summary-value {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+.memory-icon .memory-category-img,
+.memory-dot .memory-category-img,
+.memory-grid-icon .memory-category-img,
+.memory-info-icon .memory-category-img {
+  display: block;
+  object-fit: contain;
+}
+.memory-icon .memory-category-img {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+}
+.memory-dot .memory-category-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+}
+.memory-grid-icon .memory-category-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+}
+.memory-info-icon .memory-category-img {
+  width: 18px;
+  height: 18px;
+  border-radius: 7px;
+}
+.memory-building-illustration .memory-hero-img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: min(420px, 96%);
+  max-width: 100%;
+  max-height: 230px;
+  object-fit: contain;
+  border-radius: 18px;
+}
 .memory-dot,
 .memory-grid-icon,
 .memory-doc-icon {
@@ -11708,16 +11745,37 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
         { value: "category", label: "Kategoriye göre" }
       ];
 
-      function timelineIconSvg(category = "Diğer") {
+      function timelineCategoryImage(category = "Diğer") {
         const key = String(category || "Diğer").toLocaleLowerCase("tr-TR");
-        const icons = {
-          "kuruluş": `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"/><path d="M4 21V8.5L12 4l8 4.5V21"/><path d="M9 21v-5.2c0-.44.36-.8.8-.8h4.4c.44 0 .8.36.8.8V21"/><path d="M8.5 10.5h.01"/><path d="M12 10.5h.01"/><path d="M15.5 10.5h.01"/><path d="M8.5 13.5h.01"/><path d="M12 13.5h.01"/><path d="M15.5 13.5h.01"/></svg>`,
-          "üyelik": `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-1.7A4.3 4.3 0 0 0 11.7 15H6.3A4.3 4.3 0 0 0 2 19.3V21"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-1.7a4.3 4.3 0 0 0-3.2-4.15"/><path d="M16.5 3.2a4 4 0 0 1 0 7.6"/></svg>`,
-          "standart": `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/><path d="M14 2v5h5"/><path d="M8.5 12h7"/><path d="M8.5 16h5"/><path d="M8.5 8.5h2"/></svg>`,
-          "akreditasyon": `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5.5L12 2 4 5.5V12c0 6 8 10 8 10"/><path d="m8.8 12.2 2.1 2.1 4.6-5.1"/></svg>`,
-          "diğer": `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18"/><path d="M3 12h18"/><path d="M5.6 5.6 18.4 18.4"/><path d="M18.4 5.6 5.6 18.4"/></svg>`
+        const images = {
+          "kuruluş": "Kurulus.png",
+          "üyelik": "Uyelik.png",
+          "standart": "Standart.png",
+          "akreditasyon": "Akreditasyon.png",
+          "diğer": "Akreditasyon.png"
         };
-        return icons[key] || icons["diğer"];
+        return images[key] || images["diğer"];
+      }
+
+      function timelineCategoryAlt(category = "Diğer") {
+        const key = String(category || "Diğer").toLocaleLowerCase("tr-TR");
+        const labels = {
+          "kuruluş": "Kuruluş ikonu",
+          "üyelik": "Üyelik ikonu",
+          "standart": "Standart ikonu",
+          "akreditasyon": "Akreditasyon ikonu",
+          "diğer": "Kurumsal hafıza ikonu"
+        };
+        return labels[key] || labels["diğer"];
+      }
+
+      function timelineIconSvg(category = "Diğer") {
+        return `<img class="memory-category-img" src="${timelineCategoryImage(category)}" alt="${esc(timelineCategoryAlt(category))}">`;
+      }
+
+      function timelineCategoryHeroImage(category = "Diğer") {
+        const alt = String(category || "Kurumsal hafıza") + " görseli";
+        return `<img class="memory-hero-img" src="${timelineCategoryImage(category)}" alt="${esc(alt)}">`;
       }
 
       function timelineCalendarSvg() {
@@ -11930,7 +11988,7 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
                 <h3>${esc(item.title)}</h3>
                 <p>${esc(item.description)}</p>
               </div>
-              <div class="memory-building-illustration">${item.imageData ? `<img src="${esc(item.imageData)}" alt="${esc(item.title)}" style="max-width:88%;max-height:210px;object-fit:contain;border-radius:18px">` : buildingIllustrationSvg()}</div>
+              <div class="memory-building-illustration">${item.imageData ? `<img src="${esc(item.imageData)}" alt="${esc(item.title)}" class="memory-hero-img">` : timelineCategoryHeroImage(item.category)}</div>
             </div>
             <div class="memory-detail-body">
               <div class="memory-info-grid">
