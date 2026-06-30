@@ -3364,15 +3364,31 @@ body.ux-dark .memory-detail-hero {
   margin-top: 2px;
 }
 .brand-library-title h2 {
+  position: relative;
+  display: inline-block;
   margin: 0;
+  padding-bottom: 11px;
   color: #111827;
   font-size: clamp(25px, 2.1vw, 34px);
   letter-spacing: -.035em;
 }
+
+.brand-library-title h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 44px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--turkak-red), rgba(200,16,46,.12));
+}
+
 .brand-library-title p {
-  margin: 7px 0 0;
+  margin: 3px 0 0;
   color: var(--muted);
   font-size: 13px;
+}
 }
 .brand-library-actions {
   display: flex;
@@ -11986,12 +12002,24 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
         return item.id || `legacy_${index}`;
       }
 
-      function brandLibraryDisplayLabel(item, items, index) {
-        const sameTitleCount = items.filter(x => x.title === item.title).length;
-        if (sameTitleCount <= 1) return item.title;
-        const sameTitleOrder = items.slice(0, index + 1).filter(x => x.title === item.title).length;
-        return `${item.title} (${sameTitleOrder})`;
-      }
+     function brandLibraryPrimaryText(item) {
+  const content = String(item?.content || "").trim();
+
+  if (content) {
+    const firstLine = content
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .find(Boolean) || content;
+
+    return firstLine.length > 90 ? firstLine.slice(0, 90) + "..." : firstLine;
+  }
+
+  return String(item?.title || "Kurumsal kimlik dokümanı").trim();
+}
+
+function brandLibraryDisplayLabel(item, items, index) {
+  return brandLibraryPrimaryText(item);
+}
 
       function findBrandLibrarySelection(value, items) {
         if (!value) return items[0];
@@ -12019,10 +12047,8 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
       }
 
       function brandLibraryShortText(item) {
-        const text = String(item?.content || "").trim();
-        return text ? (text.length > 86 ? text.slice(0, 86) + "..." : text) : "İçerik açıklaması yok.";
-      }
-
+  return brandLibraryCategoryLabel(item);
+}
       function brandLibraryImageHtml(item, className) {
         return item?.imageData
           ? `<img src="${esc(item.imageData)}" alt="${esc(item.title || "Kurumsal kimlik görseli")}">`
@@ -12102,15 +12128,14 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
         `;
         $("view").innerHTML = `
           <div class="brand-library-page">
-            <div class="brand-library-top">
-              <div>
-                <div class="brand-library-brand">
-                  <div class="brand-library-logo"><img src="turkak.png" alt="TÜRKAK"></div>
-                  <div><strong>TÜRKAK</strong><span>Türk Akreditasyon Kurumu</span></div>
-                </div>
-                <div class="brand-library-title"><h2>Kurumsal Kimlik Kütüphanesi</h2><p>Öğrenen organizasyon, büyüyen organizasyon.</p></div>
-              </div>
-              <div class="brand-library-actions">
+          <div class="brand-library-top">
+  <div>
+    <div class="brand-library-title">
+      <h2>Kurumsal Kimlik Kütüphanesi</h2>
+      <p>Öğrenen organizasyon, büyüyen organizasyon.</p>
+    </div>
+  </div>
+  <div class="brand-library-actions">
                 <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya Dön</button>
                 <div class="brand-library-bell" title="Bildirimler">🔔</div>
                 <div class="brand-library-avatar" title="Kullanıcı">${esc((state.currentUser?.fullName || state.currentUser?.username || "AK").split(" ").map(x => x[0]).join("").slice(0,2).toLocaleUpperCase("tr-TR"))}</div>
@@ -12127,8 +12152,8 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
             <section>
               <div class="brand-library-section-head"><h3>Öne Çıkan Kaynaklar</h3><button class="btn ghost small" onclick="App.openBrandLibraryDetail('${items.length ? js(brandLibraryOptionValue(items[0], 0)) : ""}')">Tümünü Gör</button></div>
               <div class="brand-library-featured-grid">
-                ${brandLibraryFeaturedCardHtml(featuredLogo, items, featuredLogoIndex >= 0 ? featuredLogoIndex : 0, "TÜRKAK Logosu", "Minimum logo kullanım boyutları ve temel logo standartları.")}
-                ${brandLibraryFeaturedCardHtml(featuredColor, items, featuredColorIndex >= 0 ? featuredColorIndex : 1, "Kurumsal Renk Paleti", "TÜRKAK renk değerleri ve görsel kimlik standartları.")}
+               ${brandLibraryFeaturedCardHtml(featuredLogo, items, featuredLogoIndex >= 0 ? featuredLogoIndex : 0, "Minimum Logo Kullanım Boyutları", "Logo kullanım boyutları ve temel logo standartları.")}
+               ${brandLibraryFeaturedCardHtml(featuredColor, items, featuredColorIndex >= 0 ? featuredColorIndex : 1, "TÜRKAK Renk Değerleri", "Kurumsal renk değerleri ve görsel kimlik standartları.")}
               </div>
             </section>
 
@@ -12152,12 +12177,19 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
       }
 
       function openBrandLibraryDetail(value) {
-        const items = getBrandLibrary().filter(item => item.content || item.imageData);
-        const selected = findBrandLibrarySelection(value, items);
-        if (!selected) return toast("Kütüphane kaydı bulunamadı.");
-        openModal(
-          selected.title || "Kurumsal Kimlik Kütüphanesi",
-          `<div class="library-detail-grid"><div><h3>${esc(selected.title || "")}</h3><p style="white-space:pre-wrap;line-height:1.65">${esc(selected.content || "")}</p></div><div class="library-image-box">${selected.imageData ? `<img src="${esc(selected.imageData)}" alt="${esc(selected.title)}">` : `<span class="muted">Görsel eklenmemiş</span>`}</div></div>`,
+  const items = getBrandLibrary().filter(item => item.content || item.imageData);
+  const selected = findBrandLibrarySelection(value, items);
+  if (!selected) return toast("Kütüphane kaydı bulunamadı.");
+
+  const detailTitle = brandLibraryPrimaryText(selected);
+  const detailText = String(selected.content || "").trim();
+  const detailDescription = detailText && detailText !== detailTitle
+    ? detailText
+    : brandLibraryCategoryLabel(selected);
+
+  openModal(
+    detailTitle || "Kurumsal Kimlik Kütüphanesi",
+    `<div class="library-detail-grid"><div><h3>${esc(detailTitle || "")}</h3><p style="white-space:pre-wrap;line-height:1.65">${esc(detailDescription || "")}</p></div><div class="library-image-box">${selected.imageData ? `<img src="${esc(selected.imageData)}" alt="${esc(detailTitle)}">` : `<span class="muted">Görsel eklenmemiş</span>`}</div></div>`,
           `<button class="btn ghost" onclick="App.closeModal()">Kapat</button>`
         );
       }
