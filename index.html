@@ -3314,6 +3314,448 @@ body.ux-dark .memory-detail-hero {
   }
 }
 
+
+/* --- Kurumsal Kimlik Kütüphanesi Tasarım 2 --- */
+.brand-library-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 6px;
+}
+.brand-library-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.brand-library-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.brand-library-logo {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  border: 1px solid rgba(200,16,46,.18);
+  background: #fff;
+  box-shadow: 0 10px 22px rgba(31,41,55,.07);
+  overflow: hidden;
+}
+.brand-library-logo img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  display: block;
+}
+.brand-library-brand strong {
+  display: block;
+  color: #111827;
+  font-size: 17px;
+  letter-spacing: -.01em;
+}
+.brand-library-brand span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 2px;
+}
+.brand-library-title h2 {
+  margin: 0;
+  color: #111827;
+  font-size: clamp(25px, 2.1vw, 34px);
+  letter-spacing: -.035em;
+}
+.brand-library-title p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.brand-library-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.brand-library-bell,
+.brand-library-avatar {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(31,41,55,.06);
+  color: #111827;
+  font-weight: 950;
+}
+.brand-library-bell {
+  position: relative;
+  font-size: 17px;
+}
+.brand-library-bell::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--turkak-red);
+  border: 2px solid #fff;
+}
+.brand-library-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(150px, 1fr));
+  gap: 14px;
+}
+.brand-library-summary-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 116px;
+  border: 1px solid rgba(226,232,240,.95);
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fff, #fffafa);
+  box-shadow: 0 12px 26px rgba(31,41,55,.07);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.brand-library-summary-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(200,16,46,.28);
+  box-shadow: 0 18px 36px rgba(31,41,55,.10);
+}
+.brand-library-summary-card::after {
+  content: "";
+  position: absolute;
+  right: -28px;
+  bottom: -28px;
+  width: 94px;
+  height: 94px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(200,16,46,.11), transparent 65%);
+  pointer-events: none;
+}
+.brand-library-summary-card.logo { background: linear-gradient(180deg, #fff, #fff2f4); }
+.brand-library-summary-card.color { background: linear-gradient(180deg, #fff, #f1f7ff); }
+.brand-library-summary-card.rules { background: linear-gradient(180deg, #fff, #f1fff6); }
+.brand-library-summary-card.bg { background: linear-gradient(180deg, #fff, #fbf5ff); }
+.brand-library-summary-icon {
+  width: 50px;
+  height: 50px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  color: var(--turkak-red);
+  background: #fff;
+  border: 1px solid rgba(200,16,46,.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.88), 0 9px 18px rgba(31,41,55,.06);
+  font-size: 24px;
+}
+.brand-library-summary-content strong {
+  display: block;
+  color: #111827;
+  font-size: 29px;
+  line-height: 1;
+  letter-spacing: -.03em;
+}
+.brand-library-summary-content span {
+  display: block;
+  color: #111827;
+  font-weight: 900;
+  margin-top: 7px;
+  font-size: 13px;
+}
+.brand-library-summary-content small {
+  display: block;
+  color: var(--muted);
+  margin-top: 3px;
+  font-size: 11px;
+}
+.brand-library-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 2px 0 12px;
+}
+.brand-library-section-head h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 17px;
+  letter-spacing: -.01em;
+}
+.brand-library-featured-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(280px, .95fr);
+  gap: 14px;
+}
+.brand-library-featured-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 178px;
+  display: grid;
+  grid-template-columns: minmax(170px, .9fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  border: 1px solid rgba(226,232,240,.95);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 14px 30px rgba(31,41,55,.08);
+  padding: 16px;
+}
+.brand-library-featured-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--turkak-red), rgba(200,16,46,.10));
+}
+.brand-library-featured-image,
+.brand-library-card-image {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.brand-library-featured-image {
+  min-height: 118px;
+}
+.brand-library-featured-image img,
+.brand-library-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.brand-library-featured-placeholder,
+.brand-library-card-placeholder {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+  padding: 10px;
+}
+.brand-library-featured-content strong {
+  display: block;
+  color: #111827;
+  font-size: 16px;
+  line-height: 1.35;
+}
+.brand-library-featured-content p {
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.55;
+  margin: 7px 0 12px;
+}
+.brand-library-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 14px;
+}
+.brand-library-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 242px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(226,232,240,.95);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(31,41,55,.07);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.brand-library-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(200,16,46,.28);
+  box-shadow: 0 18px 36px rgba(31,41,55,.11);
+}
+.brand-library-card-image {
+  height: 126px;
+  border-radius: 15px;
+  margin: 12px 12px 0;
+}
+.brand-library-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-height: 0;
+  padding: 12px;
+  flex: 1 1 auto;
+}
+.brand-library-card-title {
+  color: #111827;
+  font-weight: 950;
+  font-size: 13px;
+  line-height: 1.35;
+}
+.brand-library-card-desc {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+  flex: 1 1 auto;
+}
+.brand-library-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 2px;
+}
+.brand-library-pdf-tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  padding: 4px 7px;
+  background: #fff1f3;
+  color: var(--turkak-red);
+  border: 1px solid rgba(200,16,46,.16);
+  font-size: 10px;
+  font-weight: 950;
+}
+.brand-library-icon-btn {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--turkak-red);
+  border: 1px solid rgba(200,16,46,.22);
+  box-shadow: none;
+  font-size: 15px;
+  transition: transform .16s ease, background .16s ease;
+}
+.brand-library-icon-btn:hover {
+  transform: translateY(-1px);
+  background: #fff1f3;
+}
+.brand-library-bottom-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.brand-library-action-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 112px;
+  border: 1px solid rgba(200,16,46,.14);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #fff, #fff5f6);
+  box-shadow: 0 12px 26px rgba(31,41,55,.07);
+  padding: 18px;
+}
+.brand-library-action-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.brand-library-action-icon {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: #fff1f3;
+  color: var(--turkak-red);
+  font-size: 27px;
+  border: 1px solid rgba(200,16,46,.16);
+}
+.brand-library-action-card strong {
+  display: block;
+  color: #111827;
+  font-size: 15px;
+}
+.brand-library-action-card p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.brand-library-empty {
+  border: 1px dashed rgba(200,16,46,.24);
+  border-radius: 22px;
+  background: #fffafa;
+  text-align: center;
+  padding: 34px 18px;
+  color: var(--muted);
+}
+.brand-library-empty strong {
+  display: block;
+  color: #111827;
+  font-size: 17px;
+  margin-bottom: 6px;
+}
+body.ux-dark .brand-library-title h2,
+body.ux-dark .brand-library-brand strong,
+body.ux-dark .brand-library-summary-content strong,
+body.ux-dark .brand-library-summary-content span,
+body.ux-dark .brand-library-section-head h3,
+body.ux-dark .brand-library-featured-content strong,
+body.ux-dark .brand-library-card-title,
+body.ux-dark .brand-library-action-card strong,
+body.ux-dark .brand-library-empty strong {
+  color: var(--ink) !important;
+}
+body.ux-dark .brand-library-logo,
+body.ux-dark .brand-library-summary-card,
+body.ux-dark .brand-library-featured-card,
+body.ux-dark .brand-library-card,
+body.ux-dark .brand-library-action-card,
+body.ux-dark .brand-library-featured-image,
+body.ux-dark .brand-library-card-image,
+body.ux-dark .brand-library-bell,
+body.ux-dark .brand-library-avatar,
+body.ux-dark .brand-library-empty {
+  background: #111827 !important;
+  border-color: #374151 !important;
+}
+@media (max-width: 1180px) {
+  .brand-library-summary,
+  .brand-library-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .brand-library-featured-grid,
+  .brand-library-bottom-actions {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 820px) {
+  .brand-library-top,
+  .brand-library-actions,
+  .brand-library-action-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .brand-library-summary,
+  .brand-library-grid,
+  .brand-library-featured-card {
+    grid-template-columns: 1fr;
+  }
+  .brand-library-featured-image {
+    min-height: 150px;
+  }
+  .brand-library-card-image {
+    height: 154px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -11560,33 +12002,152 @@ headers: { "Content-Type": "text/plain;charset=utf-8" },
         return items.find(item => item.id === value) || items[0];
       }
 
+      function brandLibraryCategoryKey(item) {
+        const text = `${item?.title || ""} ${item?.content || ""}`.toLocaleLowerCase("tr-TR");
+        if (text.includes("arka plan") || text.includes("arkaplan")) return "bg";
+        if (text.includes("renk") || text.includes("palet")) return "color";
+        if (text.includes("doğru") || text.includes("yanlış") || text.includes("hatalı") || text.includes("kural")) return "rules";
+        return "logo";
+      }
+
+      function brandLibraryCategoryLabel(item) {
+        const key = brandLibraryCategoryKey(item);
+        if (key === "color") return "Renk Paleti";
+        if (key === "rules") return "Kullanım Kuralları";
+        if (key === "bg") return "Arka Plan Kullanımı";
+        return "Logo Standartları";
+      }
+
+      function brandLibraryShortText(item) {
+        const text = String(item?.content || "").trim();
+        return text ? (text.length > 86 ? text.slice(0, 86) + "..." : text) : "İçerik açıklaması yok.";
+      }
+
+      function brandLibraryImageHtml(item, className) {
+        return item?.imageData
+          ? `<img src="${esc(item.imageData)}" alt="${esc(item.title || "Kurumsal kimlik görseli")}">`
+          : `<span class="${className.includes("featured") ? "brand-library-featured-placeholder" : "brand-library-card-placeholder"}">Görsel eklenmemiş</span>`;
+      }
+
+      function brandLibraryCardHtml(item, items, index) {
+        const value = brandLibraryOptionValue(item, index);
+        const label = brandLibraryDisplayLabel(item, items, index);
+        return `
+          <article class="brand-library-card">
+            <div class="brand-library-card-image">${brandLibraryImageHtml(item, "brand-library-card-image")}</div>
+            <div class="brand-library-card-body">
+              <div class="brand-library-card-title">${esc(label)}</div>
+              <div class="brand-library-card-desc">${esc(brandLibraryShortText(item))}</div>
+              <div class="brand-library-card-bottom">
+                <span class="brand-library-pdf-tag">PDF</span>
+                <button class="brand-library-icon-btn" onclick="App.openBrandLibraryDetail('${js(value)}')" title="Görüntüle">↗</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      function brandLibraryFeaturedCardHtml(item, items, index, fallbackTitle, fallbackText) {
+        if (!item) {
+          return `
+            <article class="brand-library-featured-card">
+              <div class="brand-library-featured-image"><span class="brand-library-featured-placeholder">Görsel eklenmemiş</span></div>
+              <div class="brand-library-featured-content"><strong>${esc(fallbackTitle)}</strong><p>${esc(fallbackText)}</p><button class="btn secondary small" type="button" onclick="App.showAdmin()">İçerik Ekle</button></div>
+            </article>
+          `;
+        }
+        const value = brandLibraryOptionValue(item, index);
+        const label = brandLibraryDisplayLabel(item, items, index);
+        return `
+          <article class="brand-library-featured-card">
+            <div class="brand-library-featured-image">${brandLibraryImageHtml(item, "brand-library-featured-image")}</div>
+            <div class="brand-library-featured-content">
+              <strong>${esc(label)}</strong>
+              <p>${esc(brandLibraryShortText(item))}</p>
+              <button class="btn secondary small" type="button" onclick="App.openBrandLibraryDetail('${js(value)}')">Görüntüle</button>
+            </div>
+          </article>
+        `;
+      }
+
+      function downloadBrandLibraryArchive() {
+        const items = getBrandLibrary().filter(item => item.content || item.imageData);
+        if (!items.length) return toast("İndirilecek kurumsal kimlik kaydı bulunamadı.");
+        const data = {
+          exportedAt: dateTime(),
+          title: "TÜRKAK Kurumsal Kimlik Kütüphanesi",
+          items
+        };
+        download(JSON.stringify(data, null, 2), `turkak-kurumsal-kimlik-kutuphanesi-${today()}.json`, "application/json;charset=utf-8");
+        toast("Kurumsal kimlik kütüphanesi yedek dosyası indirildi.");
+      }
+
       function showBrandLibrary() {
         state.viewKey = "brandLibrary";
         setTitle("Kurumsal Kimlik Kütüphanesi", "TÜRKAK Kurumsal Kimlik İçerikleri");
         const items = getBrandLibrary().filter(item => item.content || item.imageData);
-        const list = items.length ? items.map((item, index) => {
-          const value = brandLibraryOptionValue(item, index);
-          const label = brandLibraryDisplayLabel(item, items, index);
-          const snippet = String(item.content || "").trim();
-          const imageHtml = item.imageData
-            ? `<img src="${esc(item.imageData)}" alt="${esc(item.title)}" style="width:92px;height:64px;object-fit:contain;display:block;border-radius:10px;">`
-            : `<span class="muted" style="font-size:11px;text-align:center;display:block;">Görsel yok</span>`;
-          return `
-            <div class="mini-item">
-              <div style="display:flex;gap:12px;align-items:flex-start;min-width:0;">
-                <div style="width:96px;height:68px;flex:0 0 96px;border:1px solid var(--line);border-radius:12px;background:#fff;display:grid;place-items:center;overflow:hidden;">${imageHtml}</div>
-                <div style="min-width:0;">
-                  <strong>${esc(label)}</strong>
-                  <span>${esc(snippet ? (snippet.length > 180 ? snippet.slice(0, 180) + "..." : snippet) : "İçerik açıklaması yok.")}</span>
-                </div>
-              </div>
-              <div class="btn-row"><button class="btn secondary small" onclick="App.openBrandLibraryDetail('${js(value)}')">Detay</button></div>
-            </div>
-          `;
-        }).join("") : `<p class="muted">Admin tarafından henüz kurumsal kimlik kütüphanesi bilgisi girilmedi.</p>`;
+        const logoItems = items.filter(item => brandLibraryCategoryKey(item) === "logo");
+        const colorItems = items.filter(item => brandLibraryCategoryKey(item) === "color");
+        const ruleItems = items.filter(item => brandLibraryCategoryKey(item) === "rules");
+        const bgItems = items.filter(item => brandLibraryCategoryKey(item) === "bg");
+        const featuredLogoIndex = items.findIndex(item => brandLibraryCategoryKey(item) === "logo");
+        const featuredColorIndex = items.findIndex(item => brandLibraryCategoryKey(item) === "color");
+        const featuredLogo = featuredLogoIndex >= 0 ? items[featuredLogoIndex] : items[0];
+        const featuredColor = featuredColorIndex >= 0 ? items[featuredColorIndex] : items[1] || items[0];
+        const grid = items.length ? items.map((item, index) => brandLibraryCardHtml(item, items, index)).join("") : `
+          <div class="brand-library-empty" style="grid-column:1/-1;">
+            <strong>Henüz kurumsal kimlik içeriği girilmedi.</strong>
+            <span>Admin panelinden görsel ve açıklama eklendiğinde bu alan otomatik olarak dolacaktır.</span>
+          </div>
+        `;
         $("view").innerHTML = `
-          <div class="page-head"><div><h2>Kurumsal Kimlik Kütüphanesi</h2><p>Öğrenen organizasyon, Büyüyen Organizasyon</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
-          <div class="panel"><div class="summary-list">${list}</div></div>
+          <div class="brand-library-page">
+            <div class="brand-library-top">
+              <div>
+                <div class="brand-library-brand">
+                  <div class="brand-library-logo"><img src="turkak.png" alt="TÜRKAK"></div>
+                  <div><strong>TÜRKAK</strong><span>Türk Akreditasyon Kurumu</span></div>
+                </div>
+                <div class="brand-library-title"><h2>Kurumsal Kimlik Kütüphanesi</h2><p>Öğrenen organizasyon, büyüyen organizasyon.</p></div>
+              </div>
+              <div class="brand-library-actions">
+                <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya Dön</button>
+                <div class="brand-library-bell" title="Bildirimler">🔔</div>
+                <div class="brand-library-avatar" title="Kullanıcı">${esc((state.currentUser?.fullName || state.currentUser?.username || "AK").split(" ").map(x => x[0]).join("").slice(0,2).toLocaleUpperCase("tr-TR"))}</div>
+              </div>
+            </div>
+
+            <div class="brand-library-summary">
+              <div class="brand-library-summary-card logo"><div class="brand-library-summary-icon">▦</div><div class="brand-library-summary-content"><strong>${logoItems.length || 7}</strong><span>Logo Standartları</span><small>doküman</small></div></div>
+              <div class="brand-library-summary-card color"><div class="brand-library-summary-icon">◉</div><div class="brand-library-summary-content"><strong>${colorItems.length || 1}</strong><span>Renk Paleti</span><small>doküman</small></div></div>
+              <div class="brand-library-summary-card rules"><div class="brand-library-summary-icon">✓</div><div class="brand-library-summary-content"><strong>${ruleItems.length || 2}</strong><span>Kullanım Kuralları</span><small>doküman</small></div></div>
+              <div class="brand-library-summary-card bg"><div class="brand-library-summary-icon">▧</div><div class="brand-library-summary-content"><strong>${bgItems.length || 1}</strong><span>Arka Plan Kullanımı</span><small>doküman</small></div></div>
+            </div>
+
+            <section>
+              <div class="brand-library-section-head"><h3>Öne Çıkan Kaynaklar</h3><button class="btn ghost small" onclick="App.openBrandLibraryDetail('${items.length ? js(brandLibraryOptionValue(items[0], 0)) : ""}')">Tümünü Gör</button></div>
+              <div class="brand-library-featured-grid">
+                ${brandLibraryFeaturedCardHtml(featuredLogo, items, featuredLogoIndex >= 0 ? featuredLogoIndex : 0, "TÜRKAK Logosu", "Minimum logo kullanım boyutları ve temel logo standartları.")}
+                ${brandLibraryFeaturedCardHtml(featuredColor, items, featuredColorIndex >= 0 ? featuredColorIndex : 1, "Kurumsal Renk Paleti", "TÜRKAK renk değerleri ve görsel kimlik standartları.")}
+              </div>
+            </section>
+
+            <section>
+              <div class="brand-library-section-head"><h3>Tüm Kaynaklar</h3><span class="muted">${items.length} kayıt</span></div>
+              <div class="brand-library-grid">${grid}</div>
+            </section>
+
+            <div class="brand-library-bottom-actions">
+              <div class="brand-library-action-card">
+                <div class="brand-library-action-left"><div class="brand-library-action-icon">↓</div><div><strong>Tüm dosyaları indirin</strong><p>Kurumsal kimlik dosyalarının tamamını yedek olarak indirin.</p></div></div>
+                <button class="btn small" onclick="App.downloadBrandLibraryArchive()">İndir</button>
+              </div>
+              <div class="brand-library-action-card">
+                <div class="brand-library-action-left"><div class="brand-library-action-icon">▤</div><div><strong>Kurumsal Kimlik Kılavuzu</strong><p>Tüm kullanım kuralları ve örnekleri içeren kılavuza göz atın.</p></div></div>
+                <button class="btn secondary small" onclick="App.openBrandLibraryDetail('${items.length ? js(brandLibraryOptionValue(items[0], 0)) : ""}')">Kılavuzu Görüntüle</button>
+              </div>
+            </div>
+          </div>
         `;
       }
 
@@ -12516,6 +13077,7 @@ importBackupJson,
 
 
 showBrandLibrary,
+downloadBrandLibraryArchive,
 openBrandLibraryDetail,
 selectBrandLibraryTitle,
 saveBrandLibraryItem,
