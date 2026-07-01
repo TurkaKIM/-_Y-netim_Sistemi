@@ -4989,12 +4989,23 @@ function toast(message) {
         applyAccessibilitySettings();
       }
 
+      function resetViewScrollToTop() {
+  const viewEl = $("view");
+  if (!viewEl) return;
+
+  requestAnimationFrame(() => {
+    viewEl.scrollTop = 0;
+    viewEl.scrollLeft = 0;
+  });
+}
+      
       function setTitle(title, sub) {
-        $("topTitle").textContent = title;
-        $("topSub").textContent = sub || "";
-        state.view = title;
-        renderNav();
-      }
+  $("topTitle").textContent = title;
+  $("topSub").textContent = sub || "";
+  state.view = title;
+  renderNav();
+  resetViewScrollToTop();
+}
 
       function renderNav() {
         const unread = getNotifications().filter(n => n.userId === state.currentUser?.id && !n.read).length;
