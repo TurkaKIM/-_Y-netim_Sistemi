@@ -2697,6 +2697,14 @@ body {
   min-height: 44px;
 }
 
+.module-actions-bar {
+  flex: 0 0 auto;
+}
+
+.module-actions-card {
+  align-items: center;
+}
+
 body.ux-dark .modern-step,
 body.ux-dark .modern-section-card,
 body.ux-dark .modern-summary-panel,
@@ -5636,10 +5644,6 @@ function showMeetingList(type = "all") {
   $("view").innerHTML = `
     <div class="page-head motto-head">
       <div class="motto-title"><p>TÜRKAK: Ulusal Güç, Uluslararası Güven</p></div>
-
-      <div class="btn-row">
-        <button class="btn" onclick="App.showMeetingForm()">＋ Yeni Kayıt</button>
-      </div>
     </div>
 
     <div class="cards">
@@ -5737,9 +5741,10 @@ function showMeetingList(type = "all") {
       ${meetingCalendarHtml()}
     </div>
 
-    <div style="margin-top:14px">
+    ${moduleActionsHtml(`
+      <button class="btn" onclick="App.showMeetingForm()">＋ Yeni Kayıt</button>
       <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
-    </div>
+    `)}
   `;
 
   renderMeetingRows();
@@ -6338,16 +6343,13 @@ function showMaterialModule() {
       </div>
     </div>
 
-    <div class="btn-row" style="margin-top:16px; justify-content:flex-end">
+    ${moduleActionsHtml(`
       <button class="btn secondary" onclick="App.downloadMaterialExcelTemplate()">Boş Excel Şablonu</button>
       <button class="btn secondary" onclick="App.openMaterialExcelImport()">Excel ile İçe Aktar</button>
       <button class="btn secondary" onclick="App.exportMaterialsExcel()">Excel ile Dışa Aktar</button>
       <button class="btn" onclick="App.showMaterialForm()">＋ Yeni Malzeme</button>
-    </div>
-
-    <div style="margin-top:14px">
       <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
-    </div>
+    `)}
   `;
 
   renderMaterialRows();
@@ -7081,6 +7083,16 @@ function modernStepperHtml(steps) {
   `).join("")}</div>`;
 }
 
+function moduleActionsHtml(actionsHtml) {
+  return `
+    <div class="modern-actions-bar module-actions-bar btn-row">
+      <div class="modern-actions-card module-actions-card">
+        ${actionsHtml}
+      </div>
+    </div>
+  `;
+}
+
 function modernSummaryValue(value, fallback = "Henüz girilmedi") {
   const text = String(value ?? "").trim();
   return text ? esc(text) : `<span class="muted">${esc(fallback)}</span>`;
@@ -7235,7 +7247,6 @@ function showSocialForm(id = null) {
     <div class="modern-form-page">
       <div class="page-head motto-head">
         <div class="motto-title"><p>Her Paylaşımda Kalite, Her Mesajda Güven</p></div>
-        <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
       </div>
 
       ${modernStepperHtml(["Temel Bilgiler", "Yayın & Öncelik", "Tarih & Takvim", "Açıklamalar & Dosya"])}
@@ -7351,6 +7362,7 @@ function showSocialForm(id = null) {
 
             <div class="modern-actions-bar btn-row">
               <div class="modern-actions-card">
+                <button class="btn ghost" type="button" onclick="App.showDashboard()">Anasayfaya DÖN</button>
                 <button class="btn ghost" type="button" onclick="App.showSocialList()">Sosyal Medya Planına DÖN</button>
                 <button class="btn secondary" type="button" onclick="App.downloadExcelTemplate('social')">Boş Excel Şablonu</button>
                 <button class="btn secondary" type="button" onclick="App.openExcelImport('social')">Excel'den Toplu Yükle</button>
@@ -7512,10 +7524,10 @@ function showSocialList(type = "all") {
       ${socialCalendarHtml()}
     </div>
 
-    <div class="btn-row" style="margin-top:14px">
+    ${moduleActionsHtml(`
       <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
       <button class="btn secondary" onclick="App.exportSocialCsv()">CSV Dışa Aktar</button>
-    </div>
+    `)}
   `;
 
   renderSocialRows();
@@ -7758,10 +7770,10 @@ function exportSocialCsv() {
       <div id="taskRows"></div>
     </div>
 
-    <div class="btn-row" style="margin-top:14px">
+    ${moduleActionsHtml(`
       <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
       <button class="btn secondary" onclick="App.exportCurrentListCsv()">CSV Dışa Aktar</button>
-    </div>
+    `)}
   `;
 
   renderTaskRows();
@@ -7901,7 +7913,6 @@ function exportSocialCsv() {
           <div class="modern-form-page">
             <div class="page-head motto-head">
               <div class="motto-title"><p>Her iş zamanında, her süreç kontrol altında</p></div>
-              <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
             </div>
 
             ${modernStepperHtml(["Temel Bilgiler", "Atama & Öncelik", "Tarih & Takvim", "Açıklamalar & Dosya"])}
@@ -7997,7 +8008,7 @@ function exportSocialCsv() {
                       <button class="btn secondary" type="button" onclick="App.openExcelImport('tasks')">Excel'den Toplu Yükle</button>
                       <button class="btn secondary" type="submit" data-save-mode="continue">Kaydet ve Devam Et</button>
                       <button class="btn" type="submit" data-save-mode="dashboard">Kaydet ve Anasayfaya Dön</button>
-                      <button class="btn ghost" type="button" onclick="App.showDashboard()">Vazgeç</button>
+                      <button class="btn ghost" type="button" onclick="App.showDashboard()">Anasayfaya DÖN</button>
                       ${editing && canDeleteTask(task) ? `<button class="btn danger" type="button" onclick="App.deleteTask('${js(task.id)}')">Görevi Sil</button>` : ""}
                     </div>
                   </div>
@@ -8240,7 +8251,6 @@ showDashboard();
   $("view").innerHTML = `
     <div class="page-head motto-head">
       <div class="motto-title"><p>Stratejik Hedefler, Güçlü Performansla Hayat Bulur</p></div>
-      <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
     </div>
 
     <div class="panel">
@@ -8261,13 +8271,15 @@ showDashboard();
         </div>
       </div>
 
-      <div class="form-actions btn-row">
-        <button class="btn" type="button" onclick="App.generateContentWithAI()">İçerik Oluştur</button>
-        <button class="btn ghost" type="button" onclick="App.clearContentAssistant()">Temizle</button>
-      </div>
     </div>
 
     <div id="contentAssistantResults" style="margin-top:16px"></div>
+
+    ${moduleActionsHtml(`
+      <button class="btn" type="button" onclick="App.generateContentWithAI()">İçerik Oluştur</button>
+      <button class="btn ghost" type="button" onclick="App.clearContentAssistant()">Temizle</button>
+      <button class="btn ghost" type="button" onclick="App.showDashboard()">Anasayfaya DÖN</button>
+    `)}
   `;
 }
 
@@ -9667,9 +9679,9 @@ function showAnnualScorecard(year = new Date().getFullYear()) {
       </div>
     </div>
 
-    <div style="margin-top:14px">
+    ${moduleActionsHtml(`
       <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
-    </div>
+    `)}
   `;
 
   setTimeout(animateVisibleScorecardNumbers, 80);
@@ -10271,15 +10283,14 @@ body {
             <button class="btn warning small" onclick="App.importBackupJson()">JSON Geri Yükle</button>
           </div>
 
-          <div class="btn-row" style="margin-top:16px; justify-content:flex-end">
+          ${moduleActionsHtml(`
             <button class="btn secondary" onclick="App.exportAllCsv()">Tüm İşleri CSV</button>
             <button class="btn secondary" onclick="App.exportSocialCsv()">Sosyal Medya CSV</button>
             <button class="btn secondary" onclick="App.exportBackupJson()">JSON Yedek</button>
             <button class="btn secondary" onclick="App.exportAnnualScorecardPdf()">Karne PDF</button>
             <button class="btn ghost" onclick="window.print()">Yazdır / PDF</button>
-          </div>
-
-          <div style="margin-top:14px"><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
+            <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
+          `)}
          `;
 
        setTimeout(() => {
@@ -12153,9 +12164,6 @@ function brandLibraryDisplayLabel(item, items, index) {
       <p>Öğrenen Organizasyon, Büyüyen Organizasyon</p>
     </div>
   </div>
-  <div class="brand-library-actions">
-  <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya Dön</button>
-</div>
             </div>
 
             <div class="brand-library-summary">
@@ -12188,6 +12196,9 @@ function brandLibraryDisplayLabel(item, items, index) {
                 <button class="btn secondary small" onclick="App.openBrandLibraryDetail('${items.length ? js(brandLibraryOptionValue(items[0], 0)) : ""}')">Kılavuzu Görüntüle</button>
               </div>
             </div>
+            ${moduleActionsHtml(`
+              <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya Dön</button>
+            `)}
           </div>
         `;
       }
@@ -12273,16 +12284,20 @@ function brandLibraryDisplayLabel(item, items, index) {
           </tr>
         `).join("");
         $("view").innerHTML = `
-          <div class="page-head motto-head"><div class="motto-title"><p>Başlık ve fikir notunu girin; fikrinizi geliştirin ve listeye ekleyin</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
-          <form class="panel" onsubmit="App.developAndSaveContentIdea(event)">
+          <div class="page-head motto-head"><div class="motto-title"><p>Başlık ve fikir notunu girin; fikrinizi geliştirin ve listeye ekleyin</p></div></div>
+          <form id="contentIdeaForm" class="panel" onsubmit="App.developAndSaveContentIdea(event)">
             <h3>Yeni Fikir Geliştir</h3>
             <div class="form-grid">
               <div class="field span-3"><label>Başlık</label><input id="ideaTitle" required placeholder="Örn. Akreditasyonun tüketici güvenine katkısı"></div>
               <div class="field span-3"><label>Fikir / Not</label><textarea id="ideaText" required style="min-height:130px" placeholder="Aklınızdaki paylaşım veya haber fikrini yazın."></textarea></div>
             </div>
-            <div class="form-actions btn-row"><button class="btn" type="submit">Fikri Geliştir ve Listeye Ekle</button><button class="btn ghost" type="button" onclick="App.clearIdeaForm()">Temizle</button></div>
           </form>
           <div class="panel" style="margin-top:16px"><h3>Fikir Listesi</h3><p class="muted">Detayları görmek için listedeki fikre tıklayın.</p><div class="table-wrap"><table><thead><tr><th>Fikir</th><th>Durum</th><th>Oluşturan</th><th>Tarih</th><th>İşlem</th></tr></thead><tbody>${rows || `<tr><td colspan="5">Henüz fikir kaydı bulunmuyor.</td></tr>`}</tbody></table></div></div>
+          ${moduleActionsHtml(`
+            <button class="btn" type="submit" form="contentIdeaForm">Fikri Geliştir ve Listeye Ekle</button>
+            <button class="btn ghost" type="button" onclick="App.clearIdeaForm()">Temizle</button>
+            <button class="btn ghost" type="button" onclick="App.showDashboard()">Anasayfaya DÖN</button>
+          `)}
         `;
       }
 
@@ -12659,7 +12674,6 @@ function brandLibraryDisplayLabel(item, items, index) {
           <div class="memory-page">
             <div class="page-head motto-head">
               <div class="motto-title"><p>Kurumsal kilometre taşları, üyelikler, standartlar ve akreditasyon gelişmeleri tek ekranda.</p></div>
-              <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
             </div>
             ${timelineFiltersHtml(allItems)}
             <div class="memory-layout">
@@ -12673,6 +12687,9 @@ function brandLibraryDisplayLabel(item, items, index) {
               <div class="memory-panel-title"><h3>Kart Grid Görünümü</h3><span>Responsive özet kartları</span></div>
               <div class="memory-card-grid">${gridBody}</div>
             </div>
+            ${moduleActionsHtml(`
+              <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
+            `)}
           </div>
         `;
       }
@@ -12919,7 +12936,7 @@ function brandLibraryDisplayLabel(item, items, index) {
       function showAdvancedSearch() {
         state.viewKey = "advancedSearch";
         setTitle("Gelişmiş Arama ve Filtreleme", "Tüm modüllerde içerik ve tarih bazlı arama");
-        $("view").innerHTML = `<div class="page-head motto-head"><div class="motto-title"><p>İş, sosyal medya, toplantı, fikir, kütüphane ve zaman tüneli kayıtlarında arayın.</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div><div class="panel"><div class="filters"><div class="field"><label>Arama</label><input id="advSearchText" oninput="App.renderAdvancedSearchResults()" placeholder="Başlık, açıklama, kurum, içerik..."></div><div class="field"><label>Tür</label><select id="advSearchType" onchange="App.renderAdvancedSearchResults()"><option value="">Tümü</option><option>İş</option><option>Sosyal Medya</option><option>Toplantı/Ziyaret</option><option>Fikir</option><option>Kurumsal Kimlik</option><option>Zaman Tüneli</option></select></div><div class="field"><label>Başlangıç</label><input id="advSearchStart" type="date" onchange="App.renderAdvancedSearchResults()"></div><div class="field"><label>Bitiş</label><input id="advSearchEnd" type="date" onchange="App.renderAdvancedSearchResults()"></div></div><div id="advancedSearchRows"></div></div>`;
+        $("view").innerHTML = `<div class="page-head motto-head"><div class="motto-title"><p>İş, sosyal medya, toplantı, fikir, kütüphane ve zaman tüneli kayıtlarında arayın.</p></div></div><div class="panel"><div class="filters"><div class="field"><label>Arama</label><input id="advSearchText" oninput="App.renderAdvancedSearchResults()" placeholder="Başlık, açıklama, kurum, içerik..."></div><div class="field"><label>Tür</label><select id="advSearchType" onchange="App.renderAdvancedSearchResults()"><option value="">Tümü</option><option>İş</option><option>Sosyal Medya</option><option>Toplantı/Ziyaret</option><option>Fikir</option><option>Kurumsal Kimlik</option><option>Zaman Tüneli</option></select></div><div class="field"><label>Başlangıç</label><input id="advSearchStart" type="date" onchange="App.renderAdvancedSearchResults()"></div><div class="field"><label>Bitiş</label><input id="advSearchEnd" type="date" onchange="App.renderAdvancedSearchResults()"></div></div><div id="advancedSearchRows"></div></div>${moduleActionsHtml(`<button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>`)}`;
         renderAdvancedSearchResults();
       }
 
@@ -12951,12 +12968,16 @@ function brandLibraryDisplayLabel(item, items, index) {
         state.viewKey = "sensitiveChecker";
         setTitle("Hassas İçerik Uyarı Sistemi", "Haber, sosyal medya metni, Bülten vb. İçerik Kontrol Merkezi");
         $("view").innerHTML = `
-          <div class="page-head motto-head"><div class="motto-title"><p>Bugünün performansı, yarının rekabet avantajıdır</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
+          <div class="page-head motto-head"><div class="motto-title"><p>Bugünün performansı, yarının rekabet avantajıdır</p></div></div>
           <div class="panel">
             <div class="field"><label>Kontrol Edilecek Metin</label><textarea id="sensitiveRawText" style="min-height:260px" placeholder="Haber metni, sosyal medya metni veya kontrol edilecek içeriği yapıştırın."></textarea></div>
-            <div class="form-actions btn-row"><button class="btn" type="button" onclick="App.checkSensitiveContent()">İçeriği Kontrol Et</button><button class="btn ghost" type="button" onclick="App.showSensitiveChecker()">Temizle</button></div>
           </div>
           <div id="sensitiveResults" style="margin-top:16px"></div>
+          ${moduleActionsHtml(`
+            <button class="btn" type="button" onclick="App.checkSensitiveContent()">İçeriği Kontrol Et</button>
+            <button class="btn ghost" type="button" onclick="App.showSensitiveChecker()">Temizle</button>
+            <button class="btn ghost" type="button" onclick="App.showDashboard()">Anasayfaya DÖN</button>
+          `)}
         `;
       }
 
@@ -12989,7 +13010,7 @@ function brandLibraryDisplayLabel(item, items, index) {
         setTitle("Bildirim Merkezi", "Uygulama içi bildirimler ve güncel uyarılar");
         const alerts = entryAlerts();
         const notifications = getNotifications().filter(n=>n.userId===state.currentUser.id).sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
-        $("view").innerHTML = `<div class="page-head motto-head"><div class="motto-title"><p>Mevcut bildirim sistemi korunarak eklenen merkezi görünüm.</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div><div class="panel"><h3>Bugünkü Otomatik Uyarılar</h3><div class="entry-alert-list">${alerts.map(a=>`<div class="entry-alert">${esc(a)}</div>`).join("") || `<p class="muted">Bugün için otomatik uyarı yok.</p>`}</div></div><div class="panel" style="margin-top:16px"><h3>Uygulama İçi Bildirimler</h3><div class="summary-list">${notifications.map(n=>`<div class="mini-item"><div><strong>${esc(n.title)}</strong><span>${esc(n.message)}<br>${new Date(n.createdAt).toLocaleString('tr-TR')}</span></div>${!n.read ? `<button class="btn ghost small" onclick="App.markNotification('${js(n.id)}')">Okundu</button>` : ""}</div>`).join("") || `<p class="muted">Bildirim bulunmuyor.</p>`}</div></div>`;
+        $("view").innerHTML = `<div class="page-head motto-head"><div class="motto-title"><p>Mevcut bildirim sistemi korunarak eklenen merkezi görünüm.</p></div></div><div class="panel"><h3>Bugünkü Otomatik Uyarılar</h3><div class="entry-alert-list">${alerts.map(a=>`<div class="entry-alert">${esc(a)}</div>`).join("") || `<p class="muted">Bugün için otomatik uyarı yok.</p>`}</div></div><div class="panel" style="margin-top:16px"><h3>Uygulama İçi Bildirimler</h3><div class="summary-list">${notifications.map(n=>`<div class="mini-item"><div><strong>${esc(n.title)}</strong><span>${esc(n.message)}<br>${new Date(n.createdAt).toLocaleString('tr-TR')}</span></div>${!n.read ? `<button class="btn ghost small" onclick="App.markNotification('${js(n.id)}')">Okundu</button>` : ""}</div>`).join("") || `<p class="muted">Bildirim bulunmuyor.</p>`}</div></div>${moduleActionsHtml(`<button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>`)}`;
       }
 
       let modalCloseTimer = null;
