@@ -3783,7 +3783,7 @@ body.ux-dark .brand-library-empty {
   position: absolute;
   left: 50%;
   bottom: 0;
-  width: min(280px, 78vw);
+  width: min(430px, 84vw);
   height: 4px;
   border-radius: 999px;
   transform: translateX(-50%);
@@ -6284,12 +6284,6 @@ function showMaterialModule() {
   $("view").innerHTML = `
     <div class="page-head motto-head">
       <div class="motto-title"><p>Düzenli Stok, Sorunsuz Operasyon... Takip Et, Kontrol Et, Yönet</p></div>
-      <div class="btn-row">
-        <button class="btn secondary" onclick="App.downloadMaterialExcelTemplate()">Boş Excel Şablonu</button>
-        <button class="btn secondary" onclick="App.openMaterialExcelImport()">Excel ile İçe Aktar</button>
-        <button class="btn secondary" onclick="App.exportMaterialsExcel()">Excel ile Dışa Aktar</button>
-        <button class="btn" onclick="App.showMaterialForm()">＋ Yeni Malzeme</button>
-      </div>
     </div>
 
     ${materialDashboardHtml()}
@@ -6342,6 +6336,13 @@ function showMaterialModule() {
         <div class="mini-item"><div><strong>Çoklu Personel</strong><span>Sorumlu personel ve kontrol eden kişi alanları çoklu seçim destekler.</span></div></div>
         <div class="mini-item"><div><strong>Stok Uyarısı</strong><span>Sarf malzemelerinde minimum stok seviyesi girilirse kritik stok takibi yapılır.</span></div></div>
       </div>
+    </div>
+
+    <div class="btn-row" style="margin-top:16px; justify-content:flex-end">
+      <button class="btn secondary" onclick="App.downloadMaterialExcelTemplate()">Boş Excel Şablonu</button>
+      <button class="btn secondary" onclick="App.openMaterialExcelImport()">Excel ile İçe Aktar</button>
+      <button class="btn secondary" onclick="App.exportMaterialsExcel()">Excel ile Dışa Aktar</button>
+      <button class="btn" onclick="App.showMaterialForm()">＋ Yeni Malzeme</button>
     </div>
 
     <div style="margin-top:14px">
@@ -9598,12 +9599,6 @@ function showAnnualScorecard(year = new Date().getFullYear()) {
     </div>
 
     <div id="annualScorecardPrintArea">
-      <div class="scorecard-hero">
-        <h2>${selectedYear} Faaliyet Karnesi</h2>
-        <p>Kurumsal İletişim Müdürlüğü için yıl sonu performans, iş yükü, içerik üretimi ve sosyal medya görünürlüğü özeti.</p>
-        <p class="scorecard-print-note">Rapor tarihi: ${new Date().toLocaleDateString("tr-TR")}</p>
-      </div>
-
       <div class="scorecard-grid">
         ${scorecardMetric("Toplam tamamlanan iş", scorecardNumber(completedTasks.length), "Yıl içinde tamamlanan iş sayısı")}
         ${scorecardMetric("Toplam sosyal medya paylaşımı", scorecardNumber(socialPosts.length), "Yıl içinde kayıtlı sosyal medya içerikleri")}
@@ -9926,11 +9921,6 @@ body {
 
         return `
           <div id="annualScorecardPrintArea">
-            <div class="scorecard-hero">
-              <h2>${selectedYear} Faaliyet Karnesi</h2>
-              <p>Raporlama sayfası altında birleştirilmiş yıllık karne özeti.</p>
-              <p class="scorecard-print-note">Rapor tarihi: ${new Date().toLocaleDateString("tr-TR")}</p>
-            </div>
             <div class="scorecard-grid">
               ${scorecardMetric("Tamamlanan iş", scorecardNumber(completedTasks.length), "Seçili yıldaki kapanan işler")}
               ${scorecardMetric("Sosyal medya içeriği", scorecardNumber(yearSocialPosts.length), "Seçili yıldaki kayıtlı içerikler")}
@@ -10160,21 +10150,10 @@ body {
             <div class="motto-title"><p>Sürdürülebilir başarı, ölçülebilir performansla başlar</p></div>
             <div class="btn-row">
               <select id="scorecardYear" onchange="App.showReports(this.value)">${scorecardYearOptions(selectedYear)}</select>
-              <button class="btn secondary" onclick="App.exportAllCsv()">Tüm İşleri CSV</button>
-              <button class="btn secondary" onclick="App.exportSocialCsv()">Sosyal Medya CSV</button>
-              <button class="btn secondary" onclick="App.exportBackupJson()">JSON Yedek</button>
-              <button class="btn secondary" onclick="App.exportAnnualScorecardPdf()">Karne PDF</button>
-              <button class="btn ghost" onclick="window.print()">Yazdır / PDF</button>
             </div>
           </div>
 
           <div id="annualScorecardPrintArea">
-            <div class="scorecard-hero">
-              <h2>${selectedYear} Faaliyet Karnesi</h2>
-              <p>Veriyle yönet, sonuçla fark yarat</p>
-              <p class="scorecard-print-note">Rapor tarihi: ${new Date().toLocaleDateString("tr-TR")}</p>
-            </div>
-
             ${simpleMetricCards([
               { label: "Toplam faaliyet", value: scorecardNumber(totalActivities), hint: "İş + sosyal medya + toplantı/ziyaret + fikir + AI üretimi" },
               { label: "Toplam iş", value: scorecardNumber(tasks.length), hint: "Seçili yıldaki iş kayıtları" },
@@ -10290,6 +10269,14 @@ body {
             <p class="muted">JSON yedek dosyasının içeriğini seçerek sistemi geri yükleyebilirsiniz. Mevcut verilerin üzerine yazar.</p>
             <input type="file" id="restoreFile" accept="application/json" />
             <button class="btn warning small" onclick="App.importBackupJson()">JSON Geri Yükle</button>
+          </div>
+
+          <div class="btn-row" style="margin-top:16px; justify-content:flex-end">
+            <button class="btn secondary" onclick="App.exportAllCsv()">Tüm İşleri CSV</button>
+            <button class="btn secondary" onclick="App.exportSocialCsv()">Sosyal Medya CSV</button>
+            <button class="btn secondary" onclick="App.exportBackupJson()">JSON Yedek</button>
+            <button class="btn secondary" onclick="App.exportAnnualScorecardPdf()">Karne PDF</button>
+            <button class="btn ghost" onclick="window.print()">Yazdır / PDF</button>
           </div>
 
           <div style="margin-top:14px"><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
@@ -12286,7 +12273,7 @@ function brandLibraryDisplayLabel(item, items, index) {
           </tr>
         `).join("");
         $("view").innerHTML = `
-          <div class="page-head"><div><h2>İçerik Fikir Havuzu</h2><p>Başlık ve fikir notunu girin; fikrinizi geliştirin ve listeye ekleyin</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
+          <div class="page-head motto-head"><div class="motto-title"><p>Başlık ve fikir notunu girin; fikrinizi geliştirin ve listeye ekleyin</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
           <form class="panel" onsubmit="App.developAndSaveContentIdea(event)">
             <h3>Yeni Fikir Geliştir</h3>
             <div class="form-grid">
@@ -12670,8 +12657,8 @@ function brandLibraryDisplayLabel(item, items, index) {
 
         $("view").innerHTML = `
           <div class="memory-page">
-            <div class="page-head">
-              <div><h2>Kurumsal Hafıza Zaman Tüneli</h2><p>Kurumsal kilometre taşları, üyelikler, standartlar ve akreditasyon gelişmeleri tek ekranda.</p></div>
+            <div class="page-head motto-head">
+              <div class="motto-title"><p>Kurumsal kilometre taşları, üyelikler, standartlar ve akreditasyon gelişmeleri tek ekranda.</p></div>
               <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
             </div>
             ${timelineFiltersHtml(allItems)}
@@ -12932,7 +12919,7 @@ function brandLibraryDisplayLabel(item, items, index) {
       function showAdvancedSearch() {
         state.viewKey = "advancedSearch";
         setTitle("Gelişmiş Arama ve Filtreleme", "Tüm modüllerde içerik ve tarih bazlı arama");
-        $("view").innerHTML = `<div class="page-head"><div><h2>Gelişmiş Arama ve Filtreleme</h2><p>İş, sosyal medya, toplantı, fikir, kütüphane ve zaman tüneli kayıtlarında arayın.</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div><div class="panel"><div class="filters"><div class="field"><label>Arama</label><input id="advSearchText" oninput="App.renderAdvancedSearchResults()" placeholder="Başlık, açıklama, kurum, içerik..."></div><div class="field"><label>Tür</label><select id="advSearchType" onchange="App.renderAdvancedSearchResults()"><option value="">Tümü</option><option>İş</option><option>Sosyal Medya</option><option>Toplantı/Ziyaret</option><option>Fikir</option><option>Kurumsal Kimlik</option><option>Zaman Tüneli</option></select></div><div class="field"><label>Başlangıç</label><input id="advSearchStart" type="date" onchange="App.renderAdvancedSearchResults()"></div><div class="field"><label>Bitiş</label><input id="advSearchEnd" type="date" onchange="App.renderAdvancedSearchResults()"></div></div><div id="advancedSearchRows"></div></div>`;
+        $("view").innerHTML = `<div class="page-head motto-head"><div class="motto-title"><p>İş, sosyal medya, toplantı, fikir, kütüphane ve zaman tüneli kayıtlarında arayın.</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div><div class="panel"><div class="filters"><div class="field"><label>Arama</label><input id="advSearchText" oninput="App.renderAdvancedSearchResults()" placeholder="Başlık, açıklama, kurum, içerik..."></div><div class="field"><label>Tür</label><select id="advSearchType" onchange="App.renderAdvancedSearchResults()"><option value="">Tümü</option><option>İş</option><option>Sosyal Medya</option><option>Toplantı/Ziyaret</option><option>Fikir</option><option>Kurumsal Kimlik</option><option>Zaman Tüneli</option></select></div><div class="field"><label>Başlangıç</label><input id="advSearchStart" type="date" onchange="App.renderAdvancedSearchResults()"></div><div class="field"><label>Bitiş</label><input id="advSearchEnd" type="date" onchange="App.renderAdvancedSearchResults()"></div></div><div id="advancedSearchRows"></div></div>`;
         renderAdvancedSearchResults();
       }
 
@@ -13002,7 +12989,7 @@ function brandLibraryDisplayLabel(item, items, index) {
         setTitle("Bildirim Merkezi", "Uygulama içi bildirimler ve güncel uyarılar");
         const alerts = entryAlerts();
         const notifications = getNotifications().filter(n=>n.userId===state.currentUser.id).sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
-        $("view").innerHTML = `<div class="page-head"><div><h2>Bildirim Merkezi</h2><p>Mevcut bildirim sistemi korunarak eklenen merkezi görünüm.</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div><div class="panel"><h3>Bugünkü Otomatik Uyarılar</h3><div class="entry-alert-list">${alerts.map(a=>`<div class="entry-alert">${esc(a)}</div>`).join("") || `<p class="muted">Bugün için otomatik uyarı yok.</p>`}</div></div><div class="panel" style="margin-top:16px"><h3>Uygulama İçi Bildirimler</h3><div class="summary-list">${notifications.map(n=>`<div class="mini-item"><div><strong>${esc(n.title)}</strong><span>${esc(n.message)}<br>${new Date(n.createdAt).toLocaleString('tr-TR')}</span></div>${!n.read ? `<button class="btn ghost small" onclick="App.markNotification('${js(n.id)}')">Okundu</button>` : ""}</div>`).join("") || `<p class="muted">Bildirim bulunmuyor.</p>`}</div></div>`;
+        $("view").innerHTML = `<div class="page-head motto-head"><div class="motto-title"><p>Mevcut bildirim sistemi korunarak eklenen merkezi görünüm.</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div><div class="panel"><h3>Bugünkü Otomatik Uyarılar</h3><div class="entry-alert-list">${alerts.map(a=>`<div class="entry-alert">${esc(a)}</div>`).join("") || `<p class="muted">Bugün için otomatik uyarı yok.</p>`}</div></div><div class="panel" style="margin-top:16px"><h3>Uygulama İçi Bildirimler</h3><div class="summary-list">${notifications.map(n=>`<div class="mini-item"><div><strong>${esc(n.title)}</strong><span>${esc(n.message)}<br>${new Date(n.createdAt).toLocaleString('tr-TR')}</span></div>${!n.read ? `<button class="btn ghost small" onclick="App.markNotification('${js(n.id)}')">Okundu</button>` : ""}</div>`).join("") || `<p class="muted">Bildirim bulunmuyor.</p>`}</div></div>`;
       }
 
       let modalCloseTimer = null;
