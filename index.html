@@ -3745,6 +3745,89 @@ body.ux-dark .brand-library-empty {
   }
 }
 
+
+/* --- Sadece motto başlık düzenlemesi: ana başlık gizlendi, motto ortalandı --- */
+.page-head.motto-head,
+.brand-library-top.motto-head {
+  position: relative;
+  display: block !important;
+  text-align: center;
+  min-height: 54px;
+  margin-bottom: 18px;
+  padding: 2px 180px 0;
+}
+
+.page-head.motto-head .motto-title,
+.brand-library-title.motto-title {
+  width: 100%;
+  text-align: center;
+}
+
+.page-head.motto-head .motto-title p,
+.brand-library-title.motto-title p {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  padding: 0 0 15px;
+  color: var(--ink);
+  font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: clamp(20px, 2.1vw, 27px);
+  font-weight: 800;
+  line-height: 1.28;
+  letter-spacing: -.01em;
+}
+
+.page-head.motto-head .motto-title p::after,
+.brand-library-title.motto-title p::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: min(280px, 78vw);
+  height: 4px;
+  border-radius: 999px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    90deg,
+    rgba(200,16,46,0) 0%,
+    rgba(200,16,46,.28) 14%,
+    var(--turkak-red) 48%,
+    var(--turkak-red) 52%,
+    rgba(200,16,46,.28) 86%,
+    rgba(200,16,46,0) 100%
+  );
+  animation: pageHeadLineGrow .42s ease-out both;
+}
+
+.page-head.motto-head > .btn,
+.page-head.motto-head > .btn-row,
+.brand-library-top.motto-head > .brand-library-actions {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+body.ux-dark .page-head.motto-head .motto-title p,
+body.ux-dark .brand-library-title.motto-title p {
+  color: var(--ink);
+}
+
+@media (max-width: 820px) {
+  .page-head.motto-head,
+  .brand-library-top.motto-head {
+    padding: 0;
+    min-height: 0;
+  }
+
+  .page-head.motto-head > .btn,
+  .page-head.motto-head > .btn-row,
+  .brand-library-top.motto-head > .brand-library-actions {
+    position: static;
+    justify-content: center;
+    margin-top: 12px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -4958,8 +5041,8 @@ function toast(message) {
           : "Açık iş bulunmuyor. Yeni iş kaydı için kırmızı + butonunu kullanabilirsiniz.";
 
         $("view").innerHTML = `
-          <div class="page-head">
-            <div><h2>İş Yönetim Sistemi Paneli</h2><p>Takipte Disiplin, İletişimde Güven</p></div>
+          <div class="page-head motto-head">
+            <div class="motto-title"><p>Takipte Disiplin, İletişimde Güven</p></div>
             <button class="btn icon" title="Yeni İş Kaydı" onclick="App.showTaskForm()">＋</button>
           </div>
           <div class="cards">
@@ -5551,11 +5634,8 @@ function showMeetingList(type = "all") {
   const socialNeeded = items.filter(item => item.socialRequired === "Evet").length;
 
   $("view").innerHTML = `
-    <div class="page-head">
-      <div>
-        <h2>Toplantı ve Ziyaret Takip Modülü</h2>
-        <p>TÜRKAK: Ulusal Güç, Uluslararası Güven</p>
-      </div>
+    <div class="page-head motto-head">
+      <div class="motto-title"><p>TÜRKAK: Ulusal Güç, Uluslararası Güven</p></div>
 
       <div class="btn-row">
         <button class="btn" onclick="App.showMeetingForm()">＋ Yeni Kayıt</button>
@@ -6202,11 +6282,8 @@ function showMaterialModule() {
   const locations = [...new Set(getMaterials().map(item => item.location).filter(Boolean))].sort((a,b) => a.localeCompare(b, "tr"));
 
   $("view").innerHTML = `
-    <div class="page-head">
-      <div>
-        <h2>Malzeme Yönetim Modülü</h2>
-        <p>Düzenli Stok, Sorunsuz Operasyon... Takip Et, Kontrol Et, Yönet</p>
-      </div>
+    <div class="page-head motto-head">
+      <div class="motto-title"><p>Düzenli Stok, Sorunsuz Operasyon... Takip Et, Kontrol Et, Yönet</p></div>
       <div class="btn-row">
         <button class="btn secondary" onclick="App.downloadMaterialExcelTemplate()">Boş Excel Şablonu</button>
         <button class="btn secondary" onclick="App.openMaterialExcelImport()">Excel ile İçe Aktar</button>
@@ -7155,11 +7232,8 @@ function showSocialForm(id = null) {
 
   $("view").innerHTML = `
     <div class="modern-form-page">
-      <div class="page-head">
-        <div>
-          <h2>${editing ? "Sosyal Medya Paylaşım Kaydını Düzenle" : "YENİ SOSYAL MEDYA PAYLAŞIMI"}</h2>
-          <p>Her Paylaşımda Kalite, Her Mesajda Güven</p>
-        </div>
+      <div class="page-head motto-head">
+        <div class="motto-title"><p>Her Paylaşımda Kalite, Her Mesajda Güven</p></div>
         <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
       </div>
 
@@ -7383,11 +7457,8 @@ function showSocialList(type = "all") {
   setTitle("Sosyal Medya Planı", "TÜRKAK Sosyal medya ve Kurumsal Web Sayfası İçerik Takip Merkezi");
 
   $("view").innerHTML = `
-    <div class="page-head">
-      <div>
-        <h2>Sosyal Medya ve Web İçerik Planı</h2>
-        <p>Dijitalde de Güvenin Adresi: TÜRKAK</p>
-      </div>
+    <div class="page-head motto-head">
+      <div class="motto-title"><p>Dijitalde de Güvenin Adresi: TÜRKAK</p></div>
 
     </div>
 
@@ -7637,11 +7708,8 @@ function exportSocialCsv() {
   setTitle("Genel İş Listesi", "Kurumsal İletişim Müdürlüğü Çalışma Programı Takip Merkezi");
 
   $("view").innerHTML = `
-    <div class="page-head">
-      <div>
-        <h2>${esc(listTitle(type))}</h2>
-        <p>Çalışmaları Kayıt Altına Al, Süreci Güvenle Yönet</p>
-      </div>
+    <div class="page-head motto-head">
+      <div class="motto-title"><p>Çalışmaları Kayıt Altına Al, Süreci Güvenle Yönet</p></div>
 
 
     </div>
@@ -7830,8 +7898,8 @@ function exportSocialCsv() {
 );
         $("view").innerHTML = `
           <div class="modern-form-page">
-            <div class="page-head">
-              <div><h2>${editing ? 'İş Kaydını Düzenle' : 'YENİ İŞ KAYDI'}</h2><p>Her iş zamanında, her süreç kontrol altında</p></div>
+            <div class="page-head motto-head">
+              <div class="motto-title"><p>Her iş zamanında, her süreç kontrol altında</p></div>
               <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
             </div>
 
@@ -8169,11 +8237,8 @@ showDashboard();
   );
 
   $("view").innerHTML = `
-    <div class="page-head">
-      <div>
-        <h2>KURUMSAL İÇERİK ASİSTANI</h2>
-        <p>Stratejik Hedefler, Güçlü Performansla Hayat Bulur</p>
-      </div>
+    <div class="page-head motto-head">
+      <div class="motto-title"><p>Stratejik Hedefler, Güçlü Performansla Hayat Bulur</p></div>
       <button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button>
     </div>
 
@@ -9520,11 +9585,8 @@ function showAnnualScorecard(year = new Date().getFullYear()) {
   const totalSocialPerformance = performanceTotals(socialPosts);
 
   $("view").innerHTML = `
-    <div class="page-head">
-      <div>
-        <h2>Faaliyet Karnesi</h2>
-        <p>Veriyle Ölçülen, Etkiyle Güçlenen İletişim</p>
-      </div>
+    <div class="page-head motto-head">
+      <div class="motto-title"><p>Veriyle Ölçülen, Etkiyle Güçlenen İletişim</p></div>
 
       <div class="btn-row">
         <select id="scorecardYear" onchange="App.showReports(this.value)">
@@ -10094,11 +10156,8 @@ body {
         const completionDayChartRows = chartRowsFromCompletionDays(tasks);
 
         $("view").innerHTML = `
-          <div class="page-head">
-            <div>
-              <h2>Faaliyet Karnesi</h2>
-              <p>Sürdürülebilir başarı, ölçülebilir performansla başlar</p>
-            </div>
+          <div class="page-head motto-head">
+            <div class="motto-title"><p>Sürdürülebilir başarı, ölçülebilir performansla başlar</p></div>
             <div class="btn-row">
               <select id="scorecardYear" onchange="App.showReports(this.value)">${scorecardYearOptions(selectedYear)}</select>
               <button class="btn secondary" onclick="App.exportAllCsv()">Tüm İşleri CSV</button>
@@ -12101,10 +12160,9 @@ function brandLibraryDisplayLabel(item, items, index) {
         `;
         $("view").innerHTML = `
           <div class="brand-library-page">
-          <div class="brand-library-top">
+          <div class="brand-library-top motto-head">
   <div>
-    <div class="brand-library-title">
-      <h2>Kurumsal Kimlik Kütüphanesi</h2>
+    <div class="brand-library-title motto-title">
       <p>Öğrenen Organizasyon, Büyüyen Organizasyon</p>
     </div>
   </div>
@@ -12906,7 +12964,7 @@ function brandLibraryDisplayLabel(item, items, index) {
         state.viewKey = "sensitiveChecker";
         setTitle("Hassas İçerik Uyarı Sistemi", "Haber, sosyal medya metni, Bülten vb. İçerik Kontrol Merkezi");
         $("view").innerHTML = `
-          <div class="page-head"><div><h2>Hassas İçerik Uyarı Sistemi</h2><p>Bugünün performansı, yarının rekabet avantajıdır</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
+          <div class="page-head motto-head"><div class="motto-title"><p>Bugünün performansı, yarının rekabet avantajıdır</p></div><button class="btn ghost" onclick="App.showDashboard()">Anasayfaya DÖN</button></div>
           <div class="panel">
             <div class="field"><label>Kontrol Edilecek Metin</label><textarea id="sensitiveRawText" style="min-height:260px" placeholder="Haber metni, sosyal medya metni veya kontrol edilecek içeriği yapıştırın."></textarea></div>
             <div class="form-actions btn-row"><button class="btn" type="button" onclick="App.checkSensitiveContent()">İçeriği Kontrol Et</button><button class="btn ghost" type="button" onclick="App.showSensitiveChecker()">Temizle</button></div>
