@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TÜRKAK Kurumsal İletişim İş Yönetim Sistemi</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://unpkg.com/streamlit-component-lib@1.4.0/dist/index.js"></script>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
@@ -4079,11 +4078,6 @@ body.ux-dark .table-page-button.active {
   session: "turkak_its_session_v1"
 };
       const DEFAULT_PASSWORD = "Turkak2026!";
-      const SUPABASE_URL = "https://xhhqoacsctktvjfkgrnh.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhoaHFvYWNzY3RrdHZqZmtncm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwNzg2MTIsImV4cCI6MjA5NDY1NDYxMn0.eUobrsOeb5zlis9XqZm_5T9ghXguXcLoImzT0tFMJp4";
-const SUPABASE_TABLE = "app_store";
-const SUPABASE_ROW_ID = "turkak_its_data";
-
 const SOCIAL_CHANNELS = ["X (Twitter)", "Instagram", "LinkedIn", "Nsocial", "Bluesky"];
 const SOCIAL_STATUS = ["Taslak", "Planlandı", "Yayınlandı"];
 const YES_NO = ["Evet", "Hayır"];
@@ -4111,8 +4105,10 @@ const STREAMLIT_AI_TIMEOUT_MS = 180000;
 const AI_RESULT_VIEW_LOCK_MS = 10 * 60 * 1000;
 const streamlitAiResolvers = new Map();
 const passwordResetEmailResolvers = new Map();
+const sharedDataResolvers = new Map();
 let lastHandledStreamlitAiResponseId = "";
 let lastHandledPasswordResetEmailResponseId = "";
+let lastHandledSharedDataResponseId = "";
 
 function isLocalBrowserHost() {
   const host = window.location.hostname;
@@ -4205,6 +4201,25 @@ function setupStreamlitAiBridge() {
 function handleStreamlitAiResponse(response) {
   const requestId = String(response?.requestId || "");
   if (!requestId) return;
+
+  if (response?.type === "shared_data_response") {
+    if (requestId === lastHandledSharedDataResponseId) return;
+    lastHandledSharedDataResponseId = requestId;
+
+    const pending = sharedDataResolvers.get(requestId);
+    if (!pending) return;
+
+    sharedDataResolvers.delete(requestId);
+    clearTimeout(pending.timer);
+
+    if (!response.ok) {
+      pending.reject(new Error(response.detail || "Ortak veri işlemi tamamlanamadı."));
+      return;
+    }
+
+    pending.resolve(response);
+    return;
+  }
 
   if (response?.type === "password_reset_email_response") {
     if (requestId === lastHandledPasswordResetEmailResponseId) return;
@@ -4300,6 +4315,37 @@ function callStreamlitPasswordResetEmail(payload) {
       type: "password_reset_email_request",
       requestId,
       payload
+    });
+  });
+}
+
+function callStreamlitSharedData(action, data = null) {
+  return new Promise((resolve, reject) => {
+    if (!hasStreamlitAiBridge()) {
+      reject(new Error("Streamlit ortak veri köprüsü hazır değil. Sayfayı yenileyip tekrar deneyin."));
+      return;
+    }
+
+    const requestId = `shared_${action}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+    const timer = setTimeout(() => {
+      sharedDataResolvers.delete(requestId);
+      reject(new Error("Ortak veri işlemi zaman aşımına uğradı. Lütfen tekrar deneyin."));
+    }, 60000);
+
+    sharedDataResolvers.set(requestId, { resolve, reject, timer });
+
+    const streamlitApi = getStreamlitApi();
+    if (!streamlitApi || typeof streamlitApi.setComponentValue !== "function") {
+      sharedDataResolvers.delete(requestId);
+      clearTimeout(timer);
+      reject(new Error("Streamlit ortak veri köprüsü hazır değil. Sayfayı yenileyip tekrar deneyin."));
+      return;
+    }
+
+    streamlitApi.setComponentValue({
+      type: "shared_data_request",
+      requestId,
+      payload: { action, data }
     });
   });
 }
@@ -4402,8 +4448,6 @@ const CONTENT_OUTPUT_GROUPS = [
         },
         set(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
       };
-      const sharedDb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 let sharedSaveTimer = null;
 let sharedRefreshTimer = null;
 let listTableObserver = null;
@@ -4510,19 +4554,12 @@ function localDataSnapshot() {
 
 async function pullSharedData(showError = true) {
   try {
-    const { data, error } = await sharedDb
-      .from(SUPABASE_TABLE)
-      .select("data")
-      .eq("id", SUPABASE_ROW_ID)
-      .maybeSingle();
-
-    if (error) throw error;
-
-    if (!data || !data.data) {
+    const response = await callStreamlitSharedData("pull");
+    if (!response?.data) {
       return false;
     }
 
-    const payload = data.data || {};
+    const payload = response.data || {};
 
     if (Array.isArray(payload.users)) {
       store.set(KEYS.users, payload.users);
@@ -4570,7 +4607,7 @@ async function pullSharedData(showError = true) {
     console.error("Ortak veri okunamadı:", e);
 
     if (showError) {
-      toast("Ortak veri okunamadı. Supabase bağlantısını ve tablo ayarlarını kontrol edin.");
+      toast(`Ortak veri okunamadı: ${e.message || e}`);
     }
 
     return false;
@@ -4580,25 +4617,14 @@ async function pullSharedData(showError = true) {
 async function pushSharedData(showError = true) {
   try {
     const payload = localDataSnapshot();
-
-    const { error } = await sharedDb
-      .from(SUPABASE_TABLE)
-      .upsert({
-        id: SUPABASE_ROW_ID,
-        data: payload,
-        updated_at: new Date().toISOString()
-      }, {
-        onConflict: "id"
-      });
-
-    if (error) throw error;
+    await callStreamlitSharedData("push", payload);
 
     return true;
   } catch (e) {
     console.error("Ortak veri yazılamadı:", e);
 
     if (showError) {
-      toast("Ortak veri kaydedilemedi. Supabase RLS ve tablo izinlerini kontrol edin.");
+      toast(`Ortak veri kaydedilemedi: ${e.message || e}`);
     }
 
     return false;

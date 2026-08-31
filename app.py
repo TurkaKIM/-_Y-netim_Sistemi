@@ -23,6 +23,9 @@ TERMS_PDF_URL = (
 
 DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
 DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
+DEFAULT_SUPABASE_URL = "https://xhhqoacsctktvjfkgrnh.supabase.co"
+SUPABASE_TABLE = "app_store"
+SUPABASE_ROW_ID = "turkak_its_data"
 APP_DIR = Path(__file__).parent.resolve()
 
 # Streamlit sayfasını geniş ekran yap
@@ -435,6 +438,119 @@ def process_ai_request(request_id: str, payload: dict[str, Any]) -> dict[str, An
             "result": {},
         }
 
+
+def get_supabase_server_config() -> tuple[str, str]:
+    """Return server-only Supabase settings without exposing the secret to the browser."""
+    url = get_secret_or_env("SUPABASE_URL", DEFAULT_SUPABASE_URL).rstrip("/")
+    service_key = (
+        get_secret_or_env("SUPABASE_SERVICE_ROLE_KEY")
+        or get_secret_or_env("SUPABASE_SECRET_KEY")
+    )
+
+    if not url:
+        raise RuntimeError("Streamlit Secrets içinde SUPABASE_URL tanımlı değil.")
+    if not service_key:
+        raise RuntimeError(
+            "Streamlit Secrets içinde SUPABASE_SERVICE_ROLE_KEY tanımlı değil. "
+            "Anon key RLS engelini aşmak için kullanılmaz."
+        )
+
+    return url, service_key
+
+
+def supabase_server_headers(service_key: str, prefer: str = "") -> dict[str, str]:
+    headers = {
+        "apikey": service_key,
+        "Authorization": f"Bearer {service_key}",
+        "Content-Type": "application/json",
+    }
+    if prefer:
+        headers["Prefer"] = prefer
+    return headers
+
+
+def supabase_error_detail(response: requests.Response) -> str:
+    try:
+        payload = response.json()
+        if isinstance(payload, dict):
+            return str(payload.get("message") or payload.get("details") or payload.get("hint") or "").strip()
+    except Exception:
+        pass
+    return str(response.text or "").strip()[:300]
+
+
+def process_shared_data_request(request_id: str, payload: dict[str, Any]) -> dict[str, Any]:
+    """Read or write the fixed shared-data row through the Streamlit backend."""
+    action = str(payload.get("action") or "").strip().lower()
+
+    try:
+        url, service_key = get_supabase_server_config()
+        endpoint = f"{url}/rest/v1/{SUPABASE_TABLE}"
+
+        if action == "pull":
+            response = requests.get(
+                endpoint,
+                params={"select": "data", "id": f"eq.{SUPABASE_ROW_ID}"},
+                headers=supabase_server_headers(service_key),
+                timeout=30,
+            )
+            if not response.ok:
+                detail = supabase_error_detail(response)
+                raise RuntimeError(f"Ortak veri okunamadı (HTTP {response.status_code}). {detail}".strip())
+
+            rows = response.json()
+            shared_data = rows[0].get("data") if isinstance(rows, list) and rows else None
+            return {
+                "ok": True,
+                "type": "shared_data_response",
+                "requestId": request_id,
+                "action": action,
+                "data": shared_data if isinstance(shared_data, dict) else None,
+            }
+
+        if action == "push":
+            shared_data = payload.get("data")
+            if not isinstance(shared_data, dict):
+                raise RuntimeError("Kaydedilecek ortak veri geçerli bir nesne değil.")
+
+            response = requests.post(
+                endpoint,
+                params={"on_conflict": "id"},
+                headers=supabase_server_headers(
+                    service_key,
+                    "resolution=merge-duplicates,return=minimal",
+                ),
+                json={
+                    "id": SUPABASE_ROW_ID,
+                    "data": shared_data,
+                    "updated_at": str(
+                        shared_data.get("updatedAt")
+                        or time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+                    ),
+                },
+                timeout=30,
+            )
+            if not response.ok:
+                detail = supabase_error_detail(response)
+                raise RuntimeError(f"Ortak veri kaydedilemedi (HTTP {response.status_code}). {detail}".strip())
+
+            return {
+                "ok": True,
+                "type": "shared_data_response",
+                "requestId": request_id,
+                "action": action,
+            }
+
+        raise RuntimeError("Geçersiz ortak veri işlemi.")
+    except Exception as exc:  # noqa: BLE001
+        return {
+            "ok": False,
+            "type": "shared_data_response",
+            "requestId": request_id,
+            "action": action,
+            "detail": str(exc),
+        }
+
 def process_password_reset_email_request(request_id: str, payload: dict[str, Any]) -> dict[str, Any]:
     """Send password reset email from the Streamlit backend."""
     try:
@@ -490,6 +606,8 @@ if "turkak_last_ai_request_id" not in st.session_state:
     st.session_state.turkak_last_ai_request_id = ""
 if "turkak_last_password_reset_email_request_id" not in st.session_state:
     st.session_state.turkak_last_password_reset_email_request_id = ""
+if "turkak_last_shared_data_request_id" not in st.session_state:
+    st.session_state.turkak_last_shared_data_request_id = ""
 
 turkak_component = components.declare_component(
     "turkak_is_yonetim_sistemi",
@@ -518,5 +636,14 @@ if isinstance(component_value, dict) and component_value.get("type") == "passwor
     if request_id and request_id != st.session_state.turkak_last_password_reset_email_request_id:
         st.session_state.turkak_last_password_reset_email_request_id = request_id
         st.session_state.turkak_ai_response = process_password_reset_email_request(request_id, payload)
+        st.rerun()
+
+if isinstance(component_value, dict) and component_value.get("type") == "shared_data_request":
+    request_id = str(component_value.get("requestId") or "")
+    payload = component_value.get("payload") or {}
+
+    if request_id and request_id != st.session_state.turkak_last_shared_data_request_id:
+        st.session_state.turkak_last_shared_data_request_id = request_id
+        st.session_state.turkak_ai_response = process_shared_data_request(request_id, payload)
         st.rerun()
         
