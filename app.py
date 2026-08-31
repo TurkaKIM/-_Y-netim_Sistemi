@@ -15,6 +15,13 @@ import streamlit.components.v1 as components
 from openai import APIConnectionError, APITimeoutError, AuthenticationError, OpenAI, RateLimitError
 from pypdf import PdfReader
 
+from database.queries import DatabaseError, SupabaseConfig, SupabaseQueries
+from services.ai_analyzer import AIAnalyzer, AIConfig
+from services.prompt_service import PromptService
+from services.suggestion_engine import SuggestionEngine
+from services.theme_analyzer import ThemeAnalyzer
+from services.web_collector import WebCollector, WebCollectorConfig
+
 TERMS_PDF_URL = (
     "https://raw.githubusercontent.com/davutkara1985-create/"
     "is-takip-uygulamasi3/0d5489ad4f2ef7c2478c0c742f6185cfc7564622/"
@@ -406,9 +413,90 @@ def call_ai_with_retry(prompt: str) -> str:
         return call_gemini_with_retry(prompt)
     return call_openai_with_retry(prompt)
 
+
+@st.cache_data(ttl=21600, show_spinner=False)
+def analyze_digital_memory_cached(
+    query: str,
+    admin_prompt: str,
+    provider: str,
+    model: str,
+    max_results: int,
+    _ai_api_key: str,
+    _tavily_api_key: str,
+) -> dict[str, Any]:
+    """Aynı sorguyu altı saat boyunca yeniden taramadan döndürür."""
+    analyzer = AIAnalyzer(
+        AIConfig(
+            provider=provider,
+            api_key=_ai_api_key,
+            model=model,
+            timeout=ai_timeout_seconds(),
+        )
+    )
+    intent = analyzer.analyze_query(query, admin_prompt)
+    contents = WebCollector(
+        WebCollectorConfig(
+            api_key=_tavily_api_key,
+            timeout=max(1, int(get_secret_or_env("DIGITAL_MEMORY_SEARCH_TIMEOUT", "30"))),
+            max_results=max_results,
+        )
+    ).collect(intent.get("search_queries", []))
+    synthesis = analyzer.synthesize(query, intent, contents, admin_prompt)
+    return {
+        "intent": intent,
+        "contents": contents,
+        "theme_analysis": ThemeAnalyzer.normalize(synthesis, contents),
+        "suggestions": SuggestionEngine.normalize(synthesis),
+        "ai_commentary": str(synthesis.get("ai_commentary") or "Analiz yorumu oluşturulamadı."),
+    }
+
+
+def process_digital_memory_request(payload: dict[str, Any]) -> dict[str, Any]:
+    """Dijital Hafıza analizini mevcut Streamlit bileşeni içinde çalıştırır."""
+    query = str(payload.get("query") or "").strip()
+    user_id = str(payload.get("userId") or "unknown").strip() or "unknown"
+    url, service_key = get_supabase_server_config()
+    queries = SupabaseQueries(SupabaseConfig(url=url, service_role_key=service_key))
+    admin_prompt, _prompt_warning = PromptService(queries).get_active_prompt()
+
+    provider = selected_provider()
+    if provider == "gemini":
+        ai_api_key = get_secret_or_env("GEMINI_API_KEY") or get_secret_or_env("GOOGLE_API_KEY")
+    else:
+        ai_api_key = get_secret_or_env("OPENAI_API_KEY")
+
+    try:
+        max_results = max(1, min(60, int(get_secret_or_env("DIGITAL_MEMORY_MAX_RESULTS", "30"))))
+    except ValueError:
+        max_results = 30
+
+    result = analyze_digital_memory_cached(
+        query,
+        admin_prompt,
+        provider,
+        selected_ai_model(),
+        max_results,
+        ai_api_key,
+        get_secret_or_env("TAVILY_API_KEY"),
+    )
+    try:
+        queries.log_ai_search(user_id, query, result)
+    except DatabaseError:
+        result["log_warning"] = "Analiz tamamlandı; ancak arama kaydı yazılamadı."
+    return result
+
 def process_ai_request(request_id: str, payload: dict[str, Any]) -> dict[str, Any]:
     """Process one AI request coming from the Streamlit component iframe."""
     try:
+        if str(payload.get("mode") or "") == "digital_memory":
+            return {
+                "ok": True,
+                "requestId": request_id,
+                "provider": selected_provider(),
+                "model": selected_ai_model(),
+                "result": process_digital_memory_request(payload),
+            }
+
         raw_text = str(payload.get("rawText") or "").strip()
         outputs = payload.get("outputs") or []
         custom_prompt = str(payload.get("customPrompt") or "")
@@ -608,8 +696,6 @@ if "turkak_last_password_reset_email_request_id" not in st.session_state:
     st.session_state.turkak_last_password_reset_email_request_id = ""
 if "turkak_last_shared_data_request_id" not in st.session_state:
     st.session_state.turkak_last_shared_data_request_id = ""
-if "turkak_last_digital_memory_request_id" not in st.session_state:
-    st.session_state.turkak_last_digital_memory_request_id = ""
 
 turkak_component = components.declare_component(
     "turkak_is_yonetim_sistemi",
@@ -621,15 +707,6 @@ component_value = turkak_component(
     key="turkak_is_yonetim_sistemi",
     default=None,
 )
-
-if isinstance(component_value, dict) and component_value.get("type") == "digital_memory_navigation":
-    request_id = str(component_value.get("requestId") or "")
-    payload = component_value.get("payload") or {}
-    if request_id and request_id != st.session_state.turkak_last_digital_memory_request_id:
-        st.session_state.turkak_last_digital_memory_request_id = request_id
-        st.session_state.digital_memory_user_id = str(payload.get("userId") or "")
-        st.session_state.digital_memory_user_name = str(payload.get("userName") or "")
-        st.switch_page("pages/digital_memory.py")
 
 if isinstance(component_value, dict) and component_value.get("type") == "ai_request":
     request_id = str(component_value.get("requestId") or "")

@@ -43,12 +43,15 @@ class SupabaseQueries:
     def get_digital_memory_prompt(self) -> str:
         self._ensure_configured()
         endpoint = f"{self.config.url.rstrip('/')}/rest/v1/{self.config.table}"
-        response = requests.get(
-            endpoint,
-            headers=self._headers,
-            params={"id": f"eq.{self.config.row_id}", "select": "data", "limit": "1"},
-            timeout=self.config.timeout,
-        )
+        try:
+            response = requests.get(
+                endpoint,
+                headers=self._headers,
+                params={"id": f"eq.{self.config.row_id}", "select": "data", "limit": "1"},
+                timeout=self.config.timeout,
+            )
+        except requests.RequestException as exc:
+            raise DatabaseError(f"Aktif prompt okunamadı: {exc}") from exc
         if not response.ok:
             raise DatabaseError(self._response_error(response, "Aktif prompt okunamadı"))
         rows = response.json()
@@ -61,16 +64,19 @@ class SupabaseQueries:
     def log_ai_search(self, user_id: str, query: str, response_data: dict[str, Any]) -> None:
         self._ensure_configured()
         endpoint = f"{self.config.url.rstrip('/')}/rest/v1/ai_search_logs"
-        response = requests.post(
-            endpoint,
-            headers={**self._headers, "Prefer": "return=minimal"},
-            json={
-                "user_id": str(user_id or "unknown"),
-                "query": query,
-                "response": response_data,
-            },
-            timeout=self.config.timeout,
-        )
+        try:
+            response = requests.post(
+                endpoint,
+                headers={**self._headers, "Prefer": "return=minimal"},
+                json={
+                    "user_id": str(user_id or "unknown"),
+                    "query": query,
+                    "response": response_data,
+                },
+                timeout=self.config.timeout,
+            )
+        except requests.RequestException as exc:
+            raise DatabaseError(f"Arama kaydı yazılamadı: {exc}") from exc
         if not response.ok:
             raise DatabaseError(self._response_error(response, "Arama kaydı yazılamadı"))
 

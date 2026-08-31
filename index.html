@@ -4203,22 +4203,6 @@ function setupStreamlitAiBridge() {
   });
 }
 
-function openDigitalMemory() {
-  const streamlitApi = getStreamlitApi();
-  if (!streamlitApi || typeof streamlitApi.setComponentValue !== "function") {
-    toast("Dijital Hafıza Merkezi açılamadı.");
-    return;
-  }
-  streamlitApi.setComponentValue({
-    type: "digital_memory_navigation",
-    requestId: `digital-memory-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-    payload: {
-      userId: String(state.currentUser?.id || ""),
-      userName: String(state.currentUser?.fullName || "")
-    }
-  });
-}
-
 function handleStreamlitAiResponse(response) {
   const requestId = String(response?.requestId || "");
   if (!requestId) return;
@@ -4286,10 +4270,11 @@ function callStreamlitAI(payload) {
     }
 
     const requestId = `ai_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+    const timeoutMs = payload?.mode === "digital_memory" ? 360000 : STREAMLIT_AI_TIMEOUT_MS;
     const timer = setTimeout(() => {
       streamlitAiResolvers.delete(requestId);
       reject(new Error("ChatGPT yanıtı zaman aşımına uğradı. Lütfen tekrar deneyin."));
-    }, STREAMLIT_AI_TIMEOUT_MS);
+    }, timeoutMs);
 
     streamlitAiResolvers.set(requestId, { resolve, reject, timer });
 
@@ -4673,6 +4658,8 @@ function rerenderIfNeeded() {
   showReports();
 } else if (state.viewKey === "contentAssistant") {
   showContentAssistant();
+} else if (state.viewKey === "digitalMemory") {
+  showDigitalMemory();
 } else if (state.viewKey === "brandLibrary") {
   showBrandLibrary();
 } else if (state.viewKey === "contentIdeas") {
@@ -4701,7 +4688,7 @@ function startSharedRefresh() {
 }
 
 if (
-  ["contentAssistant", "sensitiveChecker"].includes(state.viewKey) &&
+  ["contentAssistant", "sensitiveChecker", "digitalMemory"].includes(state.viewKey) &&
   state.lastAiResultAt &&
   Date.now() - state.lastAiResultAt < AI_RESULT_VIEW_LOCK_MS
 ) {
@@ -5278,7 +5265,7 @@ function toast(message) {
   ["meetings", "Toplantı / Ziyaret Takibi", "🤝", "showMeetingList"],
   ["brandLibrary", "Kurumsal Kimlik Kütüphanesi", "🎨", "showBrandLibrary"],
   ["timeline", "Kurumsal Hafıza Zaman Tüneli", "🕒", "showTimeline"],
-  ["digitalMemory", "Dijital Hafıza Merkezi", "🧠", "openDigitalMemory"],
+  ["digitalMemory", "Dijital Hafıza Merkezi", "🧠", "showDigitalMemory"],
   ["contentAssistant", "Kurumsal İçerik Asistanı", "✍️", "showContentAssistant"],
   ["sensitiveChecker", "Hassas İçerik Uyarı Sistemi", "⚠️", "showSensitiveChecker"],
   ["contentIdeas", "İçerik Fikir Havuzu", "💡", "showContentIdeas"],
@@ -8510,6 +8497,155 @@ closeModal();
 toast("Görev silindi. Anasayfaya dönüldü.");
 showDashboard();
       }
+      function showDigitalMemory() {
+  state.viewKey = "digitalMemory";
+  state.digitalMemoryTab = state.digitalMemoryTab || "contents";
+  setTitle(
+    "TÜRKAK Dijital Hafıza Merkezi",
+    "TÜRKAK web sitesi ve resmî sosyal medya içeriklerinin yapay zekâ destekli analizi"
+  );
+
+  $("view").innerHTML = `
+    <div class="page-head motto-head">
+      <div class="motto-title"><p>Kurumsal hafızayı araştırın, geçmiş içeriklerden yeni fikirler geliştirin</p></div>
+    </div>
+    <div class="panel">
+      <div class="field">
+        <label>Aramak İstediğiniz Konu *</label>
+        <textarea id="digitalMemoryQuery" style="min-height:150px" placeholder="Dünya Akreditasyon Günü">${esc(state.digitalMemoryQuery || "")}</textarea>
+        <small>Örnek: Geçen 3 yıl bugün TÜRKAK ne paylaşmış, ISO 17025 konusunda geçmiş içerikler.</small>
+      </div>
+    </div>
+    <div id="digitalMemoryResults" style="margin-top:16px"></div>
+    ${moduleActionsHtml(`
+      <button class="btn" type="button" onclick="App.analyzeDigitalMemory()">Analiz Et</button>
+      <button class="btn ghost" type="button" onclick="App.clearDigitalMemory()">Temizle</button>
+      <button class="btn ghost" type="button" onclick="App.showDashboard()">Anasayfaya DÖN</button>
+    `)}
+  `;
+
+  if (state.digitalMemoryResult) renderDigitalMemoryResults();
+}
+
+async function analyzeDigitalMemory() {
+  const query = $("digitalMemoryQuery")?.value.trim() || "";
+  if (!query) return toast("Lütfen analiz edilecek bir konu yazın.");
+  if (!hasStreamlitAiBridge()) return toast("AI bağlantısı hazır değil. Streamlit Secrets ayarlarını kontrol edin.");
+
+  state.digitalMemoryQuery = query;
+  $("digitalMemoryResults").innerHTML = corporateLoadingHtml(
+    "Resmî kaynaklar taranıyor...",
+    "Web sitesi ve sosyal medya içerikleri bulunuyor, temalar analiz ediliyor.",
+    "digitalMemoryLottie"
+  );
+  mountCorporateLottie("digitalMemoryLottie");
+
+  try {
+    const data = await requestAI({
+      mode: "digital_memory",
+      query,
+      userId: state.currentUser?.id || "unknown"
+    });
+    state.digitalMemoryResult = data.result || {};
+    state.digitalMemoryTab = "contents";
+    state.lastAiResultAt = Date.now();
+    renderDigitalMemoryResults();
+    if (state.digitalMemoryResult.log_warning) toast(state.digitalMemoryResult.log_warning);
+  } catch (error) {
+    console.error(error);
+    $("digitalMemoryResults").innerHTML = `
+      <div class="panel">
+        <h3>Analiz tamamlanamadı</h3>
+        <p class="danger-text">${esc(error.message || error)}</p>
+      </div>
+    `;
+  }
+}
+
+function clearDigitalMemory() {
+  state.digitalMemoryQuery = "";
+  state.digitalMemoryResult = null;
+  state.digitalMemoryTab = "contents";
+  showDigitalMemory();
+}
+
+function selectDigitalMemoryTab(tab) {
+  state.digitalMemoryTab = tab;
+  renderDigitalMemoryResults();
+}
+
+function digitalMemoryList(items, emptyText) {
+  if (!Array.isArray(items) || !items.length) return `<p class="muted">${esc(emptyText)}</p>`;
+  return `<div class="summary-list">${items.map(item => {
+    if (item && typeof item === "object") {
+      const count = item.count !== undefined && item.count !== null ? ` (${esc(item.count)})` : "";
+      return `<div class="mini-item"><div><strong>${esc(item.name || "Tema")}${count}</strong><span>${esc(item.evidence || "")}</span></div></div>`;
+    }
+    return `<div class="mini-item"><div><span>${esc(item)}</span></div></div>`;
+  }).join("")}</div>`;
+}
+
+function digitalMemoryContentsHtml(contents) {
+  if (!Array.isArray(contents) || !contents.length) return `<p class="muted">Resmî kanallarda sorguyla eşleşen içerik bulunamadı.</p>`;
+  return `<div class="summary-list">${contents.map(item => `
+    <div class="mini-item" style="align-items:flex-start">
+      <div style="min-width:0">
+        <strong>${esc(item.title || "Başlıksız içerik")}</strong>
+        <span><b>Tarih:</b> ${esc(item.date || "Belirtilmemiş")} &nbsp; <b>Kaynak:</b> ${esc(item.platform || "-")}</span>
+        <span style="margin-top:6px">${esc(item.summary || "Özet bulunamadı.")}</span>
+      </div>
+      <a class="btn secondary small" href="${esc(item.url || "#")}" target="_blank" rel="noopener noreferrer">Kaynağı Aç</a>
+    </div>
+  `).join("")}</div>`;
+}
+
+function digitalMemoryThemesHtml(analysis) {
+  return `<div class="dashboard-grid">
+    <div class="panel"><h3>En Sık İşlenen Temalar</h3>${digitalMemoryList(analysis.themes, "Tema bulunamadı.")}</div>
+    <div class="panel"><h3>Ortak Anahtar Kelimeler</h3>${digitalMemoryList(analysis.keywords, "Anahtar kelime bulunamadı.")}</div>
+    <div class="panel"><h3>İçerik Kategorileri</h3>${digitalMemoryList(analysis.categories, "Kategori bulunamadı.")}</div>
+    <div class="panel"><h3>Eğilimler</h3>${digitalMemoryList(analysis.trends, "Eğilim bulunamadı.")}</div>
+  </div>`;
+}
+
+function digitalMemorySuggestionsHtml(suggestions) {
+  const groups = [
+    ["social_media", "Sosyal Medya Önerileri"],
+    ["news", "Haber Önerileri"],
+    ["website", "Web Sitesi Önerileri"],
+    ["video", "Video Önerileri"],
+    ["linkedin", "LinkedIn Önerileri"]
+  ];
+  return `<div class="dashboard-grid">${groups.map(([key, label]) => `
+    <div class="panel"><h3>${label}</h3>${digitalMemoryList(suggestions[key], "Öneri oluşturulamadı.")}</div>
+  `).join("")}</div>`;
+}
+
+function renderDigitalMemoryResults() {
+  const container = $("digitalMemoryResults");
+  if (!container || !state.digitalMemoryResult) return;
+  const result = state.digitalMemoryResult;
+  const active = state.digitalMemoryTab || "contents";
+  const tabs = [
+    ["contents", "📚 Bulunan İçerikler"],
+    ["themes", "📈 Tema Analizi"],
+    ["suggestions", "💡 İçerik Önerileri"],
+    ["commentary", "📝 Yapay Zeka Yorumu"]
+  ];
+  let body = "";
+  if (active === "themes") body = digitalMemoryThemesHtml(result.theme_analysis || {});
+  else if (active === "suggestions") body = digitalMemorySuggestionsHtml(result.suggestions || {});
+  else if (active === "commentary") body = `<div class="panel"><h3>Yapay Zeka Yorumu</h3><p style="white-space:pre-wrap;line-height:1.75">${esc(result.ai_commentary || "Analiz yorumu oluşturulamadı.")}</p></div>`;
+  else body = `<div class="panel">${digitalMemoryContentsHtml(result.contents || [])}</div>`;
+
+  container.innerHTML = `
+    <div class="btn-row" style="margin-bottom:12px">
+      ${tabs.map(([key, label]) => `<button class="btn ${active === key ? "" : "secondary"} small" type="button" onclick="App.selectDigitalMemoryTab('${key}')">${label}</button>`).join("")}
+    </div>
+    ${body}
+  `;
+}
+
       function showContentAssistant() {
   state.viewKey = "contentAssistant";
 
@@ -13490,7 +13626,10 @@ renderAdvancedSearchResults,
 showNotificationCenter,
 showSensitiveChecker,
 checkSensitiveContent,
-openDigitalMemory,
+showDigitalMemory,
+analyzeDigitalMemory,
+clearDigitalMemory,
+selectDigitalMemoryTab,
 refreshDailyAssistantAI,
 showForgotPassword,
 requestPasswordReset,
