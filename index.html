@@ -4050,6 +4050,11 @@ body.ux-dark .table-page-button.active {
     </main>
   </section>
 
+  <datalist id="userTitleOptions">
+    <option value="Başkan"></option>
+    <option value="Genel Sekreter"></option>
+    <option value="Genel Sekreter Yardımcısı"></option>
+  </datalist>
 
   <div id="modalBackdrop" class="modal-backdrop hidden" onclick="App.backdropClose(event)">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -11826,7 +11831,7 @@ saveMaterialLogs(Array.isArray(data.materialLogs) ? data.materialLogs : []);
             <div class="form-grid">
               <div class="field"><label>Kullanıcı Adı</label><input value="${esc(u.username)}" readonly /></div>
               <div class="field"><label>Rol</label><input value="${esc(roleName(u.role))}" readonly /></div>
-              <div class="field"><label>Unvan</label><input id="profileTitle" value="${esc(u.title || '')}" /></div>
+              <div class="field"><label>Unvan</label><input id="profileTitle" list="userTitleOptions" value="${esc(u.title || '')}" /></div>
               <div class="field"><label>Ad Soyad</label><input id="profileFullName" required value="${esc(u.fullName)}" /></div>
               <div class="field"><label>E-posta</label><input id="profileEmail" type="email" value="${esc(u.email || '')}" /></div>
               <div class="field"><label>Telefon</label><input id="profilePhone" value="${esc(u.phone || '')}" /></div>
@@ -11893,7 +11898,7 @@ saveMaterialLogs(Array.isArray(data.materialLogs) ? data.materialLogs : []);
             <td><input id="u_${u.id}_username" value="${esc(u.username)}" /></td>
             <td><input id="u_${u.id}_fullName" value="${esc(u.fullName)}" /></td>
             <td><select id="u_${u.id}_role"><option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option><option value="manager" ${u.role === 'manager' ? 'selected' : ''}>Müdür</option><option value="coordinator" ${u.role === 'coordinator' ? 'selected' : ''}>Koordinatör</option><option value="staff" ${u.role === 'staff' ? 'selected' : ''}>Personel</option></select></td>
-            <td><input id="u_${u.id}_title" value="${esc(u.title || '')}" /></td>
+            <td><input id="u_${u.id}_title" list="userTitleOptions" value="${esc(u.title || '')}" /></td>
             <td><input id="u_${u.id}_email" value="${esc(u.email || '')}" /></td>
             <td><select id="u_${u.id}_active"><option value="true" ${u.active ? 'selected' : ''}>Aktif</option><option value="false" ${!u.active ? 'selected' : ''}>Pasif</option></select></td>
             <td><div class="btn-row"><button class="btn secondary small" onclick="App.saveAdminUser('${js(u.id)}')">Kaydet</button><button class="btn warning small" onclick="App.resetUserPassword('${js(u.id)}')">Şifre Sıfırla</button><button class="btn danger small" onclick="App.deleteUser('${js(u.id)}')">Sil</button></div></td>
@@ -11918,7 +11923,7 @@ saveMaterialLogs(Array.isArray(data.materialLogs) ? data.materialLogs : []);
                 <div class="field"><label>Kullanıcı adı</label><input id="newUsername" required /></div>
                 <div class="field"><label>Ad Soyad</label><input id="newFullName" required /></div>
                 <div class="field"><label>Rol</label><select id="newRole"><option value="staff">Personel</option><option value="coordinator">Koordinatör</option><option value="manager">Müdür</option><option value="admin">Admin</option></select></div>
-                <div class="field"><label>Unvan</label><input id="newTitle" /></div>
+                <div class="field"><label>Unvan</label><input id="newTitle" list="userTitleOptions" /></div>
                 <div class="field"><label>E-posta</label><input id="newEmail" type="email" /></div>
                 <div class="field"><label>Geçici şifre</label><input id="newPassword" value="${esc(DEFAULT_PASSWORD)}" /></div>
               </div>
