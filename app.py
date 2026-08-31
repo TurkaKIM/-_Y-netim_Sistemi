@@ -23,11 +23,12 @@ TERMS_PDF_URL = (
 
 DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
 DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
+APP_DIR = Path(__file__).parent.resolve()
 
 # Streamlit sayfasını geniş ekran yap
 st.set_page_config(
     page_title="TÜRKAK İş Yönetim Sistemi",
-    page_icon="turkak.png",
+    page_icon=str(APP_DIR / "turkak.png"),
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -490,10 +491,9 @@ if "turkak_last_ai_request_id" not in st.session_state:
 if "turkak_last_password_reset_email_request_id" not in st.session_state:
     st.session_state.turkak_last_password_reset_email_request_id = ""
 
-component_dir = Path(__file__).parent.resolve()
 turkak_component = components.declare_component(
     "turkak_is_yonetim_sistemi",
-    path=str(component_dir),
+    path=str(APP_DIR),
 )
 
 component_value = turkak_component(

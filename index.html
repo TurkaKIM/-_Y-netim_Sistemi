@@ -3853,7 +3853,7 @@ body.ux-dark .brand-library-title.motto-title p {
         <div>
           <div class="logo-block">
             <div class="logo-mark" aria-label="TÜRKAK logosu">
-              <img src="https://github.com/davutkara1985-create/is-takip-uygulamasi3/blob/main/turkak.png?raw=true" alt="TÜRKAK logosu">
+              <img src="turkak.png" alt="TÜRKAK logosu">
             </div>
             <div class="brand-title">
               <strong>TÜRKAK</strong>
@@ -3896,7 +3896,7 @@ body.ux-dark .brand-library-title.motto-title p {
     <aside class="sidebar">
       <div class="side-brand">
         <div class="logo-mark" aria-label="TÜRKAK logosu">
-         <img src="https://github.com/davutkara1985-create/is-takip-uygulamasi3/blob/main/turkak.png?raw=true" alt="TÜRKAK logosu">
+         <img src="turkak.png" alt="TÜRKAK logosu">
        </div>
         <div><strong>TÜRKAK</strong><span>İş Yönetim Sistemi</span></div>
       </div>
@@ -11702,7 +11702,7 @@ saveMaterialLogs(Array.isArray(data.materialLogs) ? data.materialLogs : []);
           `;
       }
 
-      function saveAdminUser(id) {
+      async function saveAdminUser(id) {
         const users = getUsers();
         const user = users.find(u => u.id === id);
         if (!user) return toast("Kullanıcı bulunamadı.");
@@ -11716,6 +11716,8 @@ saveMaterialLogs(Array.isArray(data.materialLogs) ? data.materialLogs : []);
         user.email = $(`u_${id}_email`).value.trim();
         user.active = $(`u_${id}_active`).value === "true";
         saveUsers(users);
+        const saved = await pushSharedData();
+        if (!saved) return;
         if (state.currentUser.id === id) state.currentUser = user;
         updateShell();
         toast("Kullanıcı güncellendi.");
@@ -11730,6 +11732,8 @@ saveMaterialLogs(Array.isArray(data.materialLogs) ? data.materialLogs : []);
         user.passwordHash = await sha256(DEFAULT_PASSWORD);
         user.mustChangePassword = true;
         saveUsers(users);
+        const saved = await pushSharedData();
+        if (!saved) return;
         toast("Şifre sıfırlandı.");
       }
 
@@ -11753,6 +11757,8 @@ saveMaterialLogs(Array.isArray(data.materialLogs) ? data.materialLogs : []);
         };
         users.push(user);
         saveUsers(users);
+        const saved = await pushSharedData();
+        if (!saved) return;
         toast("Kullanıcı eklendi.");
         showAdmin();
       }
