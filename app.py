@@ -608,6 +608,8 @@ if "turkak_last_password_reset_email_request_id" not in st.session_state:
     st.session_state.turkak_last_password_reset_email_request_id = ""
 if "turkak_last_shared_data_request_id" not in st.session_state:
     st.session_state.turkak_last_shared_data_request_id = ""
+if "turkak_last_digital_memory_request_id" not in st.session_state:
+    st.session_state.turkak_last_digital_memory_request_id = ""
 
 turkak_component = components.declare_component(
     "turkak_is_yonetim_sistemi",
@@ -619,6 +621,15 @@ component_value = turkak_component(
     key="turkak_is_yonetim_sistemi",
     default=None,
 )
+
+if isinstance(component_value, dict) and component_value.get("type") == "digital_memory_navigation":
+    request_id = str(component_value.get("requestId") or "")
+    payload = component_value.get("payload") or {}
+    if request_id and request_id != st.session_state.turkak_last_digital_memory_request_id:
+        st.session_state.turkak_last_digital_memory_request_id = request_id
+        st.session_state.digital_memory_user_id = str(payload.get("userId") or "")
+        st.session_state.digital_memory_user_name = str(payload.get("userName") or "")
+        st.switch_page("pages/digital_memory.py")
 
 if isinstance(component_value, dict) and component_value.get("type") == "ai_request":
     request_id = str(component_value.get("requestId") or "")

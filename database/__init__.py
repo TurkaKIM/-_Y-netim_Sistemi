@@ -1,0 +1,1 @@
+"""Supabase veri erişim katmanı."""

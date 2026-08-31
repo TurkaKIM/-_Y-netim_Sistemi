@@ -4203,6 +4203,22 @@ function setupStreamlitAiBridge() {
   });
 }
 
+function openDigitalMemory() {
+  const streamlitApi = getStreamlitApi();
+  if (!streamlitApi || typeof streamlitApi.setComponentValue !== "function") {
+    toast("Dijital Hafıza Merkezi açılamadı.");
+    return;
+  }
+  streamlitApi.setComponentValue({
+    type: "digital_memory_navigation",
+    requestId: `digital-memory-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    payload: {
+      userId: String(state.currentUser?.id || ""),
+      userName: String(state.currentUser?.fullName || "")
+    }
+  });
+}
+
 function handleStreamlitAiResponse(response) {
   const requestId = String(response?.requestId || "");
   if (!requestId) return;
@@ -4386,6 +4402,7 @@ const AI_PROXY_BASE_URL = AI_PROXY_URL.replace(/\/ai-content\/?$/, "");
 const BRAND_LIBRARY_TITLES = ["TÜRKAK Logosu", "TÜRKAK Markası", "Doğru / yanlış logo kullanımı", "Sosyal medya görsel şablonları", "Sunum şablonları", "Kurumsal renk paleti"];
 const IDEA_STATUS = ["Fikir", "Araştırılıyor", "Metin hazırla", "Görsel hazırla", "Tamamlandı"];
 const AI_PROMPT_AREAS = [
+  ["digitalMemory", "Dijital Hafıza Merkezi"],
   ["contentAssistant", "Kurumsal İçerik Asistanı - Genel"],
   ["content_title", "Haber Başlığı"],
   ["content_spot", "Spot Metin"],
@@ -4851,6 +4868,7 @@ function saveMaterialLogs(items) { store.set(KEYS.materialLogs, items.slice(-150
 
 function defaultAiPrompts() {
   return {
+    digitalMemory: "TÜRKAK'ın geçmiş web ve sosyal medya içeriklerini kurumsal iletişim bakış açısıyla incele. Yalnızca sunulan kaynaklara dayan; tarih, başlık veya içerik uydurma. Bulguları Türkçe, açık, tarafsız ve uygulanabilir biçimde raporla.",
     contentAssistant: "Ham metni TÜRKAK kurumsal diliyle, resmi, sade, açıklayıcı ve yayınlanabilir çıktı formatlarına dönüştür.",
     content_title: "Ham metinden haber diline uygun, kısa ve güçlü haber başlığı önerileri üret.",
     content_spot: "Ham metinden tek paragraflık, açıklayıcı ve kurumsal spot metin üret.",
@@ -5260,6 +5278,7 @@ function toast(message) {
   ["meetings", "Toplantı / Ziyaret Takibi", "🤝", "showMeetingList"],
   ["brandLibrary", "Kurumsal Kimlik Kütüphanesi", "🎨", "showBrandLibrary"],
   ["timeline", "Kurumsal Hafıza Zaman Tüneli", "🕒", "showTimeline"],
+  ["digitalMemory", "Dijital Hafıza Merkezi", "🧠", "openDigitalMemory"],
   ["contentAssistant", "Kurumsal İçerik Asistanı", "✍️", "showContentAssistant"],
   ["sensitiveChecker", "Hassas İçerik Uyarı Sistemi", "⚠️", "showSensitiveChecker"],
   ["contentIdeas", "İçerik Fikir Havuzu", "💡", "showContentIdeas"],
@@ -13471,6 +13490,7 @@ renderAdvancedSearchResults,
 showNotificationCenter,
 showSensitiveChecker,
 checkSensitiveContent,
+openDigitalMemory,
 refreshDailyAssistantAI,
 showForgotPassword,
 requestPasswordReset,
