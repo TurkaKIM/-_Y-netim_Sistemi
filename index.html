@@ -3842,6 +3842,135 @@ body.ux-dark .brand-library-title.motto-title p {
   line-height: 1.28 !important;
   color: var(--ink) !important;
 }
+
+/* --- Liste tablolarını yatay kaydırmasız ve sayfalı göster --- */
+.table-wrap {
+  overflow: hidden !important;
+}
+
+.table-wrap table {
+  width: 100% !important;
+  min-width: 0 !important;
+  table-layout: fixed;
+}
+
+.table-wrap th,
+.table-wrap td {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.table-wrap input,
+.table-wrap select,
+.table-wrap textarea {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.table-wrap .btn-row {
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.table-wrap .btn {
+  max-width: 100%;
+  padding: 7px 8px;
+  white-space: normal;
+}
+
+.table-wrap table.table-compact th,
+.table-wrap table.table-compact td {
+  padding: 8px 6px;
+  font-size: 11px;
+}
+
+.table-wrap table.table-ultra-compact th,
+.table-wrap table.table-ultra-compact td {
+  padding: 6px 4px;
+  font-size: 10px;
+}
+
+.table-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.table-pagination-info {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.table-pagination-pages {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.table-page-button {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.table-page-button:hover,
+.table-page-button.active {
+  border-color: var(--turkak-red);
+  background: var(--turkak-red);
+  color: #fff;
+}
+
+body.ux-dark .table-page-button {
+  background: var(--panel);
+  color: var(--ink);
+}
+
+body.ux-dark .table-page-button:hover,
+body.ux-dark .table-page-button.active {
+  background: var(--turkak-red);
+  color: #fff;
+}
+
+/* --- Toplantı / Ziyaret özet kutularını tek sıraya sığdır --- */
+.meeting-summary-cards {
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 8px;
+}
+
+.meeting-summary-cards .stat-card {
+  min-width: 0;
+  padding: 12px 8px;
+}
+
+.meeting-summary-cards .stat-card .label {
+  font-size: 11px;
+}
+
+.meeting-summary-cards .stat-card .num {
+  margin-top: 5px;
+  font-size: 26px;
+}
+
+.meeting-summary-cards .stat-card .hint {
+  font-size: 10px;
+  line-height: 1.3;
+}
 </style>
 </head>
 <body>
@@ -4277,6 +4406,82 @@ const CONTENT_OUTPUT_GROUPS = [
 
 let sharedSaveTimer = null;
 let sharedRefreshTimer = null;
+let listTableObserver = null;
+const TABLE_PAGE_SIZE = 15;
+
+function enhanceListTable(table) {
+  if (!table || table.dataset.paginationReady === "true") return;
+
+  const body = table.tBodies?.[0];
+  if (!body) return;
+
+  const columnCount = table.tHead?.rows?.[0]?.cells?.length || 0;
+  if (columnCount >= 8) table.classList.add("table-compact");
+  if (columnCount >= 11) table.classList.add("table-ultra-compact");
+
+  const rows = Array.from(body.rows);
+  table.dataset.paginationReady = "true";
+
+  if (rows.length <= TABLE_PAGE_SIZE) return;
+
+  const wrap = table.closest(".table-wrap");
+  if (!wrap) return;
+
+  const pageCount = Math.ceil(rows.length / TABLE_PAGE_SIZE);
+  const pager = document.createElement("nav");
+  pager.className = "table-pagination";
+  pager.setAttribute("aria-label", "Liste sayfaları");
+
+  let currentPage = 1;
+
+  const renderPage = () => {
+    const start = (currentPage - 1) * TABLE_PAGE_SIZE;
+    const end = Math.min(start + TABLE_PAGE_SIZE, rows.length);
+
+    rows.forEach((row, index) => {
+      row.hidden = index < start || index >= end;
+    });
+
+    pager.innerHTML = `
+      <span class="table-pagination-info">${start + 1}-${end} / ${rows.length} kayıt</span>
+      <span class="table-pagination-pages"></span>
+    `;
+
+    const pages = pager.querySelector(".table-pagination-pages");
+    for (let page = 1; page <= pageCount; page += 1) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `table-page-button${page === currentPage ? " active" : ""}`;
+      button.textContent = String(page);
+      button.setAttribute("aria-label", `${page}. sayfa`);
+      button.setAttribute("aria-current", page === currentPage ? "page" : "false");
+      button.addEventListener("click", () => {
+        currentPage = page;
+        renderPage();
+        wrap.scrollIntoView({ block: "nearest" });
+      });
+      pages.appendChild(button);
+    }
+  };
+
+  wrap.insertAdjacentElement("afterend", pager);
+  renderPage();
+}
+
+function enhanceListTables(root = document) {
+  root.querySelectorAll?.(".table-wrap table").forEach(enhanceListTable);
+}
+
+function startListTableEnhancements() {
+  const view = $("view");
+  if (!view || listTableObserver) return;
+
+  listTableObserver = new MutationObserver(() => {
+    requestAnimationFrame(() => enhanceListTables(view));
+  });
+  listTableObserver.observe(view, { childList: true, subtree: true });
+  enhanceListTables(view);
+}
 
 function localDataPayload() {
   return {
@@ -5663,7 +5868,7 @@ function showMeetingList(type = "all") {
       <div class="motto-title"><p>TÜRKAK: Ulusal Güç, Uluslararası Güven</p></div>
     </div>
 
-    <div class="cards">
+    <div class="cards meeting-summary-cards">
       <button class="stat-card red" onclick="App.showMeetingList('all')">
         <div class="label">Toplam kayıt</div>
         <div class="num">${items.length}</div>
@@ -5693,9 +5898,7 @@ function showMeetingList(type = "all") {
         <div class="num">${followUp}</div>
         <div class="hint">Aksiyon bekleyenler</div>
       </button>
-    </div>
 
-    <div class="cards">
       <button class="stat-card" onclick="App.showMeetingList('news')">
         <div class="label">Haber yapılacak</div>
         <div class="num">${newsNeeded}</div>
@@ -11667,7 +11870,7 @@ saveMaterialLogs(Array.isArray(data.materialLogs) ? data.materialLogs : []);
             <td><input id="u_${u.id}_title" value="${esc(u.title || '')}" /></td>
             <td><input id="u_${u.id}_email" value="${esc(u.email || '')}" /></td>
             <td><select id="u_${u.id}_active"><option value="true" ${u.active ? 'selected' : ''}>Aktif</option><option value="false" ${!u.active ? 'selected' : ''}>Pasif</option></select></td>
-            <td><div class="btn-row"><button class="btn secondary small" onclick="App.saveAdminUser('${js(u.id)}')">Kaydet</button><button class="btn warning small" onclick="App.resetUserPassword('${js(u.id)}')">Şifre Sıfırla</button></div></td>
+            <td><div class="btn-row"><button class="btn secondary small" onclick="App.saveAdminUser('${js(u.id)}')">Kaydet</button><button class="btn warning small" onclick="App.resetUserPassword('${js(u.id)}')">Şifre Sıfırla</button><button class="btn danger small" onclick="App.deleteUser('${js(u.id)}')">Sil</button></div></td>
           </tr>`).join("");
         $("view").innerHTML = `
           <div class="page-head">
@@ -11735,6 +11938,33 @@ saveMaterialLogs(Array.isArray(data.materialLogs) ? data.materialLogs : []);
         const saved = await pushSharedData();
         if (!saved) return;
         toast("Şifre sıfırlandı.");
+      }
+
+      async function deleteUser(id) {
+        const users = getUsers();
+        const user = users.find(item => item.id === id);
+        if (!user) return toast("Kullanıcı bulunamadı.");
+        if (state.currentUser?.id === id) return toast("Aktif olarak kullandığınız kendi hesabınızı silemezsiniz.");
+
+        const adminCount = users.filter(item => item.role === "admin").length;
+        if (user.role === "admin" && adminCount <= 1) {
+          return toast("Sistemdeki son admin hesabı silinemez.");
+        }
+
+        if (!confirm(`${user.fullName} kullanıcısı silinsin mi? Kullanıcıya ait geçmiş iş kayıtları korunacaktır.`)) return;
+
+        const remainingUsers = users.filter(item => item.id !== id);
+        saveUsers(remainingUsers);
+        const saved = await pushSharedData();
+
+        if (!saved) {
+          clearTimeout(sharedSaveTimer);
+          store.set(KEYS.users, users);
+          return;
+        }
+
+        toast("Kullanıcı silindi. Geçmiş kayıtları korundu.");
+        showAdmin();
       }
 
       async function addUser(event) {
@@ -13094,6 +13324,7 @@ function backdropClose(event) {
 
   $("loginForm").addEventListener("submit", login);
 
+  startListTableEnhancements();
   startSharedRefresh();
 
   const session = store.get(KEYS.session, null);
@@ -13219,6 +13450,7 @@ sendAdminNotificationEmail,
   showAdmin,
   saveAdminUser,
   resetUserPassword,
+  deleteUser,
   addUser,
 
   markNotification,
