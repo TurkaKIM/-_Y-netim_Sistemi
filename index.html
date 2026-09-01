@@ -5176,6 +5176,135 @@ body {
   .table-pagination { flex-direction: column; }
   .table-pagination-controls { justify-content: flex-start; }
 }
+
+/* --- Tam ekran giriş, tek satır malzeme işlemleri ve sıralanabilir tablolar --- */
+#loginPage.login-page {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #f7eef0 !important;
+}
+
+#loginPage.login-page::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: -5% !important;
+  z-index: 0 !important;
+  display: block !important;
+  background: url("login-bg.jpg") center bottom / cover no-repeat !important;
+  animation: none !important;
+  pointer-events: none !important;
+}
+
+#loginPage.login-page::after {
+  content: none !important;
+  display: none !important;
+}
+
+#loginPage .login-card {
+  position: relative;
+  z-index: 1;
+}
+
+#materialRows th:last-child,
+#materialRows td:last-child {
+  width: 238px;
+}
+
+#materialRows .material-actions-nowrap {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap !important;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+#materialRows .material-actions-nowrap .btn {
+  min-width: 0;
+  min-height: 26px;
+  flex: 0 0 auto;
+  padding: 4px 6px;
+  font-size: 8.75px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+th.sortable-header {
+  padding: 0 !important;
+}
+
+.table-sort-button {
+  width: 100%;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  border: 0;
+  border-radius: 0;
+  padding: 7px 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+}
+
+.table-sort-button:hover,
+.table-sort-button:focus-visible,
+.table-sort-button.active {
+  background: rgba(200, 16, 46, .055);
+  color: var(--turkak-red);
+  outline: none;
+}
+
+.table-sort-button svg {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: .55;
+}
+
+.table-sort-button.active svg {
+  opacity: 1;
+}
+
+.table-sort-button.sort-asc .sort-down,
+.table-sort-button.sort-desc .sort-up {
+  opacity: .18;
+}
+
+.table-sort-button.sort-asc .sort-up,
+.table-sort-button.sort-desc .sort-down {
+  opacity: 1;
+  stroke-width: 2.4;
+}
+
+@media (max-width: 820px) {
+  #materialRows th:last-child,
+  #materialRows td:last-child {
+    width: 210px;
+  }
+
+  #materialRows .material-actions-nowrap .btn {
+    padding-inline: 4px;
+    font-size: 8px;
+  }
+}
 </style>
 </head>
 <body>
@@ -5677,6 +5806,64 @@ let sharedRefreshTimer = null;
 let listTableObserver = null;
 const TABLE_PAGE_SIZE = 10;
 
+function tableDateSortValue(value) {
+  const text = String(value || "").trim();
+  let match = text.match(/\b(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
+  if (match) {
+    return Date.UTC(
+      Number(match[3]),
+      Number(match[2]) - 1,
+      Number(match[1]),
+      Number(match[4] || 0),
+      Number(match[5] || 0)
+    );
+  }
+
+  match = text.match(/\b(\d{4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2}))?/);
+  if (match) {
+    return Date.UTC(
+      Number(match[1]),
+      Number(match[2]) - 1,
+      Number(match[3]),
+      Number(match[4] || 0),
+      Number(match[5] || 0)
+    );
+  }
+
+  if (/^\d{4}$/.test(text)) return Date.UTC(Number(text), 0, 1);
+  return Number.NaN;
+}
+
+function compareTableCellValues(leftValue, rightValue, dateColumn, direction) {
+  const left = String(leftValue || "").replace(/\s+/g, " ").trim();
+  const right = String(rightValue || "").replace(/\s+/g, " ").trim();
+
+  if (!left && !right) return 0;
+  if (!left) return 1;
+  if (!right) return -1;
+
+  let result = 0;
+
+  if (dateColumn) {
+    const leftDate = tableDateSortValue(left);
+    const rightDate = tableDateSortValue(right);
+    if (Number.isFinite(leftDate) && Number.isFinite(rightDate)) {
+      result = leftDate - rightDate;
+    }
+  }
+
+  if (result === 0) {
+    const numberPattern = /^-?\d+(?:[.,]\d+)?$/;
+    if (numberPattern.test(left) && numberPattern.test(right)) {
+      result = Number(left.replace(",", ".")) - Number(right.replace(",", "."));
+    } else {
+      result = left.localeCompare(right, "tr", { sensitivity: "base", numeric: true });
+    }
+  }
+
+  return direction === "asc" ? result : -result;
+}
+
 function enhanceListTable(table) {
   if (!table || table.dataset.paginationReady === "true") return;
 
@@ -5687,13 +5874,13 @@ function enhanceListTable(table) {
   if (columnCount >= 8) table.classList.add("table-compact");
   if (columnCount >= 11) table.classList.add("table-ultra-compact");
 
-  const rows = Array.from(body.rows);
+  let rows = Array.from(body.rows);
   table.dataset.paginationReady = "true";
 
   const wrap = table.closest(".table-wrap");
   if (!wrap) return;
 
-  const pageCount = Math.max(1, Math.ceil(rows.length / TABLE_PAGE_SIZE));
+  let pageCount = Math.max(1, Math.ceil(rows.length / TABLE_PAGE_SIZE));
   const pager = document.createElement("nav");
   pager.className = "table-pagination";
   pager.setAttribute("aria-label", "Liste sayfaları");
@@ -5701,6 +5888,8 @@ function enhanceListTable(table) {
   let currentPage = 1;
 
   const renderPage = () => {
+    pageCount = Math.max(1, Math.ceil(rows.length / TABLE_PAGE_SIZE));
+    currentPage = Math.min(currentPage, pageCount);
     const start = (currentPage - 1) * TABLE_PAGE_SIZE;
     const end = Math.min(start + TABLE_PAGE_SIZE, rows.length);
 
@@ -5752,6 +5941,60 @@ function enhanceListTable(table) {
       wrap.scrollIntoView({ block: "nearest" });
     });
   };
+
+  const headers = Array.from(table.tHead?.rows?.[0]?.cells || []);
+  headers.forEach((header, columnIndex) => {
+    const label = String(header.textContent || "").replace(/\s+/g, " ").trim();
+    if (!label || /^(işlem|aksiyon|eylem)$/i.test(label)) return;
+
+    const dateColumn = /(tarih|başlangıç|bitiş|son kontrol|oluşturul|güncellen|zaman|yıl)/i.test(label);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "table-sort-button";
+    button.setAttribute("aria-label", `${label} sütununu sırala`);
+    button.innerHTML = `
+      <span>${label}</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path class="sort-up" d="m8 10 4-4 4 4"></path>
+        <path class="sort-down" d="m16 14-4 4-4-4"></path>
+      </svg>
+    `;
+
+    header.textContent = "";
+    header.classList.add("sortable-header");
+    header.setAttribute("aria-sort", "none");
+    header.appendChild(button);
+
+    button.addEventListener("click", () => {
+      const direction = header.dataset.sortDirection === "asc" ? "desc" : "asc";
+
+      headers.forEach(otherHeader => {
+        otherHeader.dataset.sortDirection = "";
+        otherHeader.setAttribute("aria-sort", "none");
+        const otherButton = otherHeader.querySelector(".table-sort-button");
+        otherButton?.classList.remove("active", "sort-asc", "sort-desc");
+      });
+
+      header.dataset.sortDirection = direction;
+      header.setAttribute("aria-sort", direction === "asc" ? "ascending" : "descending");
+      button.classList.add("active", direction === "asc" ? "sort-asc" : "sort-desc");
+      button.setAttribute(
+        "aria-label",
+        `${label} sütununu ${direction === "asc" ? "azalan" : "artan"} sırala`
+      );
+
+      rows = [...rows].sort((leftRow, rightRow) => compareTableCellValues(
+        leftRow.cells[columnIndex]?.textContent,
+        rightRow.cells[columnIndex]?.textContent,
+        dateColumn,
+        direction
+      ));
+
+      rows.forEach(row => body.appendChild(row));
+      currentPage = 1;
+      renderPage();
+    });
+  });
 
   wrap.insertAdjacentElement("afterend", pager);
   renderPage();
@@ -7987,7 +8230,7 @@ function renderMaterialRows() {
               <td>${item.status && item.status !== "Aktif" ? `${badge(item.status, materialStatusClass(item.status))}<br>` : ""}${badge(item.usability, materialUsabilityClass(item.usability))}</td>
               <td>${formatDate(item.lastCheckDate)}<br><small class="muted">${esc(materialPersonNames(item.checkedByIds))}</small></td>
               <td>
-                <div class="btn-row">
+                <div class="btn-row material-actions-nowrap">
                   <button class="btn secondary small" onclick="App.openMaterialDetail('${js(item.id)}')">Detay</button>
                   <button class="btn ghost small" onclick="App.showMaterialAssignment('${js(item.id)}')">Zimmetle</button>
                   ${item.type === "Sarf" ? `<button class="btn ghost small" onclick="App.adjustMaterialStock('${js(item.id)}', 1)">Stok +</button><button class="btn ghost small" onclick="App.adjustMaterialStock('${js(item.id)}', -1)">Stok -</button>` : ""}

@@ -66,6 +66,29 @@ html, body, .stApp, [data-testid="stAppViewContainer"] {
     max-width: 100% !important;
 }
 
+/* Stil bloğu ile uygulama iframe'i arasındaki Streamlit boşluğunu kaldır */
+[data-testid="stMainBlockContainer"],
+[data-testid="stMainBlockContainer"] > div,
+[data-testid="stMainBlockContainer"] [data-testid="stVerticalBlock"],
+[data-testid="stVerticalBlockBorderWrapper"],
+[data-testid="stElementContainer"] {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+[data-testid="stMainBlockContainer"] [data-testid="stVerticalBlock"] {
+    gap: 0 !important;
+}
+
+.stMarkdown:has(style),
+[data-testid="stMarkdownContainer"]:has(style) {
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+
 /* Streamlit üst barını gizle */
 [data-testid="stHeader"] {
     display: none !important;
