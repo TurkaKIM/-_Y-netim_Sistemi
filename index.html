@@ -4809,6 +4809,373 @@ body {
   .filters { grid-template-columns: 1fr !important; }
   .view { padding: 12px; }
 }
+
+/* --- Kullanıcı geri bildirimleri: üst başlık, sosyal ikonlar, kayan bant ve sayfalama --- */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+}
+
+.topbar-search {
+  width: 200px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #dfe5ec;
+  border-radius: 9px;
+  padding: 0 12px;
+  background: #fff;
+  color: #667085;
+  font: inherit;
+  font-size: 11.5px;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 2px 7px rgba(24, 32, 51, .03);
+}
+
+.topbar-search:hover,
+.topbar-search:focus-visible {
+  border-color: #d7a5af;
+  color: #344054;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(200, 16, 46, .07);
+}
+
+.topbar-search svg,
+.topbar-notification svg,
+.topbar-chevron {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.topbar-notification {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  display: inline-grid;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #344054;
+  cursor: pointer;
+}
+
+.topbar-notification:hover,
+.topbar-notification:focus-visible {
+  background: #fff4f6;
+  color: var(--turkak-red);
+  outline: none;
+}
+
+.topbar-notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 17px;
+  height: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  padding: 0 4px;
+  background: var(--turkak-red);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.topbar-user-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  font: inherit;
+  color: #172033;
+  cursor: pointer;
+}
+
+.topbar-user-button:hover,
+.topbar-user-button:focus-visible {
+  background: #f8fafc;
+  outline: none;
+}
+
+.topbar-user-copy {
+  min-width: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  line-height: 1.15;
+  text-align: left;
+}
+
+.topbar-user-copy b {
+  max-width: 120px;
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-user-copy small {
+  font-size: 9.5px;
+}
+
+.topbar-chevron {
+  width: 14px;
+  height: 14px;
+  color: #667085;
+}
+
+.topbar-logout {
+  box-shadow: none;
+}
+
+.social-channels-compact .social-channel-grid {
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 7px;
+}
+
+.social-channels-compact .social-channel-card {
+  position: relative;
+  min-width: 0;
+  min-height: 78px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-color: #dfe5ec;
+  border-radius: 12px;
+  padding: 9px 5px 7px;
+  background: #fff;
+  color: #475467;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.social-channels-compact .social-channel-card:hover,
+.social-channels-compact .social-channel-card:has(input:checked) {
+  border-color: #e2a6b2;
+  background: #fff5f7;
+  color: var(--turkak-red);
+  box-shadow: 0 5px 14px rgba(200, 16, 46, .08);
+}
+
+.social-channels-compact .social-channel-card input {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 13px;
+  height: 13px;
+}
+
+.social-channel-icon {
+  width: 27px;
+  height: 27px;
+  display: inline-grid;
+  place-items: center;
+}
+
+.social-channel-icon svg {
+  width: 25px;
+  height: 25px;
+}
+
+.social-channel-label {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 9px;
+  font-weight: 750;
+  line-height: 1.1 !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.social-icon-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.social-icon-chip {
+  width: 27px;
+  height: 27px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 27px;
+  border: 1px solid #dfe5ec;
+  border-radius: 8px;
+  background: #fff;
+  color: #344054;
+}
+
+.social-icon-chip svg {
+  width: 15px;
+  height: 15px;
+}
+
+.social-icon-chip > span:not(.visually-hidden) {
+  margin-left: 5px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.social-icon-row .social-icon-chip:has(> span:not(.visually-hidden)) {
+  width: auto;
+  height: 32px;
+  flex-basis: auto;
+  padding: 0 9px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+}
+
+.marquee {
+  display: block !important;
+  min-height: 40px;
+  margin: 0 0 14px;
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 10px;
+  background: linear-gradient(90deg, #172033 0%, #2a1720 52%, #490d1b 100%);
+  box-shadow: 0 5px 14px rgba(24, 32, 51, .08);
+}
+
+.marquee span {
+  padding: 11px 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  animation-duration: 52s;
+}
+
+.table-pagination {
+  min-height: 48px;
+  margin-top: 0;
+  padding: 8px 2px 0;
+  border-top: 0;
+}
+
+.table-pagination-controls {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.table-pagination-pages {
+  gap: 5px;
+  flex-wrap: nowrap;
+}
+
+.table-page-button {
+  min-width: 31px;
+  height: 31px;
+  border: 1px solid #dfe5ec;
+  border-radius: 7px;
+  background: #fff;
+  color: #344054;
+  font-size: 11px;
+  font-weight: 750;
+  box-shadow: none;
+}
+
+.table-page-button:hover:not(:disabled),
+.table-page-button.active {
+  border-color: #e2a6b2;
+  background: #fff5f7;
+  color: var(--turkak-red);
+}
+
+.table-page-button:disabled {
+  opacity: .38;
+  cursor: default;
+}
+
+.table-page-arrow {
+  display: inline-grid;
+  place-items: center;
+  padding: 0;
+}
+
+.table-page-arrow svg,
+.table-page-size svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.table-page-size {
+  height: 31px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #dfe5ec;
+  border-radius: 7px;
+  padding: 0 9px;
+  background: #fff;
+  color: #475467;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+@media (max-width: 1180px) {
+  .topbar-search { width: 155px; }
+  .social-channels-compact .social-channel-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 820px) {
+  .topbar-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  .topbar-search { flex: 1 1 180px; }
+  .topbar-user-copy { min-width: 64px; }
+  .table-pagination { align-items: flex-start; }
+  .table-pagination-controls { flex-wrap: wrap; }
+}
+
+@media (max-width: 560px) {
+  .social-channels-compact .social-channel-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .topbar-search { order: 4; flex-basis: 100%; }
+  .topbar-user-copy { display: none; }
+  .table-pagination { flex-direction: column; }
+  .table-pagination-controls { justify-content: flex-start; }
+}
 </style>
 </head>
 <body>
@@ -4879,10 +5246,21 @@ body {
           <h1 id="topTitle">Anasayfa</h1>
           <div id="topSub" class="sub">Bildirimler, takvim ve aktif işler</div>
         </div>
-        <div class="btn-row">
-          <button class="btn secondary small" onclick="App.showProfile()">Profil / Şifre</button>
-          <div class="user-chip"><span id="topAvatar" class="avatar">T</span><div><b id="topUserName">-</b><br><small id="topUserRole" class="muted">-</small></div></div>
-          <button class="btn ghost small" onclick="App.logout()">Çıkış</button>
+        <div class="topbar-actions">
+          <button class="topbar-search" type="button" onclick="App.showAdvancedSearch()" aria-label="Gelişmiş aramayı aç">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
+            <span>Ara...</span>
+          </button>
+          <button class="topbar-notification" type="button" onclick="App.showNotificationCenter()" aria-label="Bildirim Merkezini aç">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg>
+            <span id="topNotificationBadge" class="topbar-notification-badge hidden">0</span>
+          </button>
+          <button class="user-chip topbar-user-button" type="button" onclick="App.showProfile()" aria-label="Profil ve şifre ayarlarını aç">
+            <span id="topAvatar" class="avatar">T</span>
+            <span class="topbar-user-copy"><b id="topUserName">-</b><small id="topUserRole" class="muted">-</small></span>
+            <svg class="topbar-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"></path></svg>
+          </button>
+          <button class="btn ghost small topbar-logout" onclick="App.logout()">Çıkış</button>
         </div>
       </header>
       <section id="view" class="view"></section>
@@ -5297,7 +5675,7 @@ const CONTENT_OUTPUT_GROUPS = [
 let sharedSaveTimer = null;
 let sharedRefreshTimer = null;
 let listTableObserver = null;
-const TABLE_PAGE_SIZE = 15;
+const TABLE_PAGE_SIZE = 10;
 
 function enhanceListTable(table) {
   if (!table || table.dataset.paginationReady === "true") return;
@@ -5312,12 +5690,10 @@ function enhanceListTable(table) {
   const rows = Array.from(body.rows);
   table.dataset.paginationReady = "true";
 
-  if (rows.length <= TABLE_PAGE_SIZE) return;
-
   const wrap = table.closest(".table-wrap");
   if (!wrap) return;
 
-  const pageCount = Math.ceil(rows.length / TABLE_PAGE_SIZE);
+  const pageCount = Math.max(1, Math.ceil(rows.length / TABLE_PAGE_SIZE));
   const pager = document.createElement("nav");
   pager.className = "table-pagination";
   pager.setAttribute("aria-label", "Liste sayfaları");
@@ -5333,8 +5709,17 @@ function enhanceListTable(table) {
     });
 
     pager.innerHTML = `
-      <span class="table-pagination-info">${start + 1}-${end} / ${rows.length} kayıt</span>
-      <span class="table-pagination-pages"></span>
+      <span class="table-pagination-info">Toplam ${rows.length} kayıt</span>
+      <span class="table-pagination-controls">
+        <button class="table-page-button table-page-arrow" type="button" data-page-action="previous" aria-label="Önceki sayfa" ${currentPage === 1 ? "disabled" : ""}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 7-5 5 5 5"></path></svg>
+        </button>
+        <span class="table-pagination-pages"></span>
+        <button class="table-page-button table-page-arrow" type="button" data-page-action="next" aria-label="Sonraki sayfa" ${currentPage === pageCount ? "disabled" : ""}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 7 5 5-5 5"></path></svg>
+        </button>
+        <span class="table-page-size">${TABLE_PAGE_SIZE} / sayfa <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"></path></svg></span>
+      </span>
     `;
 
     const pages = pager.querySelector(".table-pagination-pages");
@@ -5352,6 +5737,20 @@ function enhanceListTable(table) {
       });
       pages.appendChild(button);
     }
+
+    pager.querySelector('[data-page-action="previous"]')?.addEventListener("click", () => {
+      if (currentPage <= 1) return;
+      currentPage -= 1;
+      renderPage();
+      wrap.scrollIntoView({ block: "nearest" });
+    });
+
+    pager.querySelector('[data-page-action="next"]')?.addEventListener("click", () => {
+      if (currentPage >= pageCount) return;
+      currentPage += 1;
+      renderPage();
+      wrap.scrollIntoView({ block: "nearest" });
+    });
   };
 
   wrap.insertAdjacentElement("afterend", pager);
@@ -5905,11 +6304,36 @@ function canDeleteSocialPost(item) {
   return Boolean(item) && (item.createdBy === state.currentUser?.id || isPrivileged());
 }
 
+function socialChannelIconSvg(channel) {
+  const icons = {
+    "X (Twitter)": '<path d="M5 4 19 20M19 4 5 20"></path>',
+    "Instagram": '<rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1"></circle>',
+    "LinkedIn": '<rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="M8 10v7M8 7v.1M12 17v-7M12 13a4 4 0 0 1 7 2.5V17"></path>',
+    "Nsocial": '<circle cx="12" cy="12" r="9"></circle><path d="M8 16V8l8 8V8"></path>',
+    "Bluesky": '<path d="M12 11c-1.7-3.2-5.7-6-8-6-1.4 0-1 4.2-.7 5.3.5 1.7 2.2 2.3 3.8 2-2.7.4-5 1.4-3.3 4.5 1.8 3.2 5.2-.7 8.2-3.8 3 3.1 6.4 7 8.2 3.8 1.7-3.1-.6-4.1-3.3-4.5 1.6.3 3.3-.3 3.8-2C21 9.2 21.4 5 20 5c-2.3 0-6.3 2.8-8 6Z"></path>',
+    "Web Sitesi": '<circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path>',
+    "Ana Sayfa Slider": '<rect x="3" y="4" width="18" height="16" rx="3"></rect><path d="m6 16 4-4 3 3 2-2 3 3M16 8h.01"></path>'
+  };
+  const paths = icons[channel] || '<circle cx="12" cy="12" r="9"></circle>';
+  return `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+}
+
+function socialChannelIconRow(channels = [], showLabels = false) {
+  if (!channels.length) return "-";
+  return `<span class="social-icon-row">${channels.map(channel => `
+    <span class="social-icon-chip" title="${esc(channel)}">
+      ${socialChannelIconSvg(channel)}
+      ${showLabels ? `<span>${esc(channel)}</span>` : `<span class="visually-hidden">${esc(channel)}</span>`}
+    </span>
+  `).join("")}</span>`;
+}
+
 function channelCheckboxes(selected = []) {
   return SOCIAL_CHANNELS.map(channel => `
     <label class="social-channel-card">
       <input type="checkbox" name="socialChannels" value="${esc(channel)}" ${selected.includes(channel) ? "checked" : ""}>
-      <span>${esc(channel)}</span>
+      <span class="social-channel-icon">${socialChannelIconSvg(channel)}</span>
+      <span class="social-channel-label">${esc(channel)}</span>
     </label>
   `).join("");
 }
@@ -6137,6 +6561,11 @@ function toast(message) {
 
       function renderNav() {
         const unread = getNotifications().filter(n => n.userId === state.currentUser?.id && !n.read).length;
+        const topNotificationBadge = $("topNotificationBadge");
+        if (topNotificationBadge) {
+          topNotificationBadge.textContent = String(unread);
+          topNotificationBadge.classList.toggle("hidden", unread === 0);
+        }
         const buttons = [
   ["dashboard", "Anasayfa", "🏠", "showDashboard"],
   ["new", "Yeni İş Kaydı", "＋", "showTaskForm"],
@@ -7555,7 +7984,7 @@ function renderMaterialRows() {
               <td><b>${metricNumber(item.quantity)}</b> ${esc(item.unit || "Adet")}${isMaterialLowStock(item) ? `<br>${badge("Kritik stok", "status-yeni")}` : ""}</td>
               <td>${esc(item.location || "-")}</td>
               <td>${esc(materialPersonNames(item.responsibleIds))}</td>
-              <td>${badge(item.status, materialStatusClass(item.status))}<br>${badge(item.usability, materialUsabilityClass(item.usability))}</td>
+              <td>${item.status && item.status !== "Aktif" ? `${badge(item.status, materialStatusClass(item.status))}<br>` : ""}${badge(item.usability, materialUsabilityClass(item.usability))}</td>
               <td>${formatDate(item.lastCheckDate)}<br><small class="muted">${esc(materialPersonNames(item.checkedByIds))}</small></td>
               <td>
                 <div class="btn-row">
@@ -8431,11 +8860,13 @@ function showSocialForm(id = null) {
                     ${channelCheckboxes(item.channels || [])}
                     <label class="social-channel-card">
                       <input type="checkbox" id="socialPublishOnWebsite" ${item.publishOnWebsite === "Evet" ? "checked" : ""}>
-                      <span>Web Sitesi</span>
+                      <span class="social-channel-icon">${socialChannelIconSvg("Web Sitesi")}</span>
+                      <span class="social-channel-label">Web Sitesi</span>
                     </label>
                     <label class="social-channel-card">
                       <input type="checkbox" id="socialShowOnSlider" ${item.showOnSlider === "Evet" ? "checked" : ""}>
-                      <span>Ana Sayfa Slider</span>
+                      <span class="social-channel-icon">${socialChannelIconSvg("Ana Sayfa Slider")}</span>
+                      <span class="social-channel-label">Ana Sayfa Slider</span>
                     </label>
                   </div>
                   <small>Birden fazla kanal seçilebilir.</small>
@@ -8740,7 +9171,7 @@ function renderSocialRows() {
                 <small class="muted">${esc(item.shortDescription || "")}</small>
               </td>
               <td>${formatDate(item.publishDate)}</td>
-              <td>${(item.channels || []).map(esc).join("<br>") || "-"}</td>
+              <td>${socialChannelIconRow(item.channels || [])}</td>
               <td>
                 Web: <b>${esc(item.publishOnWebsite)}</b><br>
                 Slider: <b>${esc(item.showOnSlider)}</b>
@@ -8775,7 +9206,7 @@ function openSocialDetail(id) {
       ${detail("Başlık", item.title)}
       ${detail("Yayın Tarihi", formatDate(item.publishDate))}
       ${detail("Durum", item.status)}
-      ${detail("Kanallar", (item.channels || []).join(", ") || "-", true)}
+      ${detail("Kanallar", socialChannelIconRow(item.channels || [], true), true, true)}
       ${detail("Web Sitesi", item.publishOnWebsite)}
       ${detail("Ana Sayfa Slider", item.showOnSlider)}
       ${detail("Oluşturan", userName(item.createdBy))}
